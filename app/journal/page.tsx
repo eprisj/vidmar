@@ -4,13 +4,14 @@ import Reveal from "@/components/Reveal";
 import Seal from "@/components/Seal";
 import Subscribe from "@/components/Subscribe";
 import { journalRubrics } from "@/lib/content";
+import { pageMeta } from "@/lib/seo";
 import styles from "./journal.module.css";
 
-export const metadata: Metadata = {
-  title: "Журнал — ВІДЬМАР",
-  description:
-    "Журнал видавництва ВІДЬМАР — записи про підготовку першої книги зʼявляться тут ближче до випуску.",
-};
+export const metadata: Metadata = pageMeta(
+  "Журнал — ВІДЬМАР",
+  "Журнал видавництва ВІДЬМАР — записи про підготовку першої книги зʼявляться тут ближче до випуску.",
+  "/journal",
+);
 
 export default function JournalPage() {
   return (

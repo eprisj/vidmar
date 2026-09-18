@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Preloader from "@/components/Preloader";
 import ToastProvider from "@/components/ToastProvider";
+import { SITE_URL, pageMeta } from "@/lib/seo";
 import "./globals.css";
 
 /** engraved display — title pages, statements, the wordmark */
@@ -29,9 +30,11 @@ const golos = Golos_Text({
 });
 
 export const metadata: Metadata = {
-  title: "ВІДЬМАР — видавництво",
-  description:
+  metadataBase: new URL(SITE_URL),
+  ...pageMeta(
+    "ВІДЬМАР — видавництво",
     "ВІДЬМАР — бутикове видавництво книг про езотерику, містику й відьомство. Готуємо перше видання і відкриті до рукописів.",
+  ),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

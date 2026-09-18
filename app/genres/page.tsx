@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import Atmosphere from "@/components/Atmosphere";
 import Reveal from "@/components/Reveal";
 import Seal from "@/components/Seal";
 import { EMAIL, genres } from "@/lib/content";
+import { pageMeta } from "@/lib/seo";
 import styles from "./genres.module.css";
 
-export const metadata: Metadata = {
-  title: "Напрями — ВІДЬМАР",
-  description:
-    "Що видає ВІДЬМАР: езотерика, містика, відьомство й духовні практики, трилери, психологічні романи, фентезі та містична проза.",
-};
+export const metadata = pageMeta(
+  "Напрями — ВІДЬМАР",
+  "Що видає ВІДЬМАР: езотерика, містика, відьомство й духовні практики, трилери, психологічні романи, фентезі та містична проза.",
+  "/genres",
+);
 
 export default function GenresPage() {
   return (

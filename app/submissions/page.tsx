@@ -7,13 +7,14 @@ import {
 } from "@/lib/content";
 import Reveal from "@/components/Reveal";
 import Seal from "@/components/Seal";
+import { pageMeta } from "@/lib/seo";
 import styles from "./submissions.module.css";
 
-export const metadata: Metadata = {
-  title: "Авторам — ВІДЬМАР",
-  description:
-    "Умови прийому рукописів у видавництво ВІДЬМАР: що ми шукаємо і як надіслати текст.",
-};
+export const metadata: Metadata = pageMeta(
+  "Авторам — ВІДЬМАР",
+  "Умови прийому рукописів у видавництво ВІДЬМАР: що ми шукаємо і як надіслати текст.",
+  "/submissions",
+);
 
 export default function SubmissionsPage() {
   return (

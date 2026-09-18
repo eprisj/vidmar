@@ -9,13 +9,14 @@ import {
   positioning,
   submissionNote,
 } from "@/lib/content";
+import { pageMeta } from "@/lib/seo";
 import styles from "./about.module.css";
 
-export const metadata: Metadata = {
-  title: "Про нас — ВІДЬМАР",
-  description:
-    "ВІДЬМАР — бутикове видавництво книг про езотерику, містику й відьомство. Лист засновника, напрями видавництва та умови прийому рукописів.",
-};
+export const metadata: Metadata = pageMeta(
+  "Про нас — ВІДЬМАР",
+  "ВІДЬМАР — бутикове видавництво книг про езотерику, містику й відьомство. Лист засновника, напрями видавництва та умови прийому рукописів.",
+  "/about",
+);
 
 export default function AboutPage() {
   return (
