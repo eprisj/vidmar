@@ -44,9 +44,11 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* the tagline right above already says "Бутикове видавництво" — this
+          line carries only what it doesn't: where the publisher stands */}
       <div className={`wrapMax ${styles.legal}`}>
         <span>© 2026 ВІДЬМАР</span>
-        <span>Бутикове видавництво · перше видання в підготовці</span>
+        <span>Перше видання — у підготовці</span>
       </div>
     </footer>
   );

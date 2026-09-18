@@ -22,12 +22,22 @@ export default function Hero() {
             Надіслати рукопис
           </Link>
         </div>
-        <div className={styles.bleed}>
+        {/* the page's actual h1: the wordmark is the heading, not decoration
+            repeating the logo above it. The blurred copy is the same word
+            going out of focus, so it stays hidden from assistive tech. */}
+        {/* the page's actual h1: the wordmark is the heading, not decoration
+            repeating the logo above it. The out-of-focus copy is drawn from
+            data-word through CSS content, so the heading holds the name once
+            in the DOM — as a second text node it made the h1 read
+            "відьмарвідьмар" to anything extracting text. */}
+        <h1 className={styles.bleed}>
           <span className={styles.word}>відьмар</span>
-          <span className={styles.wordBlur} aria-hidden="true">
-            відьмар
-          </span>
-        </div>
+          <span
+            className={styles.wordBlur}
+            data-word="відьмар"
+            aria-hidden="true"
+          />
+        </h1>
       </div>
     </section>
   );

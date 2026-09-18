@@ -93,6 +93,10 @@
   animation: riseUp 1.6s var(--ease) both;
 }
 
+.wordBlur::before {
+  content: attr(data-word);
+}
+
 .wordBlur {
   position: absolute;
   inset: 0;
