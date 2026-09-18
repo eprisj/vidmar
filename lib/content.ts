@@ -97,3 +97,12 @@ export const submissionRules = [
 
 export const submissionNote =
   "Поки ми лише формуємо команду, тому глибоку редакторську правку сирих текстів узяти в роботу ще не маємо змоги — на першому етапі йдеться саме про максимально готові до друку рукописи.";
+
+/** The three sections the journal will open with. Nothing is published yet,
+ * so the page shows them as what they are — planned, not written. Titles are
+ * the ones the journal page already named in prose. */
+export const journalRubrics = [
+  "Нотатки про підготовку видання",
+  "Розмови з авторами",
+  "Полиця редакції",
+];

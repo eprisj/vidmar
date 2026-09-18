@@ -6,6 +6,7 @@ import {
   submissionRules,
 } from "@/lib/content";
 import Reveal from "@/components/Reveal";
+import Seal from "@/components/Seal";
 import styles from "./submissions.module.css";
 
 export const metadata: Metadata = {
@@ -18,6 +19,9 @@ export default function SubmissionsPage() {
   return (
     <section className="ash" data-field="light">
       <div className={`wrapMax ${styles.head}`}>
+        <span className={styles.headMark}>
+          <Seal />
+        </span>
         <p className="micro">Авторам</p>
         <h1 className={styles.title}>Надіслати рукопис</h1>
         <p className={`body ${styles.lede}`}>{focusText}</p>
@@ -33,7 +37,7 @@ export default function SubmissionsPage() {
               <div className={styles.rules}>
                 {submissionRules.map((rule) => (
                   <div key={rule} className={styles.rule}>
-                    <span className={styles.check}>✓</span>
+                    <span className={styles.mark} aria-hidden="true" />
                     <span>{rule}</span>
                   </div>
                 ))}

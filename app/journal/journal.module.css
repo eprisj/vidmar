@@ -1,6 +1,22 @@
 .head {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 110px));
   padding-bottom: clamp(30px, 4vw, 60px);
+}
+
+.headMark {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: clamp(-140px, -6vw, -40px);
+  width: clamp(360px, 40vw, 620px);
+  aspect-ratio: 1;
+  transform: translateY(-46%);
+  color: #fff;
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .title {
@@ -11,13 +27,88 @@
   margin-top: 14px;
 }
 
+.lede {
+  max-width: 46ch;
+  margin-top: 20px;
+}
+
+/* the contents page of a journal that hasn't been written yet */
+.rubrics {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(44px, 5vw, 72px);
+}
+
+.rubric {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: clamp(16px, 3vw, 40px);
+  align-items: baseline;
+  padding-block: clamp(22px, 2.8vw, 34px);
+  border-top: 1px solid var(--hair-d);
+}
+
+.rubrics .rubric:last-child {
+  border-bottom: 1px solid var(--hair-d);
+}
+
+.rubricIndex {
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.rubricTitle {
+  font-size: clamp(1.15rem, 2.2vw, 1.8rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: var(--on-dark);
+}
+
+/* not a button and not a promise of a link — just the state of the shelf */
+.rubricState {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--on-dark-mute);
+  white-space: nowrap;
+}
+
+.rubricState::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+}
+
 .empty {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 28px;
+  gap: 24px;
   max-width: 60ch;
   padding-bottom: clamp(70px, 9vw, 130px);
+}
+
+@media (max-width: 680px) {
+  .rubric {
+    grid-template-columns: 40px minmax(0, 1fr);
+    row-gap: 8px;
+  }
+
+  .rubric > :nth-child(3) {
+    grid-column: 2;
+  }
+
+  /* the longest title sits a hair off the gutter at 375px — take the edge off
+     so it never touches, and wraps cleanly on narrower phones */
+  .rubricTitle {
+    font-size: 1.05rem;
+  }
 }
 
 .subscribeWrap {

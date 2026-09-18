@@ -1,6 +1,23 @@
 .head {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 110px));
   padding-bottom: clamp(30px, 4vw, 60px);
+}
+
+/* the same mark the other pages carry, inked dark for the light field */
+.headMark {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: clamp(-140px, -6vw, -40px);
+  width: clamp(360px, 40vw, 620px);
+  aspect-ratio: 1;
+  transform: translateY(-46%);
+  color: var(--ink);
+  opacity: 0.08;
+  pointer-events: none;
 }
 
 .title {
@@ -43,9 +60,15 @@
   border-bottom: 1px solid var(--hair-l);
 }
 
-.check {
-  color: var(--gold);
-  font-weight: 600;
+/* drawn, not typed: a ✓ glyph fell back to whatever font the platform had
+   and broke the hairline vocabulary the rest of the page is built from */
+.mark {
+  width: 7px;
+  height: 7px;
+  background: var(--gold);
+  border-radius: 50%;
+  justify-self: start;
+  transform: translateY(-2px);
 }
 
 .card {
