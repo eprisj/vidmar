@@ -29,12 +29,13 @@
     );
 }
 
-/* the seam of light: a narrow, slightly bent shaft */
+/* the seam of light: a narrow, slightly bent shaft — position/angle come
+   from --seam-x/--seam-rot/--seam-w when a variant is set */
 .seam {
   position: absolute;
   inset: -20% 0;
-  left: 46%;
-  width: 16%;
+  left: var(--seam-x, 46%);
+  width: var(--seam-w, 16%);
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.02) 0%,
@@ -44,7 +45,7 @@
     rgba(255, 255, 255, 0.02) 100%
   );
   filter: blur(38px);
-  transform: rotate(9deg) scaleX(0.7);
+  transform: rotate(var(--seam-rot, 9deg)) scaleX(0.7);
   opacity: 0.5;
 }
 
@@ -58,6 +59,19 @@
     linear-gradient(112deg, transparent 28%, rgba(255, 255, 255, 0.1) 29.2%, transparent 30.4%);
   filter: blur(6px);
   opacity: 0.5;
+  transform: rotate(var(--edge-rot, 0deg));
+}
+
+/* the publisher's mark, oversized and cropped by the tile edge — ties
+   each stone back to the same seal that carries the homepage, instead of
+   colour being the only thing distinguishing one tile from the next */
+.mark {
+  position: absolute;
+  inset: -30%;
+  color: #fff;
+  opacity: 0.22;
+  transform: rotate(var(--mark-rot, 0deg));
+  mix-blend-mode: screen;
 }
 
 /* gold veining, the only colour in the whole composition */
@@ -91,9 +105,13 @@
 }
 
 @media (max-width: 760px) {
+  /* only takes effect where no variant sets these inline */
+  .root {
+    --seam-x: 40%;
+    --seam-w: 26%;
+  }
+
   .seam {
-    left: 40%;
-    width: 26%;
     filter: blur(30px);
   }
 }

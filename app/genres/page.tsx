@@ -34,7 +34,7 @@ export default function GenresPage() {
               delay={i * 70}
               className={`${styles.tile} ${g.primary ? styles.tilePrimary : styles.tileSecondary}`}
             >
-              <Atmosphere tint={g.tint} />
+              <Atmosphere tint={g.tint} variant={i} />
               <span className={styles.tileIndex}>{String(i + 1).padStart(2, "0")}</span>
               <div className={styles.tileIn}>
                 {g.note && <span className="micro">{g.note}</span>}
