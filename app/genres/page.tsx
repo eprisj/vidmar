@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Atmosphere from "@/components/Atmosphere";
 import Reveal from "@/components/Reveal";
+import Seal from "@/components/Seal";
 import { EMAIL, genres } from "@/lib/content";
 import styles from "./genres.module.css";
 
@@ -15,6 +16,9 @@ export default function GenresPage() {
   return (
     <section className="ink" data-field="dark">
       <div className={`wrapMax ${styles.head}`}>
+        <span className={styles.headMark}>
+          <Seal />
+        </span>
         <p className="micro">Напрями</p>
         <h1 className={styles.title}>Що ми видаємо</h1>
         <p className={`body ${styles.lede}`}>

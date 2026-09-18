@@ -1,6 +1,25 @@
 .head {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 110px));
   padding-bottom: clamp(30px, 4vw, 60px);
+}
+
+/* the same seal that anchors the homepage, here just a mark pressed into
+   the page rather than the centrepiece — so the header isn't bare text
+   sitting above a mosaic that suddenly has all the personality */
+.headMark {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: clamp(-140px, -6vw, -40px);
+  width: clamp(360px, 40vw, 620px);
+  aspect-ratio: 1;
+  transform: translateY(-46%);
+  color: #fff;
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .title {
