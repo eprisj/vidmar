@@ -6,11 +6,12 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #0b0b0b;
+  background: color-mix(in srgb, var(--tint, #0b0b0b) 45%, #050505);
   pointer-events: none;
 }
 
-/* the broad dark masses either side of the seam */
+/* the broad dark masses either side of the seam — tinted per genre, but
+   kept dark enough to still read as stone, not as colour */
 .root::before {
   content: "";
   position: absolute;
@@ -18,7 +19,14 @@
   background:
     radial-gradient(60% 90% at 18% 40%, rgba(255, 255, 255, 0.07), transparent 62%),
     radial-gradient(55% 80% at 86% 62%, rgba(255, 255, 255, 0.05), transparent 60%),
-    linear-gradient(104deg, #000 12%, #141414 38%, #0a0a0a 55%, #191919 74%, #000 96%);
+    linear-gradient(
+      104deg,
+      color-mix(in srgb, var(--tint, #000) 25%, #000) 12%,
+      color-mix(in srgb, var(--tint, #141414) 55%, #141414) 38%,
+      color-mix(in srgb, var(--tint, #0a0a0a) 30%, #0a0a0a) 55%,
+      color-mix(in srgb, var(--tint, #191919) 55%, #191919) 74%,
+      color-mix(in srgb, var(--tint, #000) 25%, #000) 96%
+    );
 }
 
 /* the seam of light: a narrow, slightly bent shaft */

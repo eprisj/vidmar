@@ -34,6 +34,17 @@
   padding: clamp(22px, 3vw, 40px);
 }
 
+.panelIndex {
+  position: absolute;
+  z-index: 1;
+  top: clamp(22px, 3vw, 40px);
+  right: clamp(22px, 3vw, 40px);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
 .panelIn {
   position: relative;
   z-index: 1;
@@ -59,11 +70,15 @@
 }
 
 .row {
+  position: relative;
+  isolation: isolate;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 10px 44px minmax(0, 1fr) auto;
   gap: clamp(16px, 3vw, 40px);
   align-items: center;
   padding-block: clamp(20px, 2.6vw, 32px);
+  padding-inline: clamp(0px, 1.6vw, 24px);
+  margin-inline: clamp(0px, -1.6vw, -24px);
   border-top: 1px solid var(--hair-d);
 }
 
@@ -71,7 +86,38 @@
   border-bottom: 1px solid var(--hair-d);
 }
 
+.row::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: color-mix(in srgb, var(--tint, transparent) 40%, transparent);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+
+.row:hover::before,
+.row:focus-within::before {
+  opacity: 0.22;
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tint, var(--on-dark-mute));
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+  transition: transform 0.4s var(--ease);
+}
+
+.row:hover .swatch,
+.row:focus-within .swatch {
+  transform: scale(1.35);
+}
+
 .index {
+  position: relative;
   font-size: 0.6rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -79,9 +125,16 @@
 }
 
 .rowTitle {
+  position: relative;
   font-size: clamp(1.15rem, 2.2vw, 1.8rem);
   font-weight: 500;
   letter-spacing: -0.035em;
+  transition: transform 0.4s var(--ease);
+}
+
+.row:hover .rowTitle,
+.row:focus-within .rowTitle {
+  transform: translateX(6px);
 }
 
 .footer {
@@ -104,11 +157,11 @@
   }
 
   .row {
-    grid-template-columns: 34px minmax(0, 1fr);
+    grid-template-columns: 10px 34px minmax(0, 1fr);
     row-gap: 6px;
   }
 
-  .row > :nth-child(3) {
-    grid-column: 2;
+  .row > :nth-child(4) {
+    grid-column: 3;
   }
 }

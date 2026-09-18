@@ -32,7 +32,10 @@ export default function GenresPage() {
           {primary.map((g, i) => (
             <Reveal key={g.slug} delay={i * 90}>
               <div className={styles.panel}>
-                <Atmosphere />
+                <Atmosphere tint={g.tint} />
+                <span className={styles.panelIndex}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <div className={styles.panelIn}>
                   <span className="micro">{g.note}</span>
                   <span className={styles.panelTitle}>{g.title}</span>
@@ -45,7 +48,8 @@ export default function GenresPage() {
         <div className={styles.rows}>
           {rest.map((g, i) => (
             <Reveal key={g.slug} delay={i * 50}>
-              <div className={styles.row}>
+              <div className={styles.row} style={{ "--tint": g.tint } as React.CSSProperties}>
+                <span className={styles.swatch} />
                 <span className={styles.index}>
                   {String(i + 3).padStart(2, "0")}
                 </span>
