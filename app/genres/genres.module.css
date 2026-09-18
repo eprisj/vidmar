@@ -16,36 +16,60 @@
   margin-top: 20px;
 }
 
-/* the two primary directions: full dark panels */
-.primary {
+/* one mosaic, twelve columns: the two primary directions cut across six
+   each, the other four take three each underneath — one block of stone,
+   not a picture pair sitting above a list. */
+.mosaic {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(18px, 2.4vw, 32px);
-  padding-bottom: clamp(40px, 5vw, 72px);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 24px);
+  padding-bottom: clamp(50px, 6vw, 90px);
 }
 
-.panel {
+.tile {
   position: relative;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
   isolation: isolate;
   display: flex;
   align-items: flex-end;
+  transition: transform 0.5s var(--ease);
+}
+
+.tile:hover,
+.tile:focus-within {
+  transform: translateY(-4px);
+}
+
+.tilePrimary {
+  grid-column: span 6;
+  aspect-ratio: 4 / 3;
   padding: clamp(22px, 3vw, 40px);
 }
 
-.panelIndex {
+.tileSecondary {
+  grid-column: span 3;
+  aspect-ratio: 3 / 4;
+  padding: clamp(16px, 2vw, 26px);
+}
+
+.tileIndex {
   position: absolute;
   z-index: 1;
-  top: clamp(22px, 3vw, 40px);
-  right: clamp(22px, 3vw, 40px);
+  top: clamp(16px, 2.4vw, 40px);
+  right: clamp(16px, 2.4vw, 40px);
   font-size: 0.6rem;
   font-weight: 500;
   letter-spacing: 0.18em;
   color: rgba(255, 255, 255, 0.55);
+  transition: color 0.4s var(--ease);
 }
 
-.panelIn {
+.tile:hover .tileIndex,
+.tile:focus-within .tileIndex {
+  color: var(--gold-hi);
+}
+
+.tileIn {
   position: relative;
   z-index: 1;
   display: flex;
@@ -53,88 +77,39 @@
   gap: 10px;
 }
 
-.panelTitle {
-  font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+.tileTitle {
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 1.1;
   color: #fff;
+}
+
+.tilePrimary .tileTitle {
+  font-size: clamp(1.3rem, 2.6vw, 2.1rem);
   max-width: 16ch;
 }
 
-/* the rest: text rows */
-.rows {
-  display: flex;
-  flex-direction: column;
-  padding-bottom: clamp(50px, 6vw, 90px);
+.tileSecondary .tileTitle {
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  max-width: 12ch;
 }
 
-.row {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  grid-template-columns: 10px 44px minmax(0, 1fr) auto;
-  gap: clamp(16px, 3vw, 40px);
-  align-items: center;
-  padding-block: clamp(20px, 2.6vw, 32px);
-  padding-inline: clamp(0px, 1.6vw, 24px);
-  margin-inline: clamp(0px, -1.6vw, -24px);
-  border-top: 1px solid var(--hair-d);
+@media (max-width: 1024px) {
+  .tilePrimary {
+    grid-column: span 12;
+  }
+
+  .tileSecondary {
+    grid-column: span 6;
+    aspect-ratio: 4 / 3;
+  }
 }
 
-.rows .row:last-child {
-  border-bottom: 1px solid var(--hair-d);
-}
-
-.row::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background: color-mix(in srgb, var(--tint, transparent) 40%, transparent);
-  opacity: 0;
-  transition: opacity 0.4s var(--ease);
-  pointer-events: none;
-}
-
-.row:hover::before,
-.row:focus-within::before {
-  opacity: 0.22;
-}
-
-.swatch {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--tint, var(--on-dark-mute));
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
-  transition: transform 0.4s var(--ease);
-}
-
-.row:hover .swatch,
-.row:focus-within .swatch {
-  transform: scale(1.35);
-}
-
-.index {
-  position: relative;
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  color: var(--on-dark-mute);
-}
-
-.rowTitle {
-  position: relative;
-  font-size: clamp(1.15rem, 2.2vw, 1.8rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  transition: transform 0.4s var(--ease);
-}
-
-.row:hover .rowTitle,
-.row:focus-within .rowTitle {
-  transform: translateX(6px);
+@media (max-width: 560px) {
+  .tileSecondary {
+    grid-column: span 12;
+    aspect-ratio: 16 / 10;
+  }
 }
 
 .footer {
@@ -149,19 +124,4 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-}
-
-@media (max-width: 760px) {
-  .primary {
-    grid-template-columns: 1fr;
-  }
-
-  .row {
-    grid-template-columns: 10px 34px minmax(0, 1fr);
-    row-gap: 6px;
-  }
-
-  .row > :nth-child(4) {
-    grid-column: 3;
-  }
 }
