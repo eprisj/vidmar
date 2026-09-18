@@ -1,0 +1,142 @@
+.root {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: calc(var(--nav-h) + clamp(20px, 5vw, 56px));
+  overflow: hidden;
+}
+
+.mid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(26px, 4vw, 44px);
+  flex: 1;
+  justify-content: center;
+  padding-block: clamp(12px, 3vw, 40px);
+}
+
+.note {
+  max-width: 24ch;
+}
+
+.cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.cueLine {
+  width: 1px;
+  height: clamp(44px, 8vw, 96px);
+  background: var(--hair-l);
+  position: relative;
+  overflow: hidden;
+}
+
+.cueLine::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 36%;
+  background: var(--on-light);
+  animation: drop 2.8s var(--ease) infinite;
+}
+
+@keyframes drop {
+  0% {
+    transform: translateY(-100%);
+  }
+  62%,
+  100% {
+    transform: translateY(280%);
+  }
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: clamp(12px, 2vw, 22px);
+}
+
+/* the wordmark: oversized, cropped by the page edges, and going out of
+   focus toward the right the way the reference's does */
+.bleed {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.word,
+.wordBlur {
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  font-size: max(3.4rem, 31.5vw);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 0.78;
+  transform: translateY(0.09em);
+  color: var(--on-light);
+}
+
+.word {
+  -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 82%);
+  mask-image: linear-gradient(90deg, #000 42%, transparent 82%);
+  animation: riseUp 1.6s var(--ease) both;
+}
+
+.wordBlur {
+  position: absolute;
+  inset: 0;
+  filter: blur(11px);
+  opacity: 0.9;
+  -webkit-mask-image: linear-gradient(90deg, transparent 38%, #000 86%);
+  mask-image: linear-gradient(90deg, transparent 38%, #000 86%);
+  animation: riseUp 1.6s var(--ease) both;
+}
+
+@keyframes riseUp {
+  from {
+    transform: translateY(0.5em);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0.09em);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 860px) {
+  .root {
+    min-height: auto;
+    padding-bottom: 8px;
+  }
+
+  .mid {
+    gap: 26px;
+    padding-block: 44px 30px;
+  }
+
+  .wordBlur {
+    filter: blur(7px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word,
+  .wordBlur {
+    animation: none;
+  }
+
+  .cueLine::after {
+    animation: none;
+  }
+}

@@ -1,0 +1,30 @@
+.form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--hair-d);
+  padding-bottom: 14px;
+  width: min(100%, 520px);
+}
+
+.form input {
+  flex: 1;
+  min-width: 190px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-size: 1rem;
+  padding: 10px 0;
+  min-height: 44px;
+}
+
+.form input::placeholder {
+  color: var(--on-dark-mute);
+}
+
+.form input:focus {
+  outline: none;
+}

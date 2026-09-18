@@ -1,0 +1,91 @@
+/* A dark stone face with a fissure of light through it — built from layered
+   gradients rather than a photograph, so it costs nothing and never looks
+   like stock. Read: black rock, a seam of pale light, faint gold veining. */
+
+.root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0b0b0b;
+  pointer-events: none;
+}
+
+/* the broad dark masses either side of the seam */
+.root::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(60% 90% at 18% 40%, rgba(255, 255, 255, 0.07), transparent 62%),
+    radial-gradient(55% 80% at 86% 62%, rgba(255, 255, 255, 0.05), transparent 60%),
+    linear-gradient(104deg, #000 12%, #141414 38%, #0a0a0a 55%, #191919 74%, #000 96%);
+}
+
+/* the seam of light: a narrow, slightly bent shaft */
+.seam {
+  position: absolute;
+  inset: -20% 0;
+  left: 46%;
+  width: 16%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(255, 255, 255, 0.5) 34%,
+    rgba(255, 255, 255, 0.72) 52%,
+    rgba(255, 255, 255, 0.3) 70%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  filter: blur(38px);
+  transform: rotate(9deg) scaleX(0.7);
+  opacity: 0.5;
+}
+
+/* the hard edges where the rock breaks */
+.edges {
+  position: absolute;
+  inset: -12%;
+  background:
+    linear-gradient(101deg, transparent 42%, rgba(255, 255, 255, 0.34) 43.2%, transparent 44.6%),
+    linear-gradient(97deg, transparent 56%, rgba(255, 255, 255, 0.16) 57.2%, transparent 58.4%),
+    linear-gradient(112deg, transparent 28%, rgba(255, 255, 255, 0.1) 29.2%, transparent 30.4%);
+  filter: blur(6px);
+  opacity: 0.5;
+}
+
+/* gold veining, the only colour in the whole composition */
+.veins {
+  position: absolute;
+  inset: -12%;
+  background:
+    linear-gradient(99deg, transparent 41.5%, rgba(194, 160, 84, 0.5) 41.9%, transparent 42.4%),
+    linear-gradient(86deg, transparent 71.8%, rgba(194, 160, 84, 0.24) 72.2%, transparent 72.8%);
+  -webkit-mask-image: radial-gradient(60% 45% at 48% 52%, #000 10%, transparent 78%);
+  mask-image: radial-gradient(60% 45% at 48% 52%, #000 10%, transparent 78%);
+  filter: blur(1.6px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+/* falloff to true black at the edges, so the panel has no visible seams */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(75% 65% at 50% 45%, transparent 30%, rgba(0, 0, 0, 0.75) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 22%, transparent 78%, rgba(0, 0, 0, 0.6));
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  opacity: 0.8;
+}
+
+@media (max-width: 760px) {
+  .seam {
+    left: 40%;
+    width: 26%;
+    filter: blur(30px);
+  }
+}

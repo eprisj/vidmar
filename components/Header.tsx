@@ -1,0 +1,125 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { EMAIL } from "@/lib/content";
+import styles from "./Header.module.css";
+
+const nav = [
+  { href: "/about", label: "Про нас" },
+  { href: "/genres", label: "Напрями" },
+  { href: "/submissions", label: "Авторам" },
+  { href: "/journal", label: "Журнал" },
+];
+
+export default function Header() {
+  const pathname = usePathname();
+  const [solid, setSolid] = useState(false);
+  const [onPage, setOnPage] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const sync = useCallback(() => {
+    setSolid(window.scrollY > 40);
+    // read the field sitting directly behind the bar
+    const probe = document.elementsFromPoint(window.innerWidth / 2, 40);
+    const field = probe.find(
+      (el) => el instanceof HTMLElement && el.dataset.field,
+    ) as HTMLElement | undefined;
+    setOnPage(field?.dataset.field === "page");
+  }, []);
+
+  useEffect(() => {
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    return () => {
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
+  }, [sync]);
+
+  useEffect(() => {
+    setOpen(false);
+    const id = window.setTimeout(sync, 60);
+    return () => window.clearTimeout(id);
+  }, [pathname, sync]);
+
+  useEffect(() => {
+    if (!open) return;
+    document.body.classList.add("is-loading");
+    return () => document.body.classList.remove("is-loading");
+  }, [open]);
+
+  return (
+    <>
+      <header
+        className={`${styles.root} ${solid || open ? styles.solid : ""} ${
+          onPage && !open ? styles.onPage : ""
+        }`}
+      >
+        <div className={`wrapMax ${styles.bar}`}>
+          <Link href="/" className={styles.brand} aria-label="ВІДЬМАР — на головну">
+            <span className={styles.mark} role="img" aria-label="ВІДЬМАР" />
+          </Link>
+
+          <nav className={styles.nav}>
+            {nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                data-on={pathname.startsWith(item.href)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className={styles.tools}>
+            <a className={styles.contact} href={`mailto:${EMAIL}`}>
+              Написати нам
+            </a>
+            <button
+              type="button"
+              className={`${styles.burger} ${open ? styles.burgerOpen : ""}`}
+              aria-label={open ? "Закрити меню" : "Меню"}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span />
+              <span />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* rendered as a sibling, never inside <header>: a backdrop-filtered
+          header would become the containing block for this fixed panel and
+          collapse it to the header's own (tiny) height */}
+      <div
+        className={`${styles.menu} ${open ? styles.menuOpen : ""}`}
+        aria-hidden={!open}
+      >
+        <nav className={styles.menuNav}>
+          {nav.map((item, i) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              tabIndex={open ? undefined : -1}
+              style={{ transitionDelay: open ? `${80 + i * 60}ms` : "0ms" }}
+              data-on={pathname.startsWith(item.href)}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <div className={styles.menuFoot}>
+          <span className="micro">Видавництво ВІДЬМАР</span>
+          <a className="micro" href={`mailto:${EMAIL}`} tabIndex={open ? undefined : -1}>
+            {EMAIL}
+          </a>
+        </div>
+      </div>
+    </>
+  );
+}

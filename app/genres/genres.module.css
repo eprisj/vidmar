@@ -1,0 +1,114 @@
+.head {
+  padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 110px));
+  padding-bottom: clamp(30px, 4vw, 60px);
+}
+
+.title {
+  font-size: clamp(2.4rem, 8vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 0.94;
+  margin-top: 14px;
+}
+
+.lede {
+  max-width: 58ch;
+  margin-top: 20px;
+}
+
+/* the two primary directions: full dark panels */
+.primary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 2.4vw, 32px);
+  padding-bottom: clamp(40px, 5vw, 72px);
+}
+
+.panel {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(22px, 3vw, 40px);
+}
+
+.panelIn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panelTitle {
+  font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: #fff;
+  max-width: 16ch;
+}
+
+/* the rest: text rows */
+.rows {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(50px, 6vw, 90px);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: clamp(16px, 3vw, 40px);
+  align-items: center;
+  padding-block: clamp(20px, 2.6vw, 32px);
+  border-top: 1px solid var(--hair-d);
+}
+
+.rows .row:last-child {
+  border-bottom: 1px solid var(--hair-d);
+}
+
+.index {
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--on-dark-mute);
+}
+
+.rowTitle {
+  font-size: clamp(1.15rem, 2.2vw, 1.8rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+  padding-bottom: clamp(70px, 9vw, 130px);
+}
+
+.cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .primary {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 34px minmax(0, 1fr);
+    row-gap: 6px;
+  }
+
+  .row > :nth-child(3) {
+    grid-column: 2;
+  }
+}

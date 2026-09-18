@@ -1,0 +1,32 @@
+.seal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: currentColor;
+}
+
+.ring,
+.star {
+  transform-origin: 100px 100px;
+  animation: turn 340s linear infinite;
+}
+
+.star {
+  animation-duration: 500s;
+  animation-direction: reverse;
+}
+
+@keyframes turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .star {
+    animation: none;
+  }
+}
