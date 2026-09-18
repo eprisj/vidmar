@@ -13,7 +13,7 @@
   display: block;
   width: 140px;
   height: calc(140px * 0.279);
-  background-image: url("/logo.webp");
+  background-image: url("/vidmar/logo.webp");
   background-repeat: no-repeat;
   background-size: calc(140px * 1.291) auto;
   background-position: 51% 48%;

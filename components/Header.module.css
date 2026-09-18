@@ -45,7 +45,7 @@
   display: block;
   width: var(--w);
   height: calc(var(--w) * 0.279);
-  background-image: url("/logo.webp");
+  background-image: url("/vidmar/logo.webp");
   background-repeat: no-repeat;
   background-size: calc(var(--w) * 1.291) auto;
   background-position: 51% 48%;

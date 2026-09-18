@@ -23,7 +23,7 @@
 .plate {
   aspect-ratio: 1;
   width: 100%;
-  background-image: url("/logo.webp");
+  background-image: url("/vidmar/logo.webp");
   background-size: cover;
   background-position: center;
   background-color: var(--ink-2);
