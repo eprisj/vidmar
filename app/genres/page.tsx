@@ -33,8 +33,10 @@ export default function GenresPage() {
               key={g.slug}
               delay={i * 70}
               className={`${styles.tile} ${g.primary ? styles.tilePrimary : styles.tileSecondary}`}
+              style={{ "--tint": g.tint } as React.CSSProperties}
             >
               <Atmosphere tint={g.tint} variant={i} />
+              <span className={styles.accent} />
               <span className={styles.tileIndex}>{String(i + 1).padStart(2, "0")}</span>
               <div className={styles.tileIn}>
                 {g.note && <span className="micro">{g.note}</span>}
