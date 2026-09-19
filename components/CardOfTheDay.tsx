@@ -37,7 +37,14 @@ export default function CardOfTheDay() {
             </span>
           </span>
           <span className={styles.back}>
-            <img className={styles.img} src={`/vidmar/tarot/${card.file}.webp`} alt="" aria-hidden="true" />
+            <img
+              className={styles.img}
+              src={`/vidmar/tarot/${card.file}.webp`}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+            />
           </span>
         </span>
       </button>

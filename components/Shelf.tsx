@@ -11,7 +11,14 @@ import styles from "./Shelf.module.css";
 export default function Shelf() {
   return (
     <section className={`ink ${styles.root}`} data-field="dark" data-candle="">
-      <img className={styles.plate} src={shelf.src} alt="" aria-hidden="true" />
+      <img
+        className={styles.plate}
+        src={shelf.src}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+      />
       <div className={`wrapMax ${styles.in}`}>
         <Reveal className={styles.copy}>
           <span className="micro micro--bright">атмосфера</span>

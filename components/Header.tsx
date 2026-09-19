@@ -105,7 +105,14 @@ export default function Header() {
         {/* the same night the home page opens on: a stand of trees along
             the foot of the menu */}
         <span className={styles.menuMoon} aria-hidden="true" />
-        <img className={styles.menuForest} src={forest.src} alt="" aria-hidden="true" />
+        <img
+          className={styles.menuForest}
+          src={forest.src}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+        />
 
         <nav className={styles.menuNav}>
           {nav.map((item, i) => (

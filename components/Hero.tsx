@@ -34,7 +34,12 @@ export default function Hero() {
           (scripts/forest.mjs); the ruled sky, its mist and the moon are baked
           into the far plane */}
       <div className={styles.scene} aria-hidden="true">
-        <img className={`${styles.plane} ${styles.back}`} src={back.src} alt="" />
+        <img
+          className={`${styles.plane} ${styles.back}`}
+          src={back.src}
+          alt=""
+          fetchPriority="high"
+        />
         <img className={`${styles.plane} ${styles.mid}`} src={mid.src} alt="" />
         <img className={`${styles.plane} ${styles.front}`} src={front.src} alt="" />
       </div>

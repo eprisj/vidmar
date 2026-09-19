@@ -14,7 +14,14 @@ import styles from "./Altar.module.css";
 export default function Altar() {
   return (
     <section className={`ink-2 ${styles.root}`} data-field="dark" data-candle="">
-      <img className={styles.plate} src={altar.src} alt="" aria-hidden="true" />
+      <img
+        className={styles.plate}
+        src={altar.src}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+      />
       <div className={`wrapMax ${styles.in}`}>
         <Reveal className={styles.copy}>
           <span className={styles.star} aria-hidden="true">

@@ -39,7 +39,14 @@ export default function GenresPage() {
           about the one word "відьомство" actually meant before it became
           six neat labels */}
       <section className={`ink ${styles.plate}`} data-field="dark">
-        <img className={styles.plateImg} src="/vidmar/gravure/witches-storm.webp" alt="" aria-hidden="true" />
+        <img
+          className={styles.plateImg}
+          src="/vidmar/gravure/witches-storm.webp"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+        />
       </section>
 
       <section className="ink pad" data-field="dark" data-candle="">
@@ -59,6 +66,8 @@ export default function GenresPage() {
                   src={`/vidmar/gravure/${tilePlate[g.slug]}.webp`}
                   alt=""
                   aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <span className={styles.tileScrim} />
                 <span className={styles.accent} />
