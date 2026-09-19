@@ -342,3 +342,24 @@ ul {
     transform: none;
   }
 }
+
+/* ---------------- candle ---------------- */
+
+/* a warm glow that trails the pointer across dark sections (CandleLight.tsx
+   feeds --mx / --my); screen-blended, so it only ever adds light */
+[data-candle] {
+  position: relative;
+}
+
+[data-candle]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    460px circle at var(--mx, -999px) var(--my, -999px),
+    rgba(240, 220, 166, 0.085),
+    transparent 62%
+  );
+  mix-blend-mode: screen;
+}

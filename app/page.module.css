@@ -2,7 +2,7 @@
 
 .scene {
   position: relative;
-  min-height: 100svh;
+  min-height: 110svh;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -20,16 +20,29 @@
   color: #fff;
 }
 
+/* the ring turns and opens up as the scene is scrolled through
+   (--p / --in come from ScrollProgress) */
+.sceneRing {
+  position: absolute;
+  inset: 0;
+  transform: rotate(calc(var(--p, 0.5) * 140deg - 70deg)) scale(calc(0.78 + var(--in, 1) * 0.22));
+  opacity: calc(0.25 + var(--in, 1) * 0.75);
+  will-change: transform;
+}
+
 .sceneCopy {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: clamp(16px, 2.4vw, 26px);
   max-width: 64%;
+  /* the statement comes out of focus as it arrives, like the reference */
+  filter: blur(calc((1 - var(--in, 1)) * 9px));
+  opacity: calc(0.15 + var(--in, 1) * 0.85);
 }
 
-/* the heptagram, small and clear of the type rather than slashed through it */
 .sceneStar {
   position: relative;
   width: clamp(46px, 6vw, 64px);
@@ -44,9 +57,9 @@
 
 .sceneText {
   text-wrap: balance;
-  font-size: clamp(1.05rem, 2vw, 1.75rem);
-  line-height: 1.34;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.15rem, 2.3vw, 2rem);
+  line-height: 1.3;
+  letter-spacing: -0.025em;
   font-weight: 400;
   color: #fff;
 }
@@ -61,63 +74,36 @@
   flex-wrap: wrap;
 }
 
-/* ---------- genre rows ---------- */
-
-.genres {
-  display: flex;
-  flex-direction: column;
-}
-
-.genreRow {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
-  gap: clamp(16px, 3vw, 40px);
-  align-items: center;
-  padding-block: clamp(20px, 2.6vw, 34px);
-  border-top: 1px solid var(--hair-d);
-  transition: opacity 0.45s var(--ease);
-}
-
-.genres:hover .genreRow {
-  opacity: 0.35;
-}
-
-.genres .genreRow:hover {
-  opacity: 1;
-}
-
-.genres .genreRow:last-child {
-  border-bottom: 1px solid var(--hair-d);
-}
-
-.index {
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  color: var(--on-dark-mute);
-}
-
-.genreTitle {
-  font-size: clamp(1.15rem, 2.4vw, 2rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-}
-
 /* ---------- founder's letter ---------- */
 
-.letter {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: clamp(32px, 6vw, 96px);
-  align-items: start;
+.letterScene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.letterQuote {
-  font-size: clamp(1.4rem, 3.2vw, 2.6rem);
-  line-height: 1.16;
-  letter-spacing: -0.04em;
+.letterIn {
+  position: relative;
+  z-index: 1;
+}
+
+.letterLit {
+  font-size: clamp(1.8rem, 5.2vw, 4.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.045em;
   font-weight: 500;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.letterFoot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(24px, 5vw, 80px);
+  align-items: end;
+  margin-top: clamp(40px, 6vw, 90px);
+  padding-top: clamp(24px, 3vw, 36px);
+  border-top: 1px solid var(--hair-d);
 }
 
 /* ---------- status rows ---------- */
@@ -129,10 +115,10 @@
 
 .statusRow {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1.4fr);
+  grid-template-columns: clamp(90px, 13vw, 190px) minmax(0, 1fr) minmax(0, 1.3fr);
   gap: clamp(16px, 3vw, 48px);
-  align-items: start;
-  padding-block: clamp(24px, 3vw, 40px);
+  align-items: center;
+  padding-block: clamp(18px, 2.4vw, 30px);
   border-top: 1px solid var(--hair-d);
 }
 
@@ -140,14 +126,49 @@
   border-bottom: 1px solid var(--hair-d);
 }
 
+/* big hollow numerals, the odometer figures of the reference */
+.bigNum {
+  font-size: clamp(3.2rem, 8vw, 7rem);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.42);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.5s var(--ease), -webkit-text-stroke-color 0.5s var(--ease);
+}
+
+.statusRow:hover .bigNum {
+  color: rgba(255, 255, 255, 0.92);
+  -webkit-text-stroke-color: transparent;
+}
+
 .statusTitle {
-  font-size: clamp(1.05rem, 1.9vw, 1.45rem);
+  font-size: clamp(1.1rem, 2vw, 1.55rem);
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.15;
 }
 
 /* ---------- submission block ---------- */
+
+.submitScene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* the seal, pressed faintly into the ash like a blind stamp */
+.submitSeal {
+  position: absolute;
+  right: -12vw;
+  top: 50%;
+  width: min(62vw, 760px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  color: rgba(36, 36, 36, 0.09);
+  pointer-events: none;
+}
 
 .submission {
   display: grid;
@@ -163,16 +184,25 @@
 
 .rule {
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr);
+  grid-template-columns: clamp(52px, 6vw, 80px) minmax(0, 1fr);
   gap: 14px;
-  align-items: baseline;
+  align-items: center;
   padding-block: 18px;
   border-top: 1px solid var(--hair-l);
-  font-size: 0.96rem;
+  font-size: 0.98rem;
 }
 
 .rules .rule:last-child {
   border-bottom: 1px solid var(--hair-l);
+}
+
+.ruleNum {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(36, 36, 36, 0.45);
 }
 
 .cta {
@@ -184,7 +214,29 @@
 
 /* ---------- closing ---------- */
 
+.closingScene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 90svh;
+  display: grid;
+  place-items: center;
+}
+
+.closingRing {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(120vmin, 1100px);
+  aspect-ratio: 1;
+  color: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%) rotate(calc(var(--p, 0.5) * -90deg));
+  pointer-events: none;
+}
+
 .closing {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -193,25 +245,22 @@
 }
 
 @media (max-width: 860px) {
-  .letter,
-  .submission {
+  .submission,
+  .letterFoot {
     grid-template-columns: 1fr;
   }
 
   .statusRow {
-    grid-template-columns: 36px minmax(0, 1fr);
-    row-gap: 8px;
-  }
-
-  .statusRow > :nth-child(3) {
-    grid-column: 2;
+    grid-template-columns: 1fr;
+    row-gap: 10px;
   }
 
   .sceneCopy {
     max-width: 78%;
   }
 
-  .genres:hover .genreRow {
-    opacity: 1;
+  .submitSeal {
+    right: -40vw;
+    width: 110vw;
   }
 }

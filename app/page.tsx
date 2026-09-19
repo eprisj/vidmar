@@ -1,9 +1,14 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import Atmosphere from "@/components/Atmosphere";
+import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
 import Reveal from "@/components/Reveal";
 import Subscribe from "@/components/Subscribe";
+import ScrollProgress from "@/components/ScrollProgress";
+import Marquee from "@/components/Marquee";
+import LitText from "@/components/LitText";
+import GenreRows from "@/components/GenreRows";
 import {
   EMAIL,
   founderLetter,
@@ -19,11 +24,14 @@ export default function Home() {
     <>
       <Hero />
 
-      {/* the dark scene: stone, a seam of light, the seal */}
-      <section className={styles.scene} data-field="dark">
+      {/* the dark scene: stone, living smoke, the ring turning with the scroll */}
+      <ScrollProgress className={styles.scene} data-field="dark" data-candle="">
         <Atmosphere />
+        <Smoke intensity={0.9} source={[0.5, 0.05]} />
         <div className={styles.sceneIn}>
-          <Seal star={false} />
+          <div className={styles.sceneRing}>
+            <Seal star={false} />
+          </div>
           <div className={styles.sceneCopy}>
             <span className={styles.sceneStar}>
               <Seal ticks={0} emblem />
@@ -34,10 +42,15 @@ export default function Home() {
             </p>
           </div>
         </div>
+      </ScrollProgress>
+
+      {/* the directions, drifting past */}
+      <section className="ink" data-field="dark">
+        <Marquee words={genres.map((g) => g.title)} />
       </section>
 
       {/* what we publish */}
-      <section className="ink pad" data-field="dark">
+      <section className="ink pad" data-field="dark" data-candle="">
         <div className="wrapMax">
           <Reveal>
             <div className={styles.head}>
@@ -47,52 +60,35 @@ export default function Home() {
               </Link>
             </div>
           </Reveal>
-
-          <div className={styles.genres} style={{ marginTop: "clamp(28px,4vw,56px)" }}>
-            {genres.map((g, i) => (
-              <Reveal key={g.slug} delay={i * 40}>
-                <div className={styles.genreRow}>
-                  <span className={styles.index}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className={styles.genreTitle}>{g.title}</span>
-                  {g.note && <span className="micro">{g.note}</span>}
-                </div>
-              </Reveal>
-            ))}
+          <div style={{ marginTop: "clamp(28px,4vw,56px)" }}>
+            <GenreRows genres={genres} />
           </div>
         </div>
       </section>
 
-      {/* the founder's letter */}
-      <section className="ink-2 pad" data-field="dark">
-        <div className="wrapMax">
+      {/* the founder's letter, lit word by word */}
+      <section className={`ink-2 pad ${styles.letterScene}`} data-field="dark" data-candle="">
+        <Smoke intensity={0.55} source={[0.85, 0.0]} tint={[0.62, 0.5, 0.3]} />
+        <div className={`wrapMax ${styles.letterIn}`}>
           <Reveal>
             <div className={styles.head} style={{ marginBottom: "clamp(30px,4vw,54px)" }}>
               <span className="micro micro--bright">лист засновника</span>
             </div>
           </Reveal>
 
-          <div className={styles.letter}>
-            <Reveal>
-              <p className={styles.letterQuote}>{founderLetter[2]}</p>
-            </Reveal>
-            <Reveal delay={120}>
-              <div>
-                <p className="body">{founderLetter[3]}</p>
-                <div className={styles.cta}>
-                  <Link className="pill pill--bare" href="/about">
-                    Читати лист повністю
-                  </Link>
-                </div>
-              </div>
-            </Reveal>
+          <LitText text={founderLetter[2]} className={styles.letterLit} />
+
+          <div className={styles.letterFoot}>
+            <p className="body">{founderLetter[3]}</p>
+            <Link className="pill pill--bare" href="/about">
+              Читати лист повністю
+            </Link>
           </div>
         </div>
       </section>
 
       {/* where we are right now */}
-      <section className="ink pad" data-field="dark">
+      <section className="ink pad" data-field="dark" data-candle="">
         <div className="wrapMax">
           <Reveal>
             <div className={styles.head} style={{ marginBottom: "clamp(20px,3vw,36px)" }}>
@@ -102,9 +98,9 @@ export default function Home() {
 
           <div className={styles.status}>
             {status.map((s, i) => (
-              <Reveal key={s.n} delay={i * 80}>
+              <Reveal key={s.n} delay={i * 90}>
                 <div className={styles.statusRow}>
-                  <span className={styles.index}>{s.n}</span>
+                  <span className={styles.bigNum}>{s.n}</span>
                   <span className={styles.statusTitle}>{s.title}</span>
                   <p className="body">{s.body}</p>
                 </div>
@@ -115,8 +111,11 @@ export default function Home() {
       </section>
 
       {/* submissions */}
-      <section className="ash pad" data-field="light">
-        <div className="wrapMax">
+      <section className={`ash pad ${styles.submitScene}`} data-field="light">
+        <span className={styles.submitSeal} aria-hidden="true">
+          <Seal />
+        </span>
+        <div className="wrapMax" style={{ position: "relative" }}>
           <Reveal>
             <div className={styles.head}>
               <span className="micro micro--bright">для авторів</span>
@@ -146,7 +145,7 @@ export default function Home() {
               <div className={styles.rules}>
                 {submissionRules.map((r, i) => (
                   <div key={r} className={styles.rule}>
-                    <span className="micro">{String(i + 1).padStart(2, "0")}</span>
+                    <span className={styles.ruleNum}>{String(i + 1).padStart(2, "0")}</span>
                     <span>{r}</span>
                   </div>
                 ))}
@@ -156,8 +155,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* closing — newsletter */}
-      <section className="ink pad" data-field="dark">
+      {/* closing — newsletter, under the smoke */}
+      <ScrollProgress className={`ink pad ${styles.closingScene}`} data-field="dark" data-candle="">
+        <Smoke intensity={0.8} source={[0.5, 0.0]} />
+        <div className={styles.closingRing} aria-hidden="true">
+          <Seal star={false} />
+        </div>
         <div className={`wrapMax ${styles.closing}`}>
           <Reveal>
             <span className="micro">розсилка</span>
@@ -174,7 +177,7 @@ export default function Home() {
             <Subscribe />
           </Reveal>
         </div>
-      </section>
+      </ScrollProgress>
     </>
   );
 }

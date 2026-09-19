@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Golos_Text, Literata } from "next/font/google";
 import Header from "@/components/Header";
+import CandleLight from "@/components/CandleLight";
 import Footer from "@/components/Footer";
 import Preloader from "@/components/Preloader";
 import ToastProvider from "@/components/ToastProvider";
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ToastProvider>
           <Preloader />
           <Header />
+          <CandleLight />
           <main>{children}</main>
           <Footer />
         </ToastProvider>
