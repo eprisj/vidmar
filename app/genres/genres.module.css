@@ -17,15 +17,19 @@
   isolation: isolate;
   display: flex;
   align-items: flex-end;
+  border: 1px solid var(--hair-d);
+  border-radius: 3px;
   transition:
     transform 0.5s var(--ease),
-    box-shadow 0.5s var(--ease);
+    box-shadow 0.5s var(--ease),
+    border-color 0.5s var(--ease);
 }
 
 .tile:hover,
 .tile:focus-within {
   transform: translateY(-4px);
   box-shadow: 0 24px 48px -16px color-mix(in srgb, var(--tint, transparent) 75%, transparent);
+  border-color: color-mix(in srgb, var(--tint, var(--gold)) 55%, transparent);
 }
 
 /* the genre's true colour, undiluted by the stone underneath — a spine
