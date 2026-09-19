@@ -22,6 +22,7 @@ export default function Footer() {
           <div className={styles.stack}>
             <Link href="/about">Про нас</Link>
             <Link href="/genres">Напрями</Link>
+            <Link href="/catalog">Каталог</Link>
             <Link href="/journal">Журнал</Link>
           </div>
         </div>

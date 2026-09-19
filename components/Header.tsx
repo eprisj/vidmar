@@ -10,6 +10,7 @@ import styles from "./Header.module.css";
 const nav = [
   { href: "/about", label: "Про нас" },
   { href: "/genres", label: "Напрями" },
+  { href: "/catalog", label: "Каталог" },
   { href: "/submissions", label: "Авторам" },
   { href: "/journal", label: "Журнал" },
 ];

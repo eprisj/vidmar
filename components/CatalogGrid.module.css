@@ -1,0 +1,118 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: clamp(32px, 4.4vw, 56px);
+}
+
+.chip {
+  font-family: var(--font-golos), sans-serif;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-dark-mute);
+  border: 1px solid var(--hair-d);
+  border-radius: 999px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition:
+    color 0.3s var(--ease),
+    border-color 0.3s var(--ease),
+    background 0.3s var(--ease);
+}
+
+.chip:hover {
+  color: var(--on-dark);
+  border-color: var(--on-dark-mute);
+}
+
+.chipOn {
+  color: #16130a;
+  background: color-mix(in srgb, var(--tint, var(--gold)) 78%, white 22%);
+  border-color: transparent;
+}
+
+.chipOn:hover {
+  color: #16130a;
+}
+
+.none {
+  padding-block: clamp(40px, 6vw, 72px);
+  text-align: center;
+  color: var(--on-dark-mute);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: clamp(18px, 2.4vw, 28px);
+}
+
+/* the placeholder itself: a book-cover proportion, a dashed edge instead of
+   a printed one — a slot waiting for a spine, not a book pretending to
+   exist. The genre's own tint marks which direction it belongs to, faint,
+   the way the tint does everywhere else on the site. */
+.card {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border: 1px dashed var(--hair-d);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--tint, transparent) 10%, transparent);
+  transition: border-color 0.4s var(--ease);
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--tint, var(--gold)) 70%, white 20%);
+}
+
+.spine {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 10px;
+  background: color-mix(in srgb, var(--tint, var(--gold)) 55%, transparent);
+  opacity: 0.5;
+}
+
+/* the same "not yet written" sweep the journal's rubric lines use */
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(115deg, transparent 30%, rgba(240, 220, 166, 0.1) 50%, transparent 70%) -140% 0 / 240% 100%
+      no-repeat;
+  animation: sweep 4.2s var(--ease) infinite;
+  pointer-events: none;
+}
+
+@keyframes sweep {
+  to {
+    background-position: 140% 0;
+  }
+}
+
+.cardGenre {
+  position: relative;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--on-dark-mute);
+}
+
+.cardState {
+  position: relative;
+  color: color-mix(in srgb, var(--tint, var(--gold)) 75%, white 25%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+  }
+}
