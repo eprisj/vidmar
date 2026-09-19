@@ -10,6 +10,7 @@ import LitText from "@/components/LitText";
 import GenreRows from "@/components/GenreRows";
 import Shelf from "@/components/Shelf";
 import Altar from "@/components/Altar";
+import CardOfTheDay from "@/components/CardOfTheDay";
 import { founderLetter, genres, positioning, status } from "@/lib/content";
 import styles from "./page.module.css";
 
@@ -76,6 +77,16 @@ export default function Home() {
       </section>
 
       <Altar />
+
+      {/* the one interactive thing on the page — the altar just showed a
+          reading laid out; this lets the visitor actually draw */}
+      <section className="ink-2 pad" data-field="dark" data-candle="">
+        <div className="wrapMax">
+          <Reveal>
+            <CardOfTheDay />
+          </Reveal>
+        </div>
+      </section>
 
       {/* where we are right now */}
       <section className="ink pad" data-field="dark" data-candle="">

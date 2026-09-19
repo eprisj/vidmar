@@ -108,3 +108,27 @@ export const journalRubrics = [
   "Розмови з авторами",
   "Полиця редакції",
 ];
+
+export type TarotCard = {
+  slug: string;
+  file: string;
+  name: string;
+  meaning: string;
+};
+
+/** The ten Major Arcana currently scanned (Rider–Waite–Smith, 1909, public
+ * domain — Pamela Colman Smith died 1951, so the deck itself is out of
+ * copyright everywhere the site is read). Card of the day picks from this
+ * set by date, not the full 22, until the rest are in. */
+export const tarotDeck: TarotCard[] = [
+  { slug: "fool", file: "00-fool", name: "Блазень", meaning: "Початок із чистого аркуша — крок у невідоме без страху." },
+  { slug: "magician", file: "01-magician", name: "Маг", meaning: "Усі інструменти вже у ваших руках — лишилося захотіти." },
+  { slug: "high-priestess", file: "02-high-priestess", name: "Верховна Жриця", meaning: "Те, що не сказане вголос, часто важливіше за сказане." },
+  { slug: "empress", file: "03-empress", name: "Імператриця", meaning: "Щедрість, яка росте сама, коли їй не заважати." },
+  { slug: "emperor", file: "04-emperor", name: "Імператор", meaning: "Порядок, побудований на досвіді, а не на страху." },
+  { slug: "hierophant", file: "05-hierophant", name: "Ієрофант", meaning: "Традицію варто зрозуміти, перш ніж їй заперечити." },
+  { slug: "lovers", file: "06-lovers", name: "Закохані", meaning: "Вибір, який промовляє більше за будь-яку клятву." },
+  { slug: "chariot", file: "07-chariot", name: "Колісниця", meaning: "Рух уперед силою волі, навіть коли коні тягнуть у різні боки." },
+  { slug: "strength", file: "08-strength", name: "Сила", meaning: "Лагідність, яка приборкує краще за грубу силу." },
+  { slug: "hermit", file: "09-hermit", name: "Відлюдник", meaning: "Світло, яке несеш сам, коли компанії більше немає." },
+];
