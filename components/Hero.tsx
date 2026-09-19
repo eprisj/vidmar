@@ -1,43 +1,70 @@
 import Link from "next/link";
+import back from "@/assets/forest/back.svg";
+import mid from "@/assets/forest/mid.svg";
+import front from "@/assets/forest/front.svg";
 import styles from "./Hero.module.css";
+
+/** Seeded so the server and every visit draw the same swarm. */
+function fireflies(count: number) {
+  let s = 1117;
+  const rnd = () => {
+    s = (s * 16807) % 2147483647;
+    return s / 2147483647;
+  };
+  return Array.from({ length: count }, (_, i) => ({
+    key: i,
+    style: {
+      left: `${6 + rnd() * 88}%`,
+      top: `${46 + rnd() * 46}%`,
+      "--dur": `${7 + rnd() * 9}s`,
+      "--delay": `${-rnd() * 16}s`,
+      "--dx": `${(rnd() - 0.5) * 90}px`,
+      "--dy": `${-20 - rnd() * 70}px`,
+      "--size": `${2 + rnd() * 2.2}px`,
+    } as React.CSSProperties,
+  }));
+}
+
+const SWARM = fireflies(22);
 
 export default function Hero() {
   return (
-    <section className={`ash ${styles.root}`} data-field="light">
-      <div className={`wrapMax ${styles.mid}`}>
-        <p className={`lede ${styles.note}`}>
+    <section className={styles.root} data-field="dark">
+      {/* the night forest: three generated planes (scripts/forest.mjs) with
+          fog drifting between them; the moon is baked into the far plane */}
+      <div className={styles.scene} aria-hidden="true">
+        <img className={`${styles.plane} ${styles.back}`} src={back.src} alt="" />
+        <span className={`${styles.fog} ${styles.fogFar}`} />
+        <img className={`${styles.plane} ${styles.mid}`} src={mid.src} alt="" />
+        <span className={`${styles.fog} ${styles.fogMid}`} />
+        <img className={`${styles.plane} ${styles.front}`} src={front.src} alt="" />
+      </div>
+
+      <div className={`wrapMax ${styles.title}`}>
+        <h1 className={styles.word}>Відьмар</h1>
+        <p className={styles.lede}>
           видаємо книги про езотерику, містику й відьомство.
         </p>
+      </div>
 
+      {/* the ground mist rises over the foot of the name, and the fireflies
+          drift in front of everything */}
+      <div className={styles.near} aria-hidden="true">
+        <span className={`${styles.fog} ${styles.fogGround}`} />
+        {SWARM.map((f) => (
+          <span key={f.key} className={styles.firefly} style={f.style} />
+        ))}
+      </div>
+
+      <div className={`wrapMax ${styles.foot}`}>
+        <p className="micro">Перше видання — у підготовці</p>
         <span className={styles.cue}>
           <span className="micro">прогорнути вниз</span>
           <span className={styles.cueLine} />
         </span>
-      </div>
-
-      <div>
-        <div className={`wrapMax ${styles.foot}`}>
-          <p className="micro">Перше видання — у підготовці</p>
-          <Link className="pill" href="/submissions">
-            Надіслати рукопис
-          </Link>
-        </div>
-        {/* the page's actual h1: the wordmark is the heading, not decoration
-            repeating the logo above it. The blurred copy is the same word
-            going out of focus, so it stays hidden from assistive tech. */}
-        {/* the page's actual h1: the wordmark is the heading, not decoration
-            repeating the logo above it. The out-of-focus copy is drawn from
-            data-word through CSS content, so the heading holds the name once
-            in the DOM — as a second text node it made the h1 read
-            "відьмарвідьмар" to anything extracting text. */}
-        <h1 className={styles.bleed}>
-          <span className={styles.word}>відьмар</span>
-          <span
-            className={styles.wordBlur}
-            data-word="відьмар"
-            aria-hidden="true"
-          />
-        </h1>
+        <Link className={`pill ${styles.cta}`} href="/submissions">
+          Надіслати рукопис
+        </Link>
       </div>
     </section>
   );
