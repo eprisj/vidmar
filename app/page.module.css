@@ -51,10 +51,6 @@
   opacity: 0.9;
 }
 
-.sceneCaption {
-  color: rgba(255, 255, 255, 0.62);
-}
-
 .sceneText {
   text-wrap: balance;
   font-size: clamp(1.15rem, 2.3vw, 2rem);

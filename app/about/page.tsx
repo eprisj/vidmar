@@ -1,106 +1,121 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
 import LitText from "@/components/LitText";
-import Marquee from "@/components/Marquee";
-import GenreRows from "@/components/GenreRows";
-import SubmitBlock from "@/components/SubmitBlock";
-import ScrollProgress from "@/components/ScrollProgress";
-import { focusText, founderLetter, genres, positioning } from "@/lib/content";
+import Atmosphere from "@/components/Atmosphere";
+import { founderLetter } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./about.module.css";
 
 export const metadata: Metadata = pageMeta(
   "Про нас — ВІДЬМАР",
-  "ВІДЬМАР — бутикове видавництво книг про езотерику, містику й відьомство. Лист засновника, напрями видавництва та умови прийому рукописів.",
+  "ВІДЬМАР — бутикове видавництво книг про езотерику, містику й відьомство. Лист засновника: хто ми, чому починаємо і що робимо.",
   "/about",
 );
 
+/** where the page goes next — two large doors, not a second copy of the
+ * directions list or the author block that the other pages already carry */
+const doors = [
+  { href: "/genres", label: "що ми видаємо", title: "Напрями видавництва", variant: 2 },
+  { href: "/submissions", label: "для авторів", title: "Надіслати рукопис", variant: 3 },
+];
+
 export default function AboutPage() {
+  const [thanks, family, dream, together] = founderLetter;
+
   return (
     <>
-      <PageHero label="Видавництво" title="ВІДЬМАР" lede={focusText} variant={1} />
+      <PageHero
+        label="Про нас"
+        title="Простір для особливих книг"
+        lede="Починаємо з нуля — вдвох, із любові до читання."
+        variant={1}
+      />
 
-      {/* the mark itself: the one warm object on the site */}
-      <ScrollProgress className={`ink pad ${styles.brand}`} data-field="dark" data-candle="">
-        <div className={`wrapMax ${styles.grid}`}>
-          <Reveal>
-            <div className={styles.plateWrap}>
-              <div
-                className={styles.plate}
-                role="img"
-                aria-label="Знак ВІДЬМАР, тиснений золотом на палітурній тканині"
-              />
-              <span className={styles.plateRing} aria-hidden="true">
-                <Seal star={false} />
-              </span>
-            </div>
-          </Reveal>
-          <Reveal delay={110}>
-            <div className={styles.copy}>
-              <span className="micro micro--bright">хто ми</span>
-              <p className={styles.manifest}>{positioning}</p>
-              <p className="body">
-                Бутикове — це значить небагато назв і кожна зроблена так,
-                ніби вона єдина. Книги, які хочеться тримати в руках, а не
-                прогортати.
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </ScrollProgress>
-
-      {/* the founder's letter, lit word by word as it is read */}
-      <section className={`ink-2 pad ${styles.letterScene}`} data-field="dark" data-candle="">
-        <Smoke intensity={0.5} source={[0.1, 0.0]} tint={[0.62, 0.5, 0.3]} />
+      {/* the letter: one text, four different weights, so it reads as a
+          composed page rather than four identical paragraphs in a column */}
+      <section className={`ink pad ${styles.letterScene}`} data-field="dark" data-candle="">
+        <Smoke intensity={0.5} source={[0.12, 0.0]} tint={[0.62, 0.5, 0.3]} />
         <div className={`wrapMax ${styles.letterIn}`}>
           <Reveal>
             <span className="micro micro--bright">лист засновника</span>
           </Reveal>
 
           <Reveal delay={80}>
-            <h2 className={styles.pull}>Вітаю у ВІДЬМАР!</h2>
+            <h2 className={styles.greet}>Вітаю у ВІДЬМАР!</h2>
           </Reveal>
 
           <div className={styles.letter}>
-            {founderLetter.map((paragraph) => (
-              <LitText key={paragraph.slice(0, 24)} text={paragraph} className={styles.letterLit} />
-            ))}
-          </div>
+            <div className={styles.p0}>
+              <LitText text={thanks} className={styles.lit0} />
+            </div>
 
-          <Reveal>
-            <div className={styles.signoff}>
-              <span className={styles.signStar} aria-hidden="true">
+            <div className={styles.p1}>
+              <LitText text={family} className={styles.lit1} />
+            </div>
+
+            <div className={styles.p2}>
+              <span className={styles.dreamStar} aria-hidden="true">
                 <Seal ticks={0} emblem />
               </span>
-              <div>
-                <b>Засновник видавництва ВІДЬМАР</b>
-                <span>та Марія — партнерка, яка колись закохала мене в читання</span>
+              <LitText text={dream} className={styles.lit2} />
+            </div>
+
+            <div className={styles.p3}>
+              <LitText text={together} className={styles.lit3} />
+            </div>
+          </div>
+
+          {/* two of them: the signature is the second thing the page says about us */}
+          <Reveal>
+            <div className={styles.duo}>
+              <div className={styles.person}>
+                <span className={styles.personStar} aria-hidden="true">
+                  <Seal ticks={0} emblem />
+                </span>
+                <div>
+                  <b>Засновник</b>
+                  <span>видавництва ВІДЬМАР</span>
+                </div>
+              </div>
+              <span className={styles.duoLine} aria-hidden="true" />
+              <div className={styles.person}>
+                <span className={styles.personStar} aria-hidden="true">
+                  <Seal ticks={0} emblem />
+                </span>
+                <div>
+                  <b>Марія</b>
+                  <span>партнерка, яка колись закохала мене в читання</span>
+                </div>
               </div>
             </div>
           </Reveal>
         </div>
       </section>
 
-      <section className="ink" data-field="dark">
-        <Marquee words={genres.map((g) => g.title)} />
+      <section className={styles.doors} data-field="dark">
+        {doors.map((d, i) => (
+          <Link key={d.href} href={d.href} className={styles.door} data-candle="">
+            <Atmosphere variant={d.variant} watermark={false} />
+            <span className={styles.doorRing} aria-hidden="true">
+              <Seal star={false} ticks={72} />
+            </span>
+            <span className={styles.doorIn}>
+              <span className="micro micro--bright">{d.label}</span>
+              <span className={styles.doorTitle}>{d.title}</span>
+              <span className={styles.doorArrow} aria-hidden="true">
+                →
+              </span>
+            </span>
+            <span className={styles.doorNum} aria-hidden="true">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+          </Link>
+        ))}
       </section>
-
-      {/* what we publish */}
-      <section className="ink pad" data-field="dark" data-candle="">
-        <div className="wrapMax">
-          <Reveal>
-            <span className="micro micro--bright">що ми видаємо</span>
-          </Reveal>
-          <div style={{ marginTop: "clamp(28px,4vw,56px)" }}>
-            <GenreRows genres={genres} />
-          </div>
-        </div>
-      </section>
-
-      <SubmitBlock />
     </>
   );
 }

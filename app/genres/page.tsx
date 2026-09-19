@@ -1,7 +1,6 @@
 import Atmosphere from "@/components/Atmosphere";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
-import Marquee from "@/components/Marquee";
 import SubmitBlock from "@/components/SubmitBlock";
 import { genres } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
@@ -23,9 +22,6 @@ export default function GenresPage() {
         variant={2}
       />
 
-      <section className="ink" data-field="dark">
-        <Marquee words={genres.map((g) => g.title)} />
-      </section>
 
       <section className="ink pad" data-field="dark" data-candle="">
         <div className="wrapMax">

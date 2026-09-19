@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EMAIL, focusText, submissionNote, submissionRules } from "@/lib/content";
+import { EMAIL, submissionNote, submissionRules } from "@/lib/content";
 import Reveal from "@/components/Reveal";
 import Seal from "@/components/Seal";
 import Smoke from "@/components/Smoke";
@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMeta(
 export default function SubmissionsPage() {
   return (
     <>
-      <PageHero label="Авторам" title="Надіслати рукопис" lede={focusText} variant={3} />
+      <PageHero label="Авторам" title="Надіслати рукопис" lede="Ми вже відкриті до співпраці. Поки формуємо команду, розглядаємо максимально готові до друку рукописи." variant={3} />
 
       {/* the three conditions, set as large as the page allows */}
       <section className={`ash pad ${styles.rulesScene}`} data-field="light">

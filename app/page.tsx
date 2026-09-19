@@ -31,9 +31,6 @@ export default function Home() {
               <Seal ticks={0} emblem />
             </span>
             <p className={styles.sceneText}>{positioning}</p>
-            <p className={`micro ${styles.sceneCaption}`}>
-              езотерика · містика · відьомство · духовні практики
-            </p>
           </div>
         </div>
       </ScrollProgress>
