@@ -121,7 +121,7 @@ export default function Header() {
           ))}
         </nav>
         <div className={styles.menuFoot}>
-          <span className="micro">Видавництво ВІДЬМАР</span>
+          <span className="micro">Написати нам</span>
           <a className="micro" href={`mailto:${EMAIL}`} tabIndex={open ? undefined : -1}>
             {EMAIL}
           </a>

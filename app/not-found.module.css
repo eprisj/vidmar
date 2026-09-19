@@ -42,9 +42,10 @@
 }
 
 .code {
+  font-family: var(--display);
   font-size: clamp(5rem, 18vw, 13rem);
   font-weight: 500;
-  letter-spacing: -0.07em;
+  letter-spacing: 0.005em;
   line-height: 0.82;
   color: transparent;
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
