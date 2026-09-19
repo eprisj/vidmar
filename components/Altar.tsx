@@ -1,5 +1,6 @@
 import altar from "@/assets/altar/altar.svg";
 import Reveal from "./Reveal";
+import Seal from "./Seal";
 import styles from "./Altar.module.css";
 
 /**
@@ -16,6 +17,10 @@ export default function Altar() {
       <img className={styles.plate} src={altar.src} alt="" aria-hidden="true" />
       <div className={`wrapMax ${styles.in}`}>
         <Reveal className={styles.copy}>
+          <span className={styles.star} aria-hidden="true">
+            <Seal ticks={0} emblem />
+          </span>
+          <span className={styles.circle} aria-hidden="true" />
           <span className="micro micro--bright">ремесло</span>
           <h2 className={styles.title}>Не формула, а обряд</h2>
           <p className={`body ${styles.lede}`}>
