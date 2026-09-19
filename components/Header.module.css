@@ -297,22 +297,10 @@
   transform: translateY(-0.9em);
 }
 
-.menuFoot {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  color: rgba(238, 230, 211, 0.55);
-}
-
 /* the bar joins the menu's sky while it is open, instead of a grey band */
 .isOpen {
   background: #0a0a0a;
   border-color: rgba(238, 230, 211, 0.08);
-}
-
-.menuFoot a {
-  color: var(--gold);
 }
 
 @media (max-width: 860px) {

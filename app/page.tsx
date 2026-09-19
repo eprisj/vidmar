@@ -10,6 +10,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import LitText from "@/components/LitText";
 import GenreRows from "@/components/GenreRows";
 import Shelf from "@/components/Shelf";
+import Altar from "@/components/Altar";
 import { founderLetter, genres, positioning, status } from "@/lib/content";
 import styles from "./page.module.css";
 
@@ -74,6 +75,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Altar />
 
       {/* where we are right now */}
       <section className="ink pad" data-field="dark" data-candle="">

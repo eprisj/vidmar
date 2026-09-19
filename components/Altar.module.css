@@ -1,0 +1,49 @@
+.root {
+  padding-block: clamp(64px, 9vw, 120px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(36px, 5vw, 64px);
+}
+
+/* edge to edge, the same as the shelf — the room, not a picture of it */
+.plate {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1600 / 900;
+  object-fit: cover;
+  object-position: 50% 62%;
+}
+
+.in {
+  display: flex;
+  justify-content: center;
+}
+
+.copy {
+  max-width: 46ch;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.6vw, 16px);
+}
+
+.title {
+  font-family: var(--font-literata), "Georgia", serif;
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.lede {
+  color: var(--on-dark-mute);
+}
+
+@media (max-width: 640px) {
+  .plate {
+    aspect-ratio: 4 / 5;
+    object-position: 38% 62%;
+  }
+}

@@ -120,12 +120,6 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-        <div className={styles.menuFoot}>
-          <span className="micro">Видавництво ВІДЬМАР</span>
-          <a className="micro" href={`mailto:${EMAIL}`} tabIndex={open ? undefined : -1}>
-            {EMAIL}
-          </a>
-        </div>
       </div>
     </>
   );
