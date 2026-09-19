@@ -1,21 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import { subscribe } from "@/lib/api";
 import { useToast } from "./ToastProvider";
 import styles from "./Subscribe.module.css";
 
 export default function Subscribe() {
   const toast = useToast();
   const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
 
   return (
     <form
       className={styles.form}
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        if (!email) return;
-        setEmail("");
-        toast("готово — лист про підтвердження вже летить");
+        if (!email || busy) return;
+        setBusy(true);
+        try {
+          await subscribe(email);
+          setEmail("");
+          toast("готово — ви в списку");
+        } catch {
+          toast("не вдалося підписати, спробуйте пізніше");
+        } finally {
+          setBusy(false);
+        }
       }}
     >
       <input
@@ -27,7 +37,7 @@ export default function Subscribe() {
         aria-label="Ваша пошта"
         onChange={(e) => setEmail(e.target.value)}
       />
-      <button type="submit" className="pill">
+      <button type="submit" className="pill" disabled={busy}>
         Підписатись
       </button>
     </form>

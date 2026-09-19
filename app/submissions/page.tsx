@@ -6,6 +6,7 @@ import Smoke from "@/components/Smoke";
 import Atmosphere from "@/components/Atmosphere";
 import PageHero from "@/components/PageHero";
 import ScrollProgress from "@/components/ScrollProgress";
+import SubmissionForm from "@/components/SubmissionForm";
 import { pageMeta } from "@/lib/seo";
 import styles from "./submissions.module.css";
 
@@ -59,19 +60,19 @@ export default function SubmissionsPage() {
             <span className={styles.sendStar} aria-hidden="true">
               <Seal ticks={0} emblem />
             </span>
-            <span className="micro">надсилайте рукопис на</span>
-            <a className={styles.email} href={`mailto:${EMAIL}`}>
-              {/* break only after the @, never inside a word */}
-              {EMAIL.split("@")[0]}@<wbr />
-              {EMAIL.split("@")[1]}
-            </a>
+            <span className="micro">надішліть рукопис прямо тут</span>
             <p className={styles.sendNote}>
-              Разом із рукописом додайте трохи інформації про себе. Будемо
-              знайомитися!
+              Короткий опис і кілька слів про себе — повний текст попросимо
+              окремо, якщо зацікавимось.
             </p>
-            <a className="pill pill--solid" href={`mailto:${EMAIL}`}>
-              Написати листа
-            </a>
+            <SubmissionForm />
+            <p className={styles.sendNote} style={{ marginTop: 8 }}>
+              Або одразу на пошту:{" "}
+              <a className={styles.email} href={`mailto:${EMAIL}`}>
+                {EMAIL.split("@")[0]}@<wbr />
+                {EMAIL.split("@")[1]}
+              </a>
+            </p>
           </div>
         </div>
       </ScrollProgress>

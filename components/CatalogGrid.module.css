@@ -72,6 +72,19 @@
   border-color: color-mix(in srgb, var(--tint, var(--gold)) 70%, white 20%);
 }
 
+.cardReal {
+  border-style: solid;
+}
+
+.cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
 .spine {
   position: absolute;
   inset: 0 auto 0 0;
