@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { EMAIL } from "@/lib/content";
+import forest from "@/assets/forest/mid.svg";
 import styles from "./Header.module.css";
 
 const nav = [
@@ -56,7 +57,7 @@ export default function Header() {
       <header
         className={`${styles.root} ${solid || open ? styles.solid : ""} ${
           onPage && !open ? styles.onPage : ""
-        }`}
+        } ${open ? styles.isOpen : ""}`}
       >
         <div className={`wrapMax ${styles.bar}`}>
           <Link href="/" className={styles.brand} aria-label="ВІДЬМАР — на головну">
@@ -100,6 +101,11 @@ export default function Header() {
         className={`${styles.menu} ${open ? styles.menuOpen : ""}`}
         aria-hidden={!open}
       >
+        {/* the same night the home page opens on: a stand of trees along
+            the foot of the menu */}
+        <span className={styles.menuMoon} aria-hidden="true" />
+        <img className={styles.menuForest} src={forest.src} alt="" aria-hidden="true" />
+
         <nav className={styles.menuNav}>
           {nav.map((item, i) => (
             <Link
@@ -109,6 +115,7 @@ export default function Header() {
               style={{ transitionDelay: open ? `${80 + i * 60}ms` : "0ms" }}
               data-on={pathname.startsWith(item.href)}
             >
+              <span className={styles.menuNum}>{String(i + 1).padStart(2, "0")}</span>
               {item.label}
             </Link>
           ))}

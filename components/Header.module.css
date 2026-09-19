@@ -153,8 +153,12 @@
   position: fixed;
   inset: var(--nav-h) 0 0 0;
   z-index: 90;
-  background: var(--ink);
-  color: var(--on-dark);
+  overflow: hidden;
+  isolation: isolate;
+  /* the home page's night: dark overhead, lifting toward a moonlit horizon
+     so the trees along the foot read as silhouettes */
+  background: linear-gradient(to bottom, #090c12, #151b25 50%, #283243);
+  color: #eee6d3;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -177,20 +181,59 @@
     transform 0.4s var(--ease);
 }
 
+/* the moon, low in the empty half below the links, trees in front of it */
+.menuMoon {
+  position: absolute;
+  z-index: -1;
+  right: 14%;
+  bottom: 27%;
+  width: clamp(88px, 28vw, 150px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* faint maria, as on the home page's moon, so it isn't a flat disc */
+  background:
+    radial-gradient(circle at 36% 34%, rgba(154, 145, 124, 0.2) 0 9%, transparent 17%),
+    radial-gradient(circle at 60% 60%, rgba(154, 145, 124, 0.16) 0 7%, transparent 14%),
+    radial-gradient(circle at 44% 66%, rgba(154, 145, 124, 0.12) 0 4%, transparent 9%),
+    radial-gradient(circle at 42% 40%, #f4efe2, #e4dcc7 78%, #cfc6ae);
+  box-shadow:
+    0 0 60px 18px rgba(233, 226, 207, 0.14),
+    0 0 180px 70px rgba(233, 226, 207, 0.07);
+  pointer-events: none;
+}
+
+/* trees along the foot, thinning upward into the sky */
+.menuForest {
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0;
+  width: 100%;
+  height: 52%;
+  object-fit: cover;
+  object-position: 50% 100%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32%);
+  mask-image: linear-gradient(to bottom, transparent, #000 32%);
+  pointer-events: none;
+}
+
 .menuNav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
+/* set in the same engraved face as the home page's name */
 .menuNav a {
-  font-size: clamp(2.2rem, 12vw, 3.2rem);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  font-family: var(--font-cormorant), "Times New Roman", serif;
+  font-size: clamp(2.3rem, 11vw, 3.3rem);
   font-weight: 500;
-  letter-spacing: -0.04em;
-  text-transform: lowercase;
-  padding-block: 12px;
-  border-bottom: 1px solid var(--hair-d);
-  color: var(--on-dark-mute);
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  padding-block: 16px;
+  border-bottom: 1px solid rgba(238, 230, 211, 0.1);
+  color: rgba(238, 230, 211, 0.86);
   opacity: 0;
   transform: translateY(14px);
   transition:
@@ -205,7 +248,19 @@
 }
 
 .menuNav a[data-on="true"] {
+  color: var(--gold-hi);
+}
+
+.menuNum {
+  flex: none;
+  width: 2.2em;
+  font-family: var(--font-golos), sans-serif;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
   color: var(--gold);
+  opacity: 0.8;
+  transform: translateY(-0.9em);
 }
 
 .menuFoot {
@@ -213,7 +268,13 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  color: var(--on-dark-mute);
+  color: rgba(238, 230, 211, 0.55);
+}
+
+/* the bar joins the menu's sky while it is open, instead of a grey band */
+.isOpen {
+  background: #090c12;
+  border-color: rgba(238, 230, 211, 0.08);
 }
 
 .menuFoot a {
