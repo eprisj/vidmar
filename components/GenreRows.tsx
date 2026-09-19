@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { Genre } from "@/lib/content";
 import Atmosphere from "./Atmosphere";
+import GenreIcon from "./GenreIcon";
 import Seal from "./Seal";
 import styles from "./GenreRows.module.css";
 
@@ -59,6 +60,7 @@ export default function GenreRows({ genres }: { genres: Genre[] }) {
             style={{ "--tint": g.tint } as CSSProperties}
             onPointerEnter={() => setActive(i)}
           >
+            <GenreIcon slug={g.slug} className={styles.icon} />
             <span className={styles.index}>{String(i + 1).padStart(2, "0")}</span>
             <span className={styles.title}>{g.title}</span>
             {g.note && <span className="micro">{g.note}</span>}

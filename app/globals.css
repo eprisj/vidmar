@@ -228,13 +228,21 @@ ul {
 
 /* ---------------- controls ---------------- */
 
+/* A plain single-line outline read as a generic UI kit component next to
+   the engraved scenes around it. The second, inset line borrows the plate
+   mark a real engraving carries at its edge; the dot grew into a small
+   struck ring, the way a wax seal's centre sits inside its rim. Gold on
+   hover everywhere — the pill was the one control that didn't reach for
+   the house's only accent colour — and a slight lift so it feels pressed
+   rather than merely recoloured. */
 .pill {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   border: 1px solid currentColor;
   border-radius: 999px;
-  padding: 13px 24px;
+  padding: 13px 26px;
   min-height: 46px;
   cursor: pointer;
   font-size: 0.6rem;
@@ -244,35 +252,65 @@ ul {
   transition:
     background 0.4s var(--ease),
     color 0.4s var(--ease),
-    border-color 0.4s var(--ease);
+    border-color 0.4s var(--ease),
+    transform 0.3s var(--ease),
+    box-shadow 0.3s var(--ease);
+}
+
+.pill::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid currentColor;
+  border-radius: inherit;
+  opacity: 0.28;
+  pointer-events: none;
 }
 
 .pill::before {
   content: "";
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: currentColor;
+  box-shadow: 0 0 0 1px currentColor inset;
+  background: transparent;
   flex: none;
+  transition: background 0.4s var(--ease);
 }
 
 .pill:hover {
-  background: var(--on-dark);
-  border-color: var(--on-dark);
-  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #16130a;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px -14px rgba(201, 162, 75, 0.7);
+}
+
+.pill:hover::before {
+  background: currentColor;
+}
+
+.pill:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .ash .pill:hover,
 .ash-2 .pill:hover {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--ash);
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #16130a;
 }
 
 .pill--solid {
   background: var(--on-dark);
   border-color: var(--on-dark);
   color: var(--ink);
+}
+
+.pill--solid::before {
+  box-shadow: 0 0 0 1px var(--ink) inset;
+  background: var(--ink);
 }
 
 .pill--solid:hover {

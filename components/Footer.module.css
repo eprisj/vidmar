@@ -83,5 +83,38 @@
 @media (max-width: 520px) {
   .grid {
     grid-template-columns: 1fr;
+    /* stacked to one column, the columns' own gap reads as row spacing —
+       too tight once everything is vertical instead of side by side */
+    row-gap: 40px;
+  }
+
+  /* the footer was set at the same scale as a desktop sidebar shrunk to
+     fit a phone, so next to the hero above it it read as an afterthought;
+     everything below steps up one size for a phone reading it up close */
+  .mark {
+    width: 148px;
+  }
+
+  .tagline,
+  .col a,
+  .col p {
+    font-size: 1rem;
+  }
+
+  .col h4 {
+    font-size: 0.68rem;
+    margin-bottom: 20px;
+  }
+
+  .stack {
+    gap: 16px;
+  }
+
+  .big {
+    font-size: 1.4rem;
+  }
+
+  .legal {
+    font-size: 0.66rem;
   }
 }

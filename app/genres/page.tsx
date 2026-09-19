@@ -1,4 +1,5 @@
 import Atmosphere from "@/components/Atmosphere";
+import GenreIcon from "@/components/GenreIcon";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import SubmitBlock from "@/components/SubmitBlock";
@@ -36,6 +37,7 @@ export default function GenresPage() {
                 style={{ "--tint": g.tint } as React.CSSProperties}
               >
                 <Atmosphere tint={g.tint} variant={i} />
+                <GenreIcon slug={g.slug} className={styles.tileIcon} />
                 <span className={styles.accent} />
                 <span className={styles.tileIndex}>{String(i + 1).padStart(2, "0")}</span>
                 <div className={styles.tileIn}>
