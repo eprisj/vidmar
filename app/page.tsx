@@ -4,19 +4,13 @@ import Atmosphere from "@/components/Atmosphere";
 import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
 import Reveal from "@/components/Reveal";
-import Subscribe from "@/components/Subscribe";
+import SubmitBlock from "@/components/SubmitBlock";
+import ClosingBlock from "@/components/ClosingBlock";
 import ScrollProgress from "@/components/ScrollProgress";
 import Marquee from "@/components/Marquee";
 import LitText from "@/components/LitText";
 import GenreRows from "@/components/GenreRows";
-import {
-  EMAIL,
-  founderLetter,
-  genres,
-  positioning,
-  status,
-  submissionRules,
-} from "@/lib/content";
+import { founderLetter, genres, positioning, status } from "@/lib/content";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -110,74 +104,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* submissions */}
-      <section className={`ash pad ${styles.submitScene}`} data-field="light">
-        <span className={styles.submitSeal} aria-hidden="true">
-          <Seal />
-        </span>
-        <div className="wrapMax" style={{ position: "relative" }}>
-          <Reveal>
-            <div className={styles.head}>
-              <span className="micro micro--bright">для авторів</span>
-            </div>
-          </Reveal>
+      <SubmitBlock />
 
-          <div className={styles.submission} style={{ marginTop: "clamp(28px,4vw,50px)" }}>
-            <Reveal>
-              <div>
-                <h2 className="statement">У вас є готовий рукопис?</h2>
-                <p className="body" style={{ marginTop: 20 }}>
-                  На першому етапі ми розглядаємо максимально готові до друку
-                  тексти. Надсилайте рукопис та інформацію про себе — будемо
-                  знайомитися.
-                </p>
-                <div className={styles.cta}>
-                  <a className="pill pill--solid" href={`mailto:${EMAIL}`}>
-                    {EMAIL}
-                  </a>
-                  <Link className="pill pill--bare" href="/submissions">
-                    Умови прийому
-                  </Link>
-                </div>
-              </div>
-            </Reveal>
-            <Reveal delay={100}>
-              <div className={styles.rules}>
-                {submissionRules.map((r, i) => (
-                  <div key={r} className={styles.rule}>
-                    <span className={styles.ruleNum}>{String(i + 1).padStart(2, "0")}</span>
-                    <span>{r}</span>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* closing — newsletter, under the smoke */}
-      <ScrollProgress className={`ink pad ${styles.closingScene}`} data-field="dark" data-candle="">
-        <Smoke intensity={0.8} source={[0.5, 0.0]} />
-        <div className={styles.closingRing} aria-hidden="true">
-          <Seal star={false} />
-        </div>
-        <div className={`wrapMax ${styles.closing}`}>
-          <Reveal>
-            <span className="micro">розсилка</span>
-          </Reveal>
-          <Reveal delay={90}>
-            <h2 className="statement">Дізнайтесь першими про вихід книги</h2>
-          </Reveal>
-          <Reveal delay={160}>
-            <p className="body" style={{ textAlign: "center" }}>
-              Без спаму — тільки дата виходу, анонси та новини видавництва.
-            </p>
-          </Reveal>
-          <Reveal delay={230}>
-            <Subscribe />
-          </Reveal>
-        </div>
-      </ScrollProgress>
+      <ClosingBlock />
     </>
   );
 }

@@ -1,0 +1,29 @@
+.root {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 90svh;
+  display: grid;
+  place-items: center;
+}
+
+.ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(120vmin, 1100px);
+  aspect-ratio: 1;
+  color: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%) rotate(calc(var(--p, 0.5) * -90deg));
+  pointer-events: none;
+}
+
+.in {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(24px, 3.4vw, 42px);
+}

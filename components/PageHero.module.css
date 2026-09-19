@@ -1,0 +1,129 @@
+.root {
+  position: relative;
+  min-height: 88svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+  padding-top: calc(var(--nav-h) + clamp(48px, 8vw, 120px));
+  padding-bottom: clamp(56px, 8vw, 110px);
+}
+
+/* the ring, oversized and off to the right, turning as the page scrolls */
+.ring {
+  position: absolute;
+  right: -18vmin;
+  top: 46%;
+  width: min(118vmin, 1080px);
+  aspect-ratio: 1;
+  color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-50%) rotate(calc(var(--p, 0.5) * 150deg - 75deg));
+  pointer-events: none;
+  will-change: transform;
+}
+
+.in {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.2vw, 26px);
+  /* drifts up a little as the page is scrolled away */
+  transform: translateY(calc((var(--p, 0.5) - 0.5) * -90px));
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.star {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  color: var(--gold);
+}
+
+.title {
+  font-size: clamp(2.8rem, 10vw, 9rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+  color: #fff;
+  max-width: 13ch;
+  text-wrap: balance;
+  margin-bottom: 0.08em;
+  animation: focusIn 1.5s var(--ease) both;
+}
+
+.lede {
+  max-width: 54ch;
+  font-size: clamp(0.98rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.68);
+  animation: focusIn 1.5s var(--ease) 0.2s both;
+}
+
+/* comes out of blur, the way the reference's lines do */
+@keyframes focusIn {
+  from {
+    filter: blur(14px);
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* a thin line at the bottom edge, drawing downward: there is more below */
+.cue {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  height: clamp(40px, 6vw, 72px);
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+.cue::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 40%;
+  background: #fff;
+  animation: drop 2.8s var(--ease) infinite;
+}
+
+@keyframes drop {
+  0% {
+    transform: translateY(-100%);
+  }
+  62%,
+  100% {
+    transform: translateY(280%);
+  }
+}
+
+@media (max-width: 760px) {
+  .root {
+    min-height: 74svh;
+  }
+
+  .ring {
+    right: -52vw;
+    width: 130vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title,
+  .lede,
+  .cue::after {
+    animation: none;
+  }
+}

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import {
-  EMAIL,
-  focusText,
-  submissionNote,
-  submissionRules,
-} from "@/lib/content";
+import { EMAIL, focusText, submissionNote, submissionRules } from "@/lib/content";
 import Reveal from "@/components/Reveal";
 import Seal from "@/components/Seal";
+import Smoke from "@/components/Smoke";
+import Atmosphere from "@/components/Atmosphere";
+import PageHero from "@/components/PageHero";
+import ScrollProgress from "@/components/ScrollProgress";
 import { pageMeta } from "@/lib/seo";
 import styles from "./submissions.module.css";
 
@@ -18,52 +17,64 @@ export const metadata: Metadata = pageMeta(
 
 export default function SubmissionsPage() {
   return (
-    <section className="ash" data-field="light">
-      <div className={`wrapMax ${styles.head}`}>
-        <span className={styles.headMark}>
+    <>
+      <PageHero label="Авторам" title="Надіслати рукопис" lede={focusText} variant={3} />
+
+      {/* the three conditions, set as large as the page allows */}
+      <section className={`ash pad ${styles.rulesScene}`} data-field="light">
+        <span className={styles.stamp} aria-hidden="true">
           <Seal />
         </span>
-        <p className="micro">Авторам</p>
-        <h1 className={styles.title}>Надіслати рукопис</h1>
-        <p className={`body ${styles.lede}`}>{focusText}</p>
-      </div>
-
-      <div className="wrapMax">
-        <div className={styles.grid}>
+        <div className="wrapMax" style={{ position: "relative" }}>
           <Reveal>
-            <div>
-              <p className="micro" style={{ marginBottom: 16 }}>
-                Що ми просимо на першому етапі
-              </p>
-              <div className={styles.rules}>
-                {submissionRules.map((rule) => (
-                  <div key={rule} className={styles.rule}>
-                    <span className={styles.mark} aria-hidden="true" />
-                    <span>{rule}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="body" style={{ marginTop: 24 }}>{submissionNote}</p>
-            </div>
+            <span className="micro micro--bright">що ми просимо на першому етапі</span>
           </Reveal>
 
-          <Reveal delay={100}>
-            <div className={styles.card}>
-              <p className="micro micro--bright">Надсилайте на</p>
-              <a className={styles.email} href={`mailto:${EMAIL}`}>
-                {EMAIL}
-              </a>
-              <p className="body">
-                Разом із рукописом додайте трохи інформації про себе. Будемо
-                знайомитися!
-              </p>
-              <a className="pill pill--solid" href={`mailto:${EMAIL}`}>
-                Написати листа
-              </a>
-            </div>
+          <div className={styles.rules}>
+            {submissionRules.map((rule, i) => (
+              <Reveal key={rule} delay={i * 90}>
+                <div className={styles.rule}>
+                  <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
+                  <span className={styles.ruleText}>{rule}</span>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal>
+            <p className={`body ${styles.note}`}>{submissionNote}</p>
           </Reveal>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* the address itself, at the centre of the ring on the stone */}
+      <ScrollProgress className={styles.send} data-field="dark" data-candle="">
+        <Atmosphere variant={4} watermark={false} />
+        <Smoke intensity={0.85} source={[0.5, 0.02]} />
+        <div className={styles.sendIn}>
+          <div className={styles.sendRing} aria-hidden="true">
+            <Seal star={false} />
+          </div>
+          <div className={styles.sendCopy}>
+            <span className={styles.sendStar} aria-hidden="true">
+              <Seal ticks={0} emblem />
+            </span>
+            <span className="micro">надсилайте рукопис на</span>
+            <a className={styles.email} href={`mailto:${EMAIL}`}>
+              {/* break only after the @, never inside a word */}
+              {EMAIL.split("@")[0]}@<wbr />
+              {EMAIL.split("@")[1]}
+            </a>
+            <p className={styles.sendNote}>
+              Разом із рукописом додайте трохи інформації про себе. Будемо
+              знайомитися!
+            </p>
+            <a className="pill pill--solid" href={`mailto:${EMAIL}`}>
+              Написати листа
+            </a>
+          </div>
+        </div>
+      </ScrollProgress>
+    </>
   );
 }

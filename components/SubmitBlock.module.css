@@ -1,0 +1,71 @@
+.root {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* the seal, pressed faintly into the ash like a blind stamp */
+.seal {
+  position: absolute;
+  right: -12vw;
+  top: 50%;
+  width: min(62vw, 760px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  color: rgba(36, 36, 36, 0.09);
+  pointer-events: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 90px);
+  align-items: start;
+  margin-top: clamp(28px, 4vw, 50px);
+}
+
+.rules {
+  display: flex;
+  flex-direction: column;
+}
+
+.rule {
+  display: grid;
+  grid-template-columns: clamp(52px, 6vw, 80px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding-block: 18px;
+  border-top: 1px solid var(--hair-l);
+  font-size: 0.98rem;
+}
+
+.rules .rule:last-child {
+  border-bottom: 1px solid var(--hair-l);
+}
+
+.num {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(36, 36, 36, 0.45);
+}
+
+.cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seal {
+    right: -40vw;
+    width: 110vw;
+  }
+}

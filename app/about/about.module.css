@@ -1,108 +1,110 @@
-.head {
-  padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 110px));
-  padding-bottom: clamp(40px, 6vw, 90px);
-}
+/* ---------- the brand plate ---------- */
 
-.title {
-  font-size: clamp(2.6rem, 8.6vw, 6.4rem);
-  font-weight: 500;
-  letter-spacing: -0.05em;
-  line-height: 0.9;
-  margin-top: 14px;
+.brand {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(32px, 6vw, 96px);
-  align-items: start;
-  padding-bottom: clamp(50px, 7vw, 110px);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(32px, 6vw, 110px);
+  align-items: center;
 }
 
-/* the brand plate: the logo's own foil-on-cloth, the one warm object */
-.plate {
+.plateWrap {
+  position: relative;
   aspect-ratio: 1;
   width: 100%;
+}
+
+/* the logo on its own bookcloth — the only warm object on the site; it
+   rises and settles as the section passes (--p from ScrollProgress) */
+.plate {
+  position: absolute;
+  inset: 11%;
   background-image: url("/vidmar/logo.webp");
   background-size: cover;
   background-position: center;
   background-color: var(--ink-2);
-  filter: grayscale(0.35) contrast(1.05);
+  box-shadow: 0 50px 90px -40px rgba(0, 0, 0, 0.95);
+  transform: translateY(calc((0.5 - var(--p, 0.5)) * 60px)) scale(calc(0.96 + var(--in, 1) * 0.04));
+}
+
+.plateRing {
+  position: absolute;
+  inset: 0;
+  color: rgba(255, 255, 255, 0.4);
+  transform: rotate(calc(var(--p, 0.5) * 120deg));
+  pointer-events: none;
 }
 
 .copy {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
 }
 
 .manifest {
-  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  font-size: clamp(1.8rem, 4.4vw, 3.6rem);
   font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  max-width: 20ch;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  max-width: 16ch;
+  text-wrap: balance;
 }
 
-.steps {
-  display: flex;
-  flex-direction: column;
+/* ---------- the letter ---------- */
+
+.letterScene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.step {
-  display: grid;
-  grid-template-columns: 80px minmax(0, 1fr) minmax(0, 1.4fr);
-  gap: clamp(16px, 3vw, 48px);
-  align-items: start;
-  padding-block: clamp(24px, 3vw, 38px);
-  border-top: 1px solid var(--hair-d);
-}
-
-.steps .step:last-child {
-  border-bottom: 1px solid var(--hair-d);
-}
-
-.stepName {
-  font-size: clamp(1.2rem, 2.1vw, 1.6rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.15;
-}
-
-/* the letter itself: a first-person editorial block, set a touch larger
-   than ordinary body copy since it carries the whole page */
-.letter {
-  display: flex;
-  flex-direction: column;
-  gap: 1.4em;
-  font-size: clamp(1.02rem, 1.5vw, 1.18rem);
-  line-height: 1.72;
-  color: var(--on-dark-mute);
-  max-width: 62ch;
-}
-
-.letter p:first-child {
-  color: var(--on-dark);
+.letterIn {
+  position: relative;
+  z-index: 1;
 }
 
 .pull {
-  font-size: clamp(1.7rem, 3.8vw, 2.8rem);
-  line-height: 1.12;
-  letter-spacing: -0.04em;
+  font-size: clamp(2.6rem, 8vw, 7rem);
   font-weight: 500;
-  color: var(--on-dark);
-  max-width: 22ch;
-  margin-block: 0.2em 0.4em;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+  color: #fff;
+  margin-block: clamp(22px, 3vw, 36px) clamp(36px, 5vw, 70px);
+}
+
+.letter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1em;
+  max-width: 34ch;
+  font-size: clamp(1.3rem, 2.6vw, 2.2rem);
+}
+
+.letterLit {
+  line-height: 1.24;
+  letter-spacing: -0.03em;
+  font-weight: 500;
 }
 
 .signoff {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: clamp(30px, 4vw, 48px);
+  align-items: center;
+  gap: 18px;
+  margin-top: clamp(44px, 6vw, 80px);
   padding-top: clamp(22px, 3vw, 32px);
   border-top: 1px solid var(--hair-d);
   max-width: 62ch;
+}
+
+.signoff div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   color: var(--on-dark-mute);
 }
 
@@ -111,24 +113,12 @@
   font-weight: 500;
 }
 
-/* genre list */
-.genreRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 20px;
-  align-items: baseline;
-  padding-block: 18px;
-  border-top: 1px solid var(--hair-d);
-}
-
-.genreList .genreRow:last-child {
-  border-bottom: 1px solid var(--hair-d);
-}
-
-.genreName {
-  font-size: clamp(1.15rem, 2vw, 1.6rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
+.signStar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  color: var(--gold);
 }
 
 @media (max-width: 860px) {
@@ -136,21 +126,7 @@
     grid-template-columns: 1fr;
   }
 
-  .plate {
-    max-width: 320px;
-  }
-
-  .step {
-    grid-template-columns: 52px minmax(0, 1fr);
-    row-gap: 10px;
-  }
-
-  .step > :last-child {
-    grid-column: 2;
-  }
-
-  .genreRow {
-    grid-template-columns: 1fr;
-    row-gap: 6px;
+  .plateWrap {
+    max-width: 420px;
   }
 }

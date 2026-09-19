@@ -1,95 +1,154 @@
-.head {
+/* ---------- the conditions ---------- */
+
+.rulesScene {
   position: relative;
-  isolation: isolate;
   overflow: hidden;
-  padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 110px));
-  padding-bottom: clamp(30px, 4vw, 60px);
+  isolation: isolate;
 }
 
-/* the same mark the other pages carry, inked dark for the light field */
-.headMark {
+.stamp {
   position: absolute;
-  z-index: -1;
+  left: -14vw;
   top: 50%;
-  right: clamp(-140px, -6vw, -40px);
-  width: clamp(360px, 40vw, 620px);
+  width: min(70vw, 860px);
   aspect-ratio: 1;
-  transform: translateY(-46%);
-  color: var(--ink);
-  opacity: 0.08;
+  transform: translateY(-50%);
+  color: rgba(36, 36, 36, 0.08);
   pointer-events: none;
-}
-
-.title {
-  font-size: clamp(2.6rem, 8.4vw, 6.2rem);
-  font-weight: 500;
-  letter-spacing: -0.05em;
-  line-height: 0.92;
-  margin-top: 14px;
-}
-
-.lede {
-  max-width: 60ch;
-  margin-top: 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 6vw, 90px);
-  align-items: start;
-  padding-block: clamp(40px, 5vw, 70px) clamp(70px, 9vw, 130px);
 }
 
 .rules {
   display: flex;
   flex-direction: column;
+  margin-top: clamp(30px, 4vw, 56px);
 }
 
 .rule {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
-  gap: 16px;
-  align-items: baseline;
-  padding-block: 20px;
+  grid-template-columns: clamp(110px, 16vw, 240px) minmax(0, 1fr);
+  gap: clamp(16px, 3vw, 48px);
+  align-items: center;
+  padding-block: clamp(18px, 2.6vw, 34px);
   border-top: 1px solid var(--hair-l);
-  font-size: 1rem;
 }
 
-.rules .rule:last-child {
+.rules > :last-child .rule {
   border-bottom: 1px solid var(--hair-l);
 }
 
-/* drawn, not typed: a ✓ glyph fell back to whatever font the platform had
-   and broke the hairline vocabulary the rest of the page is built from */
-.mark {
-  width: 7px;
-  height: 7px;
-  background: var(--gold);
-  border-radius: 50%;
-  justify-self: start;
-  transform: translateY(-2px);
+/* hollow odometer numerals that fill in on hover */
+.num {
+  font-size: clamp(3.6rem, 10vw, 9rem);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.86;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(36, 36, 36, 0.4);
+  transition:
+    color 0.5s var(--ease),
+    -webkit-text-stroke-color 0.5s var(--ease);
 }
 
-.card {
-  border: 1px solid var(--hair-l);
-  padding: clamp(28px, 4vw, 44px);
+.rule:hover .num {
+  color: var(--on-light);
+  -webkit-text-stroke-color: transparent;
+}
+
+.ruleText {
+  font-size: clamp(1.25rem, 2.8vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+.note {
+  margin-top: clamp(30px, 4vw, 52px);
+  max-width: 62ch;
+}
+
+/* ---------- the address, on the stone ---------- */
+
+.send {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding-block: clamp(80px, 10vw, 140px);
+}
+
+.sendIn {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: min(92vmin, 820px);
+  aspect-ratio: 1;
+}
+
+.sendRing {
+  position: absolute;
+  inset: 0;
+  color: rgba(255, 255, 255, 0.55);
+  transform: rotate(calc(var(--p, 0.5) * 140deg - 70deg)) scale(calc(0.8 + var(--in, 1) * 0.2));
+}
+
+.sendCopy {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  text-align: center;
+  gap: clamp(14px, 2vw, 22px);
+  max-width: 76%;
+  filter: blur(calc((1 - var(--in, 1)) * 9px));
+  opacity: calc(0.15 + var(--in, 1) * 0.85);
+}
+
+.sendStar {
+  position: relative;
+  width: clamp(40px, 5vw, 56px);
+  aspect-ratio: 1;
+  color: #fff;
 }
 
 .email {
-  font-family: var(--font-golos), sans-serif;
-  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-size: clamp(1.15rem, 2.7vw, 2.35rem);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  color: var(--gold);
-  word-break: break-word;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: #fff;
+  overflow-wrap: normal;
+  background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+  transition: background-size 0.6s var(--ease);
 }
 
-@media (max-width: 860px) {
-  .grid {
+.email:hover {
+  background-size: 100% 1px;
+}
+
+.sendNote {
+  max-width: 34ch;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+@media (max-width: 760px) {
+  .rule {
     grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+
+  .stamp {
+    left: -50vw;
+    width: 130vw;
+  }
+
+  .sendCopy {
+    max-width: 88%;
   }
 }

@@ -9,6 +9,9 @@ type Props = {
    * oversized seal watermark, so a row of tiles doesn't read as one
    * texture recoloured six times */
   variant?: number;
+  /** the rotated seal watermark that comes with a variant; off where type
+   * sits on top, so the star's lines don't cut through a title */
+  watermark?: boolean;
 };
 
 /** Six hand-picked breaks, not a random one — so neighbouring tiles never
@@ -24,7 +27,7 @@ const SEAMS = [
 
 /** The full-bleed dark backdrop: broken stone, a seam of light, gold veins.
  * Purely generated — no photography, nothing to license or load. */
-export default function Atmosphere({ className = "", tint, variant }: Props) {
+export default function Atmosphere({ className = "", tint, variant, watermark = true }: Props) {
   const seam = variant != null ? SEAMS[variant % SEAMS.length] : null;
 
   const style = {
@@ -44,7 +47,7 @@ export default function Atmosphere({ className = "", tint, variant }: Props) {
     <div className={`${styles.root} ${className}`} style={style} aria-hidden="true">
       <span className={styles.seam} />
       <span className={styles.edges} />
-      {seam && (
+      {seam && watermark && (
         <span className={styles.mark}>
           <Seal />
         </span>
