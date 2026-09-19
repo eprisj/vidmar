@@ -178,3 +178,38 @@
   }
 
 }
+
+/* ---------- card of the day ---------- */
+
+/* the card used to float on a flat panel with nothing behind it — the
+   stone-and-veins texture every other section on the site already leans
+   on, plus a candle-warm glow under the card itself, so it reads as
+   something lit rather than a component pasted on a solid colour */
+.cardScene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cardScene::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 38%;
+  width: min(70vw, 640px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(201, 162, 75, 0.22) 0%,
+    rgba(201, 162, 75, 0.08) 42%,
+    transparent 72%
+  );
+  pointer-events: none;
+}
+
+.cardIn {
+  position: relative;
+  z-index: 1;
+}

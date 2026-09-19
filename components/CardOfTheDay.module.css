@@ -2,15 +2,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(20px, 3vw, 32px);
+  gap: clamp(24px, 3.4vw, 40px);
 }
 
 .stage {
   all: unset;
   cursor: pointer;
   perspective: 1400px;
-  width: clamp(180px, 26vw, 240px);
+  width: clamp(200px, 28vw, 280px);
   aspect-ratio: 500 / 875;
+  position: relative;
+}
+
+/* a table the card can rest on — without it the card just floated on the
+   scene's own glow with nothing to ground it */
+.stage::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  width: 78%;
+  height: 28px;
+  transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), transparent 75%);
 }
 
 .stage.open {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
+import Atmosphere from "@/components/Atmosphere";
 import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
 import Reveal from "@/components/Reveal";
@@ -80,8 +81,9 @@ export default function Home() {
 
       {/* the one interactive thing on the page — the altar just showed a
           reading laid out; this lets the visitor actually draw */}
-      <section className="ink-2 pad" data-field="dark" data-candle="">
-        <div className="wrapMax">
+      <section className={`ink-2 pad ${styles.cardScene}`} data-field="dark" data-candle="">
+        <Atmosphere variant={5} watermark={false} />
+        <div className={`wrapMax ${styles.cardIn}`}>
           <Reveal>
             <CardOfTheDay />
           </Reveal>
