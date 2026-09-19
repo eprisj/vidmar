@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import Atmosphere from "./Atmosphere";
-import Smoke from "./Smoke";
 import Seal from "./Seal";
 import ScrollProgress from "./ScrollProgress";
 import styles from "./PageHero.module.css";
@@ -15,14 +14,17 @@ type Props = {
 };
 
 /**
- * How every inner page opens: dark stone, living smoke, the ring turning
- * with the scroll behind a title that comes into focus.
+ * How every inner page opens: dark stone and the ring turning with the
+ * scroll, behind a title that comes into focus. The smoke and light beam
+ * that used to sit over the stone read as generic mystic-stock-photo fog —
+ * exactly the flat, generated look the etched home hero was built to move
+ * away from — so the rock's own seam and gold veins carry the atmosphere
+ * alone now.
  */
 export default function PageHero({ label, title, lede, variant = 0, children }: Props) {
   return (
     <ScrollProgress className={styles.root} data-field="dark" data-candle="">
       <Atmosphere variant={variant} watermark={false} />
-      <Smoke intensity={0.75} source={[0.72, 0.0]} />
       <div className={styles.ring} aria-hidden="true">
         <Seal star={false} />
       </div>

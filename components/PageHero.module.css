@@ -45,11 +45,16 @@
   color: var(--gold);
 }
 
+/* Literata, not the page's default grotesque: on a display line the
+   grotesque reads as generic SaaS rather than a house that sets books.
+   Cormorant stays reserved for the wordmark alone, so this doesn't compete
+   with the brand mark. */
 .title {
   font-size: clamp(2.8rem, 10vw, 9rem);
+  font-family: var(--font-literata), "Georgia", serif;
   font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 0.9;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
   color: #fff;
   max-width: 13ch;
   text-wrap: balance;
