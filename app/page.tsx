@@ -23,10 +23,13 @@ export default function Home() {
       <section className={styles.scene} data-field="dark">
         <Atmosphere />
         <div className={styles.sceneIn}>
-          <Seal />
+          <Seal star={false} />
           <div className={styles.sceneCopy}>
+            <span className={styles.sceneStar}>
+              <Seal ticks={0} emblem />
+            </span>
             <p className={styles.sceneText}>{positioning}</p>
-            <p className="micro">
+            <p className={`micro ${styles.sceneCaption}`}>
               езотерика · містика · відьомство · духовні практики
             </p>
           </div>

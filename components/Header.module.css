@@ -40,17 +40,16 @@
 }
 
 /* the real foil wordmark, cropped out of the square brand image */
+/* the wordmark as a mask, so it takes the colour of the field it sits on:
+   white over the stone, graphite over ash */
 .mark {
-  --w: 132px;
+  --w: 118px;
   display: block;
   width: var(--w);
-  height: calc(var(--w) * 0.279);
-  background-image: url("/vidmar/logo.webp");
-  background-repeat: no-repeat;
-  background-size: calc(var(--w) * 1.291) auto;
-  background-position: 51% 48%;
-  -webkit-mask-image: radial-gradient(112% 124% at 50% 50%, #000 48%, transparent 100%);
-  mask-image: radial-gradient(112% 124% at 50% 50%, #000 48%, transparent 100%);
+  height: calc(var(--w) / 3.983);
+  -webkit-mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
+  mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
+  background-color: currentColor;
 }
 
 .nav {

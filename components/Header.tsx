@@ -26,7 +26,7 @@ export default function Header() {
     const field = probe.find(
       (el) => el instanceof HTMLElement && el.dataset.field,
     ) as HTMLElement | undefined;
-    setOnPage(field?.dataset.field === "page");
+    setOnPage(field?.dataset.field === "light");
   }, []);
 
   useEffect(() => {

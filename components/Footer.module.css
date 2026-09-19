@@ -11,15 +11,13 @@
 
 .mark {
   display: block;
-  width: 140px;
-  height: calc(140px * 0.279);
-  background-image: url("/vidmar/logo.webp");
-  background-repeat: no-repeat;
-  background-size: calc(140px * 1.291) auto;
-  background-position: 51% 48%;
-  -webkit-mask-image: radial-gradient(112% 124% at 50% 50%, #000 48%, transparent 100%);
-  mask-image: radial-gradient(112% 124% at 50% 50%, #000 48%, transparent 100%);
-  margin-bottom: 16px;
+  width: 128px;
+  height: calc(128px / 3.983);
+  margin-bottom: 18px;
+  color: var(--on-dark);
+  -webkit-mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
+  mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
+  background-color: currentColor;
 }
 
 .tagline {

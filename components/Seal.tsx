@@ -5,6 +5,8 @@ type Props = {
   ticks?: number;
   /** draw the heptagram inside the ring */
   star?: boolean;
+  /** star alone at small size: fills the box, hairline stays 1px at any scale */
+  emblem?: boolean;
   className?: string;
 };
 
@@ -21,11 +23,16 @@ function pt(cx: number, cy: number, r: number, i: number, total: number) {
  * seven-pointed witch's star. Hairline-thin so it reads as an instrument
  * scale rather than an ornament.
  */
-export default function Seal({ ticks = 96, star = true, className = "" }: Props) {
+export default function Seal({
+  ticks = 96,
+  star = true,
+  emblem = false,
+  className = "",
+}: Props) {
   const C = 100;
 
   // {7/3} heptagram: step three vertices at a time around seven points
-  const verts = Array.from({ length: 7 }, (_, i) => pt(C, C, 58, i, 7));
+  const verts = Array.from({ length: 7 }, (_, i) => pt(C, C, emblem ? 88 : 58, i, 7));
   const path =
     Array.from({ length: 7 }, (_, i) => verts[(i * 3) % 7])
       .map((p, i) => `${i === 0 ? "M" : "L"}${p.x} ${p.y}`)
@@ -61,10 +68,17 @@ export default function Seal({ ticks = 96, star = true, className = "" }: Props)
       </g>
 
       {star && (
-        <g className={styles.star} opacity="0.34">
-          <path d={path} fill="none" stroke="currentColor" strokeWidth="0.4" />
+        <g className={styles.star} opacity={emblem ? 1 : 0.34}>
+          <path
+            d={path}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={emblem ? 1 : 0.4}
+            vectorEffect={emblem ? "non-scaling-stroke" : undefined}
+            strokeLinejoin="round"
+          />
           {verts.map((v, i) => (
-            <circle key={i} cx={v.x} cy={v.y} r="1.4" fill="currentColor" />
+            <circle key={i} cx={v.x} cy={v.y} r={emblem ? 6 : 1.4} fill="currentColor" />
           ))}
         </g>
       )}

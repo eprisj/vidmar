@@ -29,7 +29,21 @@
   max-width: 64%;
 }
 
+/* the heptagram, small and clear of the type rather than slashed through it */
+.sceneStar {
+  position: relative;
+  width: clamp(46px, 6vw, 64px);
+  aspect-ratio: 1;
+  color: #fff;
+  opacity: 0.9;
+}
+
+.sceneCaption {
+  color: rgba(255, 255, 255, 0.62);
+}
+
 .sceneText {
+  text-wrap: balance;
   font-size: clamp(1.05rem, 2vw, 1.75rem);
   line-height: 1.34;
   letter-spacing: -0.02em;
