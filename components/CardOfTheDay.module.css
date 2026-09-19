@@ -9,8 +9,8 @@
   all: unset;
   cursor: pointer;
   perspective: 1400px;
-  width: clamp(200px, 28vw, 280px);
-  aspect-ratio: 500 / 875;
+  width: clamp(240px, 22vw, 340px);
+  aspect-ratio: 500 / 850;
   position: relative;
 }
 
