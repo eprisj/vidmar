@@ -1,10 +1,22 @@
-import Atmosphere from "@/components/Atmosphere";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import SubmitBlock from "@/components/SubmitBlock";
 import { genres } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./genres.module.css";
+
+/** One real 19th-century plate per direction instead of the same
+ * generated stone-and-tint texture recoloured six times — each picked for
+ * what the genre actually is, not just tinted differently. All public
+ * domain (Doré, d. 1883); duotone-mapped to the site's ink/paper values. */
+const tilePlate: Record<string, string> = {
+  ezoteryka: "mystique-forest",
+  vidmovstvo: "macbeth-cave",
+  tryler: "bluebeard",
+  psyhroman: "death-moon",
+  fentezi: "fantasy-giant",
+  "mistyka-proza": "witches-storm",
+};
 
 export const metadata = pageMeta(
   "Напрями — ВІДЬМАР",
@@ -42,7 +54,13 @@ export default function GenresPage() {
                 className={`${styles.tile} ${g.primary ? styles.tilePrimary : styles.tileSecondary}`}
                 style={{ "--tint": g.tint } as React.CSSProperties}
               >
-                <Atmosphere tint={g.tint} variant={i} />
+                <img
+                  className={styles.tilePlate}
+                  src={`/vidmar/gravure/${tilePlate[g.slug]}.webp`}
+                  alt=""
+                  aria-hidden="true"
+                />
+                <span className={styles.tileScrim} />
                 <span className={styles.accent} />
                 <span className={styles.tileIndex}>{String(i + 1).padStart(2, "0")}</span>
                 <div className={styles.tileIn}>
