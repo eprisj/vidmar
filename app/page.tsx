@@ -9,6 +9,7 @@ import ClosingBlock from "@/components/ClosingBlock";
 import ScrollProgress from "@/components/ScrollProgress";
 import LitText from "@/components/LitText";
 import GenreRows from "@/components/GenreRows";
+import Shelf from "@/components/Shelf";
 import { founderLetter, genres, positioning, status } from "@/lib/content";
 import styles from "./page.module.css";
 
@@ -50,6 +51,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Shelf />
 
       {/* the founder's letter, lit word by word */}
       <section className={`ink-2 pad ${styles.letterScene}`} data-field="dark" data-candle="">

@@ -320,14 +320,11 @@
     display: none;
   }
 
-  /* centred on the bar itself, not on what's left beside the logo */
+  /* nav and the contact pill drop out, so in normal flow the burger
+     would already land right after the logo — left with it, not centred
+     on a bar that has nothing left to balance it against */
   .burger {
     display: flex;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
   }
 
   .burgerOpen span:first-child {
