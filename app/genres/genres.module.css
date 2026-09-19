@@ -1,6 +1,26 @@
 /* the same seal that anchors the homepage, here just a mark pressed into
    the page rather than the centrepiece — so the header isn't bare text
    sitting above a mosaic that suddenly has all the personality */
+
+.plate {
+  overflow: hidden;
+}
+
+.plateImg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+
+@media (max-width: 640px) {
+  .plateImg {
+    aspect-ratio: 1 / 1;
+    object-position: 60% 30%;
+  }
+}
+
 /* one mosaic, twelve columns: the two primary directions cut across six
    each, the other four take three each underneath — one block of stone,
    not a picture pair sitting above a list. */

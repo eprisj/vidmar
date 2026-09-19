@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
-import Atmosphere from "@/components/Atmosphere";
 import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
 import Reveal from "@/components/Reveal";
@@ -19,10 +18,10 @@ export default function Home() {
     <>
       <Hero />
 
-      {/* the dark scene: stone, living smoke, the ring turning with the scroll */}
+      {/* the dark scene: a real 1883 Doré engraving instead of the
+          generated stone-and-smoke every other dark section on the site
+          already uses — this is the one place that gets to be a picture */}
       <ScrollProgress className={styles.scene} data-field="dark" data-candle="">
-        <Atmosphere />
-        <Smoke intensity={0.9} source={[0.5, 0.05]} />
         <div className={styles.sceneIn}>
           <div className={styles.sceneRing}>
             <Seal star={false} />

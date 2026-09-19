@@ -8,6 +8,22 @@
   overflow: hidden;
   isolation: isolate;
   padding-block: clamp(80px, 10vw, 140px);
+  background: #0a0a0a;
+}
+
+/* the engraving itself, plus a vignette so the statement reads regardless
+   of whether it lands on the moon's paper-white or the ink around it */
+.scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(60% 55% at 50% 38%, rgba(10, 10, 10, 0.15) 0%, rgba(10, 10, 10, 0.82) 100%),
+    url("/vidmar/gravure/death-moon.webp");
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, center 30%;
+  background-size: cover, cover;
 }
 
 .sceneIn {
@@ -58,6 +74,7 @@
   letter-spacing: -0.025em;
   font-weight: 400;
   color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
 }
 
 /* ---------- shared section head ---------- */

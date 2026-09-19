@@ -1,3 +1,22 @@
+.plate {
+  overflow: hidden;
+}
+
+.plateImg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: 46% 58%;
+}
+
+@media (max-width: 640px) {
+  .plateImg {
+    aspect-ratio: 4 / 5;
+    object-position: 38% 62%;
+  }
+}
+
 .rubrics {
   display: flex;
   flex-direction: column;

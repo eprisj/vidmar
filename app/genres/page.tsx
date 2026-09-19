@@ -22,6 +22,13 @@ export default function GenresPage() {
         variant={2}
       />
 
+      {/* a real 1860s Doré engraving instead of another stone-and-tint
+          panel — the mosaic below is about the six directions; this is
+          about the one word "відьомство" actually meant before it became
+          six neat labels */}
+      <section className={`ink ${styles.plate}`} data-field="dark">
+        <img className={styles.plateImg} src="/vidmar/gravure/witches-storm.webp" alt="" aria-hidden="true" />
+      </section>
 
       <section className="ink pad" data-field="dark" data-candle="">
         <div className="wrapMax">

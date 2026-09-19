@@ -22,6 +22,12 @@ export default function JournalPage() {
         variant={5}
       />
 
+      {/* a real engraving standing in for the empty page — Macbeth and the
+          three witches, 1860s Doré, rather than another textured panel */}
+      <section className={`ink ${styles.plate}`} data-field="dark">
+        <img className={styles.plateImg} src="/vidmar/gravure/macbeth-cave.webp" alt="" aria-hidden="true" />
+      </section>
+
       {/* the three sections, shown as what they are: ruled, numbered and
           waiting — a table of contents with its lines not yet written */}
       <section className="ink pad" data-field="dark" data-candle="">
