@@ -320,9 +320,13 @@
     display: none;
   }
 
-  /* nav and the contact pill drop out, so in normal flow the burger
-     would already land right after the logo — left with it, not centred
-     on a bar that has nothing left to balance it against */
+  /* nav drops out, and with it the auto margin that pushed .tools to the
+     bar's far corner — .tools carries that push itself now, so the burger
+     still holds the right edge instead of settling next to the logo */
+  .tools {
+    margin-inline-start: auto;
+  }
+
   .burger {
     display: flex;
   }

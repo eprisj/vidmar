@@ -3,7 +3,6 @@ import { Cormorant_Garamond, Golos_Text, Literata } from "next/font/google";
 import Header from "@/components/Header";
 import CandleLight from "@/components/CandleLight";
 import Footer from "@/components/Footer";
-import Preloader from "@/components/Preloader";
 import ToastProvider from "@/components/ToastProvider";
 import { SITE_URL, pageMeta } from "@/lib/seo";
 import "./globals.css";
@@ -46,7 +45,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body>
         <ToastProvider>
-          <Preloader />
           <Header />
           <CandleLight />
           <main>{children}</main>
