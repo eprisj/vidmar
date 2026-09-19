@@ -44,10 +44,9 @@
 }
 
 .num {
-  font-family: var(--display);
   font-size: clamp(1.8rem, 3vw, 2.6rem);
   font-weight: 500;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.05em;
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1px rgba(36, 36, 36, 0.45);

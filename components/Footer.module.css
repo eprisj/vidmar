@@ -1,157 +1,87 @@
-/* The foot of every page, in the night the home page opens on: the same
-   blue-black and bone-ivory, the engraved face for everything meant to be
-   read, the grotesque only for captions. */
-
 .root {
-  --ivory: #eee6d3;
-  background-color: #090c12;
-  background-image: var(--grain), linear-gradient(to bottom, #0b0d11, #090c12);
-  color: var(--ivory);
-  border-top: 1px solid rgba(238, 230, 211, 0.08);
+  border-top: 1px solid var(--hair-d);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr 1.2fr;
-  gap: clamp(32px, 5vw, 80px);
-  align-items: start;
-  padding-block: clamp(56px, 7vw, 110px) clamp(44px, 5vw, 76px);
+  grid-template-columns: 1.3fr repeat(3, minmax(0, 1fr));
+  gap: clamp(28px, 4vw, 64px);
+  padding-block: clamp(48px, 6vw, 96px);
 }
 
 .mark {
   display: block;
   width: 128px;
   height: calc(128px / 3.983);
+  margin-bottom: 18px;
+  color: var(--on-dark);
   -webkit-mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
   mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
   background-color: currentColor;
 }
 
 .tagline {
-  margin-top: 18px;
-  max-width: 26ch;
-  font-family: var(--display);
-  font-style: italic;
-  font-size: 1.2rem;
-  line-height: 1.35;
-  color: rgba(238, 230, 211, 0.62);
+  font-size: 0.9rem;
+  color: var(--on-dark-mute);
+  max-width: 30ch;
 }
 
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.nav a {
-  width: fit-content;
-  font-family: var(--display);
-  font-size: clamp(1.35rem, 1.8vw, 1.6rem);
-  font-weight: 500;
-  line-height: 1.2;
-  color: rgba(238, 230, 211, 0.82);
-  transition: color 0.3s var(--ease);
-}
-
-.nav a:hover {
-  color: var(--gold-hi);
-}
-
-.write {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.write :global(.micro) {
-  color: var(--gold);
-}
-
-.email {
-  font-family: var(--display);
-  font-size: clamp(1.55rem, 2.4vw, 2.1rem);
-  font-weight: 500;
-  line-height: 1.15;
-  color: var(--gold-hi);
-  overflow-wrap: anywhere;
-  transition: color 0.3s var(--ease);
-}
-
-.email:hover {
-  color: var(--ivory);
-}
-
-.rules {
-  font-family: var(--text);
+.col h4 {
+  font-family: var(--font-golos), sans-serif;
   font-size: 0.6rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(238, 230, 211, 0.55);
-  border-bottom: 1px solid rgba(238, 230, 211, 0.2);
-  padding-bottom: 3px;
-  transition:
-    color 0.3s var(--ease),
-    border-color 0.3s var(--ease);
+  color: var(--gold);
+  margin-bottom: 18px;
 }
 
-.rules:hover {
-  color: var(--ivory);
-  border-color: currentColor;
+.col a,
+.col p {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--on-dark-mute);
+  transition: color 0.3s var(--ease);
+}
+
+.col a:hover {
+  color: var(--on-dark);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.big {
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  letter-spacing: -0.035em;
+  color: var(--on-dark);
 }
 
 .legal {
+  font-family: var(--font-golos), sans-serif;
   display: flex;
   justify-content: space-between;
-  gap: 8px 18px;
+  gap: 18px;
   flex-wrap: wrap;
   padding-block: 22px;
-  border-top: 1px solid rgba(238, 230, 211, 0.08);
-  font-family: var(--text);
+  border-top: 1px solid var(--hair-d);
   font-size: 0.6rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(238, 230, 211, 0.4);
+  color: #58627d;
 }
 
-/* phones: one centred column — mark, the line under it, the sections as a
-   single row, then the address — instead of four headed lists stacked into
-   a long grey scroll */
-@media (max-width: 760px) {
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
   .grid {
     grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-    gap: 34px;
-  }
-
-  .brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* two by two: four sections don't fit one line, and wrapping left
-     "Журнал" alone on the second */
-  .nav {
-    display: grid;
-    grid-template-columns: repeat(2, auto);
-    justify-content: center;
-    justify-items: center;
-    gap: 8px 36px;
-    padding-block: 26px;
-    width: 100%;
-    border-block: 1px solid rgba(238, 230, 211, 0.08);
-  }
-
-  .write {
-    align-items: center;
-  }
-
-  .legal {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
   }
 }
