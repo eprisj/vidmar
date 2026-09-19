@@ -7,7 +7,6 @@ import Reveal from "@/components/Reveal";
 import SubmitBlock from "@/components/SubmitBlock";
 import ClosingBlock from "@/components/ClosingBlock";
 import ScrollProgress from "@/components/ScrollProgress";
-import Marquee from "@/components/Marquee";
 import LitText from "@/components/LitText";
 import GenreRows from "@/components/GenreRows";
 import { founderLetter, genres, positioning, status } from "@/lib/content";
@@ -34,11 +33,6 @@ export default function Home() {
           </div>
         </div>
       </ScrollProgress>
-
-      {/* the directions, drifting past */}
-      <section className="ink" data-field="dark">
-        <Marquee words={genres.map((g) => g.title)} />
-      </section>
 
       {/* what we publish */}
       <section className="ink pad" data-field="dark" data-candle="">

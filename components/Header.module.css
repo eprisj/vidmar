@@ -28,6 +28,7 @@
 }
 
 .bar {
+  position: relative;
   display: flex;
   align-items: center;
   gap: clamp(14px, 3vw, 40px);
@@ -224,10 +225,13 @@
     display: none;
   }
 
+  /* centred on the bar itself, not on what's left beside the logo */
   .burger {
     display: flex;
-    margin-inline-start: auto;
-    position: relative;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
   }
 
@@ -239,7 +243,8 @@
     transform: translateY(-3.25px) rotate(-45deg);
   }
 
+  /* on a phone the address sits in the open menu's footer instead */
   .contact {
-    order: 2;
+    display: none;
   }
 }
