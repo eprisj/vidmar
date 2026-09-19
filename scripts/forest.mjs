@@ -70,13 +70,88 @@ function ground(rng, y, amp) {
   return `${d}L${W} ${H}Z`;
 }
 
-/** The sky and moon ride in the far plane rather than in CSS: all three
- * planes share one viewBox and one crop, so the front branches cross the moon
- * in the same place on every screen shape. A separately positioned moon
- * would slide out from under the arch as the aspect ratio changed. */
-const SKY = `<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#090c12"/><stop offset=".62" stop-color="#141a23"/><stop offset="1" stop-color="#1c2430"/></linearGradient><radialGradient id="halo"><stop offset="0" stop-color="#e9e2cf" stop-opacity=".34"/><stop offset=".42" stop-color="#e9e2cf" stop-opacity=".1"/><stop offset="1" stop-color="#e9e2cf" stop-opacity="0"/></radialGradient><radialGradient id="disc" cx=".42" cy=".4"><stop offset="0" stop-color="#f4efe2"/><stop offset=".8" stop-color="#e4dcc7"/><stop offset="1" stop-color="#cfc6ae"/></radialGradient></defs><rect width="${W}" height="${H}" fill="url(#sky)"/><circle cx="800" cy="228" r="300" fill="url(#halo)"/><circle cx="800" cy="228" r="108" fill="url(#disc)"/><g fill="#9a917c" opacity=".16"><ellipse cx="770" cy="200" rx="30" ry="22"/><ellipse cx="826" cy="252" rx="22" ry="16"/><ellipse cx="786" cy="266" rx="12" ry="9"/><ellipse cx="838" cy="196" rx="11" ry="8"/></g>`;
+const INK = "#0a0a0a";
+const PAPER = "#e9e1cc";
 
-function plane({ seed, color, groundY, groundAmp, trunk, trunkRun, trees, sky }) {
+/* ---------- the engraved sky ---------- */
+
+/* The sky is ruled like a line engraving: one horizontal line every STEP
+   units, each swelling where the light is stronger until, on the moon, the
+   lines close into a solid disc. Tone comes from line weight alone — the
+   way an etcher renders it — rather than from gradients, which is what made
+   the flat version read as clip art.
+
+   The sky and moon ride in the far plane rather than in CSS: all three
+   planes share one viewBox and one crop, so the front branches cross the
+   moon in the same place on every screen shape. */
+
+const STEP = 4;
+const MOON = { x: 800, y: 228, r: 108 };
+// faint maria: thinner lines inside the disc
+const MARIA = [
+  [-28, -24, 30],
+  [24, 20, 22],
+  [-12, 36, 12],
+];
+
+function light(x, y) {
+  const d = Math.hypot(x - MOON.x, y - MOON.y);
+  if (d < MOON.r) {
+    const inMare = MARIA.some(
+      ([dx, dy, rr]) => Math.hypot(x - MOON.x - dx, y - MOON.y - dy) < rr,
+    );
+    return inMare ? 0.7 : 1;
+  }
+  const base = 0.035 + 0.07 * (y / H) ** 1.6;
+  const glow = 0.62 * Math.exp(-((d / 190) ** 2)) + 0.16 * Math.exp(-((d / 430) ** 2));
+  const mist = 0.13 * Math.exp(-(((y - 700) / 90) ** 2)) * (0.8 + 0.2 * Math.sin(x / 420));
+  return Math.min(1, base + glow + mist);
+}
+
+/** Ramer–Douglas–Peucker: drop points the edge would pass within tol of
+ * anyway. Most of a ruled line barely changes weight, so this is what takes
+ * the sky from over a megabyte to a size a page can carry. */
+function simplify(pts, tol) {
+  if (pts.length < 3) return pts;
+  const [ax, ay] = pts[0];
+  const [bx, by] = pts[pts.length - 1];
+  const len = Math.hypot(bx - ax, by - ay) || 1;
+  let far = 0;
+  let at = 0;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [px, py] = pts[i];
+    const dist = Math.abs((by - ay) * px - (bx - ax) * py + bx * ay - by * ax) / len;
+    if (dist > far) {
+      far = dist;
+      at = i;
+    }
+  }
+  if (far <= tol) return [pts[0], pts[pts.length - 1]];
+  return [...simplify(pts.slice(0, at + 1), tol).slice(0, -1), ...simplify(pts.slice(at), tol)];
+}
+
+function engraving() {
+  const rng = mulberry32(99);
+  const rows = [];
+  for (let y0 = STEP / 2; y0 < H; y0 += STEP) {
+    // a burin never runs perfectly straight
+    const phase = rng() * Math.PI * 2;
+    const top = [];
+    const bot = [];
+    for (let x = -8; x <= W + 8; x += 4) {
+      const y = y0 + 0.6 * Math.sin(x / 300 + phase);
+      const w = Math.max(0.18, light(x, y) * STEP * 1.04);
+      top.push([x, y - w / 2]);
+      bot.push([x, y + w / 2]);
+    }
+    const edge = [...simplify(top, 0.06), ...simplify(bot, 0.06).reverse()];
+    rows.push("M" + edge.map(([x, y]) => `${x} ${y.toFixed(1)}`).join("L") + "Z");
+  }
+  return `<rect width="${W}" height="${H}" fill="${INK}"/><path fill="${PAPER}" d="${rows.join("")}"/>`;
+}
+
+function plane({ seed, groundY, groundAmp, trunk, trunkRun, trees, sky, opacity = 1 }) {
+  const color = INK;
   const rng = mulberry32(seed);
   const paths = [`<path d="${ground(rng, groundY, groundAmp)}" fill="${color}"/>`];
 
@@ -98,14 +173,15 @@ function plane({ seed, color, groundY, groundAmp, trunk, trunkRun, trees, sky })
     }
   }
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice">${sky ? SKY : ""}<g fill="none" stroke="${color}" stroke-linecap="round">${paths.join("")}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice">${sky ? engraving() : ""}<g fill="none" stroke="${color}" stroke-linecap="round"${opacity < 1 ? ` opacity="${opacity}"` : ""}>${paths.join("")}</g></svg>`;
 }
 
-// far: small, many, pale with distance — they sit in the fog
+// far: small, many, pale with distance — they stand in the ruled mist
 const back = plane({
   seed: 7,
   sky: true,
-  color: "#2a3442",
+  // the far trees are inked lighter, so the ruled mist shows through them
+  opacity: 0.55,
   groundY: 800,
   groundAmp: 22,
   trunk: 0.03,
@@ -129,7 +205,6 @@ const back = plane({
 // middle: fewer, taller, kept thin toward the centre so the name reads
 const mid = plane({
   seed: 21,
-  color: "#141a22",
   groundY: 842,
   groundAmp: 26,
   trunk: 0.034,
@@ -147,7 +222,6 @@ const mid = plane({
 // near: four old trees at the edges, leaning in to frame the clearing
 const front = plane({
   seed: 43,
-  color: "#06080b",
   groundY: 884,
   groundAmp: 14,
   trunk: 0.04,

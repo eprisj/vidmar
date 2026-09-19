@@ -30,13 +30,12 @@ const SWARM = fireflies(22);
 export default function Hero() {
   return (
     <section className={styles.root} data-field="dark">
-      {/* the night forest: three generated planes (scripts/forest.mjs) with
-          fog drifting between them; the moon is baked into the far plane */}
+      {/* the night forest as an etching: three generated planes
+          (scripts/forest.mjs); the ruled sky, its mist and the moon are baked
+          into the far plane */}
       <div className={styles.scene} aria-hidden="true">
         <img className={`${styles.plane} ${styles.back}`} src={back.src} alt="" />
-        <span className={`${styles.fog} ${styles.fogFar}`} />
         <img className={`${styles.plane} ${styles.mid}`} src={mid.src} alt="" />
-        <span className={`${styles.fog} ${styles.fogMid}`} />
         <img className={`${styles.plane} ${styles.front}`} src={front.src} alt="" />
       </div>
 
@@ -47,10 +46,8 @@ export default function Hero() {
         </p>
       </div>
 
-      {/* the ground mist rises over the foot of the name, and the fireflies
-          drift in front of everything */}
+      {/* the fireflies drift in front of everything */}
       <div className={styles.near} aria-hidden="true">
-        <span className={`${styles.fog} ${styles.fogGround}`} />
         {SWARM.map((f) => (
           <span key={f.key} className={styles.firefly} style={f.style} />
         ))}

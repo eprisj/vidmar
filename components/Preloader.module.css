@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 200;
   /* the forest's sky, so the curtain lifts onto the same night */
-  background: #090c12;
+  background: #0a0a0a;
   color: #eee6d3;
   display: grid;
   place-items: center;

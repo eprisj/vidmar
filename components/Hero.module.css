@@ -1,7 +1,7 @@
-/* The night forest. Three generated planes (scripts/forest.mjs) stacked with
-   fog between them; the name stands in the clearing and its foot sinks into
-   the ground mist. Colour stays with the brand: blue-black night, bone-pale
-   moon, and gold only in the fireflies. */
+/* The night forest as an etching. Three generated planes
+   (scripts/forest.mjs): a sky ruled in ivory lines that swell toward the moon,
+   trees cut out of it in ink. The name stands in the clearing and its foot
+   thins into the dark. Ink and paper only, gold only in the fireflies. */
 
 .root {
   --ivory: #eee6d3;
@@ -14,7 +14,7 @@
   padding-top: var(--nav-h);
   overflow: hidden;
   /* the sky's top colour, so a plane sinking on scroll never shows an edge */
-  background: #090c12;
+  background: #0a0a0a;
   color: var(--on-dark);
 }
 
@@ -43,58 +43,9 @@
   user-select: none;
 }
 
-.back {
-  opacity: 0.92;
-}
 
-.fog {
-  position: absolute;
-  left: -25%;
-  width: 150%;
-  border-radius: 50%;
-  filter: blur(28px);
-  animation: drift 46s ease-in-out infinite alternate;
-}
 
-.fogFar {
-  bottom: 12%;
-  height: 42%;
-  background: radial-gradient(
-    ellipse at 50% 60%,
-    rgba(150, 166, 188, 0.2),
-    rgba(150, 166, 188, 0.06) 45%,
-    transparent 70%
-  );
-}
-
-.fogMid {
-  bottom: -2%;
-  height: 34%;
-  background: radial-gradient(
-    ellipse at 45% 60%,
-    rgba(160, 174, 194, 0.16),
-    transparent 66%
-  );
-  animation-duration: 34s;
-  animation-direction: alternate-reverse;
-}
-
-/* densest at the foot of the name, not at the page edge */
-.fogGround {
-  bottom: -4%;
-  height: 44%;
-  background: radial-gradient(
-    ellipse at 50% 45%,
-    rgba(176, 188, 206, 0.24),
-    rgba(176, 188, 206, 0.08) 40%,
-    transparent 68%
-  );
-  animation-duration: 28s;
-}
-
-/* the last strip settles into the dark scene below, so there is no seam —
-   long and eased, because the ground mist is at its brightest right here
-   and a short fade left a lit band ending on a hard line */
+/* the last strip settles into the dark scene below, so there is no seam */
 .near::after {
   content: "";
   position: absolute;
@@ -109,14 +60,6 @@
   );
 }
 
-@keyframes drift {
-  from {
-    transform: translateX(-6%);
-  }
-  to {
-    transform: translateX(6%);
-  }
-}
 
 .firefly {
   position: absolute;
@@ -159,6 +102,22 @@
   align-items: center;
   text-align: center;
   margin-bottom: clamp(56px, 11vh, 140px);
+}
+
+/* a clearing in the ruling under the name: the lit mist runs straight
+   through the letters otherwise, and the italic line under it drowns */
+.title::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18% -8%;
+  background: radial-gradient(
+    closest-side,
+    rgba(10, 10, 10, 0.82),
+    rgba(10, 10, 10, 0.55) 55%,
+    transparent
+  );
+  pointer-events: none;
 }
 
 /* Cormorant — the engraved face the layout already loads for exactly this
@@ -324,7 +283,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fog,
   .firefly,
   .word,
   .lede,

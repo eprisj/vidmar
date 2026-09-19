@@ -157,7 +157,7 @@
   isolation: isolate;
   /* the home page's night: dark overhead, lifting toward a moonlit horizon
      so the trees along the foot read as silhouettes */
-  background: linear-gradient(to bottom, #090c12, #151b25 50%, #283243);
+  background: linear-gradient(to bottom, #0a0a0a, #151412 50%, #29261f);
   color: #eee6d3;
   display: flex;
   flex-direction: column;
@@ -200,6 +200,14 @@
     0 0 60px 18px rgba(233, 226, 207, 0.14),
     0 0 180px 70px rgba(233, 226, 207, 0.07);
   pointer-events: none;
+}
+
+/* on short phones the links reach down into the moon's place */
+@media (max-height: 760px) {
+  .menuMoon {
+    width: clamp(70px, 20vw, 110px);
+    bottom: 17%;
+  }
 }
 
 /* trees along the foot, thinning upward into the sky */
@@ -273,7 +281,7 @@
 
 /* the bar joins the menu's sky while it is open, instead of a grey band */
 .isOpen {
-  background: #090c12;
+  background: #0a0a0a;
   border-color: rgba(238, 230, 211, 0.08);
 }
 
