@@ -140,11 +140,12 @@
 }
 
 /* The one place the hand is allowed to speak: the slogan under the mark,
-   never a paragraph. Cormorant stays next in the stack because the face is
-   missing Ї, Є and Ґ — the browser then falls back per glyph, so a missing
-   letter arrives as a serif letter instead of a blank box. The hand runs
-   wider and lighter than a text face, so it is set larger and tracked out
-   rather than dropped into Cormorant's own size. */
+   never a paragraph. Cormorant stays next in the stack as a plain safety
+   net, not as a per-glyph patch — the Ukrainian letters are drawn into the
+   face itself (see layout.tsx), because relying on fallback here is what
+   put upright serif letters inside a cursive word. The hand runs wider and
+   lighter than a text face, so it is set larger and tracked out rather than
+   dropped into Cormorant's own size. */
 .lede {
   margin-top: clamp(18px, 2.4vw, 30px);
   max-width: 26ch;
@@ -153,6 +154,9 @@
   line-height: 1.15;
   letter-spacing: 0.015em;
   color: var(--ash-2);
+  /* the hand is far thinner than the italic that stood here, and it lands on
+     a sky ruled in light lines; without this it frays into the branches */
+  text-shadow: 0 1px 20px rgba(8, 17, 34, 0.9);
   animation: emerge 2.2s var(--ease) 0.85s both;
 }
 

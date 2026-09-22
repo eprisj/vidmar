@@ -18,11 +18,17 @@ const cormorant = Cormorant_Garamond({
 
 /** the hand — slogans and signatures only, never a paragraph.
  *
- * The file ships without the uppercase Ukrainian letters: І was added here
- * (it is the Latin I, glyph for glyph), but Ї, Є and Ґ are still missing, so
- * every rule that reaches for this face keeps Cormorant next in the stack —
- * the browser then falls back per glyph and a slogan degrades to a serif
- * letter instead of an empty box. */
+ * denistina_ua.ttf is a repaired copy. The original is a Latin script face
+ * whose Cyrillic was filled in by someone else: і, ї and є were present but
+ * drawn as upright serif letters, so they never triggered a font fallback —
+ * they simply stood bolt upright in the middle of a cursive word. ґ and the
+ * capitals І Ї Є Ґ were absent outright.
+ *
+ * All eight are now built from the face's own strokes: і/І reuse the Latin
+ * i/I (cursive here, and identical in shape), є/Є are the font's own э/Э
+ * mirrored, ї/Ї carry the diaeresis lifted out of ё, and ґ/Ґ add the upturn
+ * at the point where г's stroke actually ends. Nothing is borrowed from
+ * another typeface, so the line keeps one hand throughout. */
 const denistina = localFont({
   src: "./fonts/denistina_ua.ttf",
   variable: "--font-hand",
