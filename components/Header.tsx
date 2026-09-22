@@ -13,6 +13,7 @@ const nav = [
   { href: "/catalog", label: "Каталог" },
   { href: "/submissions", label: "Авторам" },
   { href: "/journal", label: "Журнал" },
+  { href: "/account", label: "Кабінет" },
 ];
 
 export default function Header() {

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import type { Genre } from "@/lib/content";
-import { getBooks, type Book } from "@/lib/api";
+import { addToCart, ApiError, formatPrice, getBooks, type Book } from "@/lib/api";
+import { useToast } from "./ToastProvider";
 import Reveal from "./Reveal";
 import styles from "./CatalogGrid.module.css";
 
@@ -13,12 +14,26 @@ import styles from "./CatalogGrid.module.css";
  * placeholder; genres with one get a real card instead.
  */
 export default function CatalogGrid({ genres }: { genres: Genre[] }) {
+  const toast = useToast();
   const [active, setActive] = useState<string | null>(null);
   const [books, setBooks] = useState<Book[]>([]);
 
   useEffect(() => {
     getBooks().then(setBooks);
   }, []);
+
+  async function buy(slug: string) {
+    try {
+      await addToCart(slug);
+      toast("додано в кошик");
+    } catch (err) {
+      if (err instanceof ApiError && err.message === "not signed in") {
+        toast("спершу увійдіть у кабінет");
+      } else {
+        toast("не вдалося додати в кошик");
+      }
+    }
+  }
 
   const shown = active ? genres.filter((g) => g.slug === active) : genres;
 
@@ -80,6 +95,21 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
                 <span className={styles.spine} aria-hidden="true" />
                 <span className={styles.cardGenre}>{book.title}</span>
                 {book.author && <span className={`micro ${styles.cardState}`}>{book.author}</span>}
+                {book.price_cents != null && (
+                  <span style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
+                    <span className="micro">{formatPrice(book.price_cents, book.currency)}</span>
+                    <button
+                      type="button"
+                      className="pill"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        buy(book.slug);
+                      }}
+                    >
+                      У кошик
+                    </button>
+                  </span>
+                )}
               </Reveal>
             ));
           })}

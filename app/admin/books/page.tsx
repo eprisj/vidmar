@@ -5,6 +5,7 @@ import {
   ApiError,
   createBook,
   deleteBook,
+  formatPrice,
   listAdminBooks,
   updateBook,
   type AdminBook,
@@ -23,6 +24,8 @@ const EMPTY: BookInput = {
   cover_url: "",
   status: "coming_soon",
   sort_order: 0,
+  price_cents: null,
+  currency: "UAH",
 };
 
 export default function AdminBooksPage() {
@@ -72,6 +75,8 @@ export default function AdminBooksPage() {
       cover_url: book.cover_url || "",
       status: book.status,
       sort_order: book.sort_order,
+      price_cents: book.price_cents,
+      currency: book.currency || "UAH",
     });
   }
 
@@ -194,6 +199,25 @@ export default function AdminBooksPage() {
           <option value="coming_soon">coming_soon (прихована)</option>
           <option value="published">published (видима в каталозі)</option>
         </select>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input
+            type="number"
+            placeholder="ціна, грн (порожньо = ще не в продажу)"
+            value={form.price_cents == null ? "" : form.price_cents / 100}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                price_cents: e.target.value === "" ? null : Math.round(Number(e.target.value) * 100),
+              })
+            }
+            style={{ padding: 8, flex: 1 }}
+          />
+          <input
+            value={form.currency}
+            onChange={(e) => setForm({ ...form, currency: e.target.value })}
+            style={{ padding: 8, width: 70 }}
+          />
+        </div>
         <input
           type="number"
           placeholder="порядок сортування"
@@ -223,6 +247,7 @@ export default function AdminBooksPage() {
             <th>назва</th>
             <th>напрям</th>
             <th>статус</th>
+            <th>ціна</th>
             <th></th>
           </tr>
         </thead>
@@ -233,6 +258,7 @@ export default function AdminBooksPage() {
               <td>{b.title}</td>
               <td>{b.genre_slug}</td>
               <td>{b.status}</td>
+              <td>{b.price_cents == null ? "—" : formatPrice(b.price_cents, b.currency)}</td>
               <td style={{ display: "flex", gap: 6 }}>
                 <button onClick={() => startEdit(b)}>ред.</button>
                 <button
