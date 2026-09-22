@@ -6,6 +6,7 @@ import PageHero from "@/components/PageHero";
 import Reveal from "@/components/Reveal";
 import AuthGate from "@/components/AuthGate";
 import { formatPrice, listMyOrders, type OrderSummary } from "@/lib/api";
+import styles from "@/components/Shop.module.css";
 
 const STATUS_LABEL: Record<string, string> = {
   awaiting_payment: "очікує оплати",
@@ -22,69 +23,83 @@ function Orders() {
   }, []);
 
   if (orders === null) return null;
+
   if (orders.length === 0) {
-    return <p className="body" style={{ opacity: 0.7 }}>Замовлень поки немає.</p>;
+    return (
+      <p className={`body ${styles.note}`}>
+        Замовлень поки немає. Перша книга ще готується – щойно вона з’явиться в{" "}
+        <Link href="/catalog">каталозі</Link>, замовлення будуть тут.
+      </p>
+    );
   }
 
   return (
-    <ul style={{ display: "grid", gap: 10, padding: 0, listStyle: "none" }}>
-      {orders.map((o) => (
-        <li
-          key={o.id}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: 16,
-            border: "1px solid var(--hair-d)",
-            borderRadius: 8,
-            padding: "12px 16px",
-          }}
-        >
-          <span>Замовлення #{o.id}</span>
-          <span>{formatPrice(o.total_cents, o.currency)}</span>
-          <span style={{ opacity: 0.7 }}>{STATUS_LABEL[o.status] || o.status}</span>
-        </li>
-      ))}
-    </ul>
+    <div className={styles.stack}>
+      <ul className={styles.list}>
+        {orders.map((o) => (
+          <li key={o.id} className={styles.row}>
+            <span className={styles.rowName}>Замовлення №{o.id}</span>
+            <span className={styles.rowMeta}>
+              <span>{formatPrice(o.total_cents, o.currency)}</span>
+              <span className={styles.state}>{STATUS_LABEL[o.status] || o.status}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className={`body ${styles.note}`}>
+        Оплата переказом: реквізити ми надсилаємо на вашу пошту після оформлення,
+        а статус тут змінюється, щойно платіж надійде.
+      </p>
+    </div>
   );
 }
 
 export default function AccountPage() {
   return (
     <>
-      <PageHero label="Кабінет" title="Ваш кабінет" variant={2} />
+      <PageHero
+        label="Кабінет"
+        title="Ваш кабінет"
+        lede="Тут живуть ваші замовлення та їхній стан. Поки полиця порожня, акаунт знадобиться, щойно вийде перше видання."
+        variant={2}
+      />
+
       <section className="ink pad" data-field="dark" data-candle="">
         <div className="wrapMax">
-          <Reveal>
-            <span className="micro micro--bright">увійти або зареєструватись</span>
-          </Reveal>
-          <div style={{ marginTop: "clamp(24px,3vw,40px)" }}>
-            <AuthGate>
-              {(user, signOut) => (
-                <div style={{ display: "grid", gap: 32 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                    <p className="body">
-                      Ви увійшли як <strong>{user.name || user.email}</strong>.
-                    </p>
-                    <button type="button" className="pill" onClick={signOut}>
-                      Вийти
-                    </button>
-                  </div>
-
-                  <div>
-                    <span className="micro">ваші замовлення</span>
-                    <div style={{ marginTop: 16 }}>
-                      <Orders />
-                    </div>
-                  </div>
-
-                  <p className="body">
-                    <Link href="/cart">Перейти до кошика →</Link>
-                  </p>
+          <AuthGate
+            aside={
+              <>
+                <p>
+                  Акаунт потрібен тільки для замовлень: він тримає ваш кошик і
+                  показує, на якому етапі кожне замовлення.
+                </p>
+                <p>
+                  Пошта – щоб надіслати реквізити для оплати й підтвердження.
+                  Більше ні для чого: розсилка окрема, і на неї треба
+                  підписатись самому.
+                </p>
+              </>
+            }
+          >
+            {(user, signOut) => (
+              <div className={styles.stack}>
+                <div className={styles.head}>
+                  <Reveal>
+                    <span className="micro micro--bright">{user.name || user.email}</span>
+                  </Reveal>
+                  <button type="button" className={styles.drop} onClick={signOut}>
+                    Вийти
+                  </button>
                 </div>
-              )}
-            </AuthGate>
-          </div>
+
+                <Orders />
+
+                <p className="body">
+                  <Link href="/cart">Перейти до кошика →</Link>
+                </p>
+              </div>
+            )}
+          </AuthGate>
         </div>
       </section>
     </>

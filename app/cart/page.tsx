@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import PageHero from "@/components/PageHero";
-import Reveal from "@/components/Reveal";
 import AuthGate from "@/components/AuthGate";
 import { useToast } from "@/components/ToastProvider";
 import { ApiError, checkout, formatPrice, getCart, removeFromCart, type CartItem } from "@/lib/api";
+import styles from "@/components/Shop.module.css";
 
 function CartContents() {
   const toast = useToast();
@@ -20,36 +21,31 @@ function CartContents() {
 
   if (items === null) return null;
 
-  const total = items.reduce((sum, i) => sum + i.price_cents * i.quantity, 0);
-
   if (items.length === 0) {
-    return <p className="body" style={{ opacity: 0.7 }}>Кошик порожній.</p>;
+    return (
+      <p className={`body ${styles.note}`}>
+        Кошик порожній. Перша книга ще готується – щойно вона з’явиться в{" "}
+        <Link href="/catalog">каталозі</Link>, її можна буде відкласти сюди.
+      </p>
+    );
   }
 
+  const total = items.reduce((sum, i) => sum + i.price_cents * i.quantity, 0);
+
   return (
-    <div style={{ display: "grid", gap: 24, maxWidth: 560 }}>
-      <ul style={{ display: "grid", gap: 10, padding: 0, listStyle: "none" }}>
+    <div className={styles.stack}>
+      <ul className={styles.list}>
         {items.map((i) => (
-          <li
-            key={i.slug}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 16,
-              border: "1px solid var(--hair-d)",
-              borderRadius: 8,
-              padding: "12px 16px",
-            }}
-          >
-            <span>
-              {i.title} × {i.quantity}
+          <li key={i.slug} className={styles.row}>
+            <span className={styles.rowName}>
+              {i.title}
+              {i.quantity > 1 && ` × ${i.quantity}`}
             </span>
-            <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              {formatPrice(i.price_cents * i.quantity, i.currency)}
+            <span className={styles.rowMeta}>
+              <span>{formatPrice(i.price_cents * i.quantity, i.currency)}</span>
               <button
                 type="button"
-                style={{ background: "none", border: "none", color: "var(--on-dark-mute)", cursor: "pointer" }}
+                className={styles.drop}
                 onClick={async () => {
                   await removeFromCart(i.slug);
                   refresh();
@@ -62,30 +58,39 @@ function CartContents() {
         ))}
       </ul>
 
-      <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 600 }}>
+      <div className={`${styles.total} body`}>
         <span>Разом</span>
-        <span>{formatPrice(total, items[0].currency)}</span>
+        <strong>{formatPrice(total, items[0].currency)}</strong>
       </div>
 
-      <button
-        type="button"
-        className="pill pill--solid"
-        disabled={busy}
-        onClick={async () => {
-          setBusy(true);
-          try {
-            await checkout();
-            toast("замовлення оформлено — реквізити для оплати надішлемо на пошту");
-            refresh();
-          } catch (err) {
-            toast(err instanceof ApiError ? err.message : "не вдалося оформити замовлення");
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {busy ? "оформлюємо…" : "Оформити замовлення"}
-      </button>
+      <div className={styles.stack}>
+        <button
+          type="button"
+          className="pill pill--solid"
+          style={{ justifySelf: "start" }}
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              await checkout();
+              toast("замовлення оформлено – реквізити надішлемо на пошту");
+              refresh();
+            } catch (err) {
+              toast(err instanceof ApiError ? err.message : "не вдалося оформити замовлення");
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          {busy ? "оформлюємо…" : "Оформити замовлення"}
+        </button>
+        <p className={`body ${styles.note}`}>
+          Після оформлення ми надішлемо реквізити для переказу на вашу пошту.
+          Картковий платіж просто на сайті з’явиться пізніше – замовлення до того
+          часу чекає в{" "}
+          <Link href="/account">кабінеті</Link> зі станом «очікує оплати».
+        </p>
+      </div>
     </div>
   );
 }
@@ -93,15 +98,31 @@ function CartContents() {
 export default function CartPage() {
   return (
     <>
-      <PageHero label="Кошик" title="Ваш кошик" variant={1} />
+      <PageHero
+        label="Кошик"
+        title="Ваш кошик"
+        lede="Книги, які ви відклали. Оплата поки відбувається переказом – реквізити приходять на пошту після оформлення."
+        variant={1}
+      />
+
       <section className="ink pad" data-field="dark" data-candle="">
         <div className="wrapMax">
-          <Reveal>
-            <span className="micro micro--bright">кошик</span>
-          </Reveal>
-          <div style={{ marginTop: "clamp(24px,3vw,40px)" }}>
-            <AuthGate>{() => <CartContents />}</AuthGate>
-          </div>
+          <AuthGate
+            aside={
+              <>
+                <p>
+                  Кошик прив’язаний до акаунта, тому переживе і закриту вкладку,
+                  і інший пристрій.
+                </p>
+                <p>
+                  Каталог поки порожній: перше видання готується, і кнопка «у
+                  кошик» з’явиться на книзі разом із ціною.
+                </p>
+              </>
+            }
+          >
+            {() => <CartContents />}
+          </AuthGate>
         </div>
       </section>
     </>

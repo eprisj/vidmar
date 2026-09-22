@@ -1,0 +1,159 @@
+/* Shared surface for the two shop pages: the sign-in form (AuthGate) and the
+   rows that carts and order histories are both built out of. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(100%, 380px);
+}
+
+.form input {
+  background: rgba(245, 222, 179, 0.04);
+  border: 1px solid var(--hair-d);
+  border-radius: 6px;
+  color: inherit;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 12px 14px;
+}
+
+.form input::placeholder {
+  color: var(--on-dark-mute);
+}
+
+.form input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.form button {
+  align-self: flex-start;
+}
+
+.error {
+  color: #e69a9a;
+  font-size: 0.9rem;
+}
+
+.switch {
+  background: none;
+  border: none;
+  color: var(--on-dark-mute);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  align-self: flex-start;
+  /* 44px of touch target without 44px of visible link */
+  padding: 12px 0;
+  margin: -12px 0;
+}
+
+.switch:hover {
+  color: var(--on-dark);
+}
+
+/* ---------- page furniture ---------- */
+
+/* the two columns a signed-out shop page wants: the form, and the short
+   explanation of what an account is even for on a site with nothing on the
+   shelf yet */
+.split {
+  display: grid;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: start;
+}
+
+@media (min-width: 720px) {
+  .split {
+    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  }
+}
+
+.aside {
+  color: var(--on-dark-mute);
+  max-width: 44ch;
+  display: grid;
+  gap: 12px;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  width: min(100%, 560px);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  border: 1px solid var(--hair-d);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.rowName {
+  flex: 1 1 14ch;
+}
+
+.rowMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.state {
+  color: var(--on-dark-mute);
+  font-size: 0.85rem;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(100%, 560px);
+  padding-top: 4px;
+}
+
+.drop {
+  background: none;
+  border: none;
+  color: var(--on-dark-mute);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 12px 0;
+  margin: -12px 0;
+}
+
+.drop:hover {
+  color: var(--on-dark);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(100%, 560px);
+}
+
+.stack {
+  display: grid;
+  gap: clamp(28px, 4vw, 44px);
+}
+
+.note {
+  color: var(--on-dark-mute);
+  max-width: 52ch;
+}
