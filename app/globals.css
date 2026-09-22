@@ -52,7 +52,12 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  /* No overflow-x here. It makes the body a scroll container, and iOS Safari
+     then resolves the fixed header against the document instead of the
+     viewport: the bar detached and sat in the middle of the page. Nothing
+     needs the clip either, every wide plate is already cut by its own
+     section's overflow:hidden. If a page ever scrolls sideways, fix the
+     element that overflows rather than putting this back. */
 }
 
 body.is-loading {
