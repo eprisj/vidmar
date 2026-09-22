@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
+import Atmosphere from "@/components/Atmosphere";
 import Reveal from "@/components/Reveal";
 import AuthGate from "@/components/AuthGate";
 import { formatPrice, listMyOrders, type OrderSummary } from "@/lib/api";
@@ -64,8 +65,9 @@ export default function AccountPage() {
         variant={2}
       />
 
-      <section className="ink padS" data-field="dark" data-candle="">
-        <div className="wrapMax">
+      <section className={`ink padS ${styles.scene}`} data-field="dark" data-candle="">
+        <Atmosphere variant={5} watermark={false} />
+        <div className={`wrapMax ${styles.sceneIn}`}>
           <AuthGate
             aside={
               <>

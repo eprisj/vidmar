@@ -68,7 +68,12 @@
 
 @media (min-width: 720px) {
   .split {
-    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+    /* the aside's own text is capped at 44ch, so a `1fr` track here just
+       opened a few hundred pixels of dead grid cell next to it on any wide
+       screen — the form and its two sentences of context, floating in an
+       otherwise-empty box. Bounding the track to what the text can actually
+       use pulls the whole block back into one composed group. */
+    grid-template-columns: minmax(0, 380px) minmax(0, 460px);
   }
 }
 
@@ -156,4 +161,22 @@
 .note {
   color: var(--on-dark-mute);
   max-width: 52ch;
+}
+
+/* ---------- scene wrapper ---------- */
+
+/* The sign-in section used to be flat page-background colour with nothing
+ * else in it — every other dark section on the site carries Atmosphere (the
+ * stone-and-seam texture, gold veins, vignette), so this was the one place
+ * that read as bare rather than moody. It needs its own stacking context so
+ * the full-bleed texture sits behind the form instead of over it. */
+.scene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sceneIn {
+  position: relative;
+  z-index: 1;
 }
