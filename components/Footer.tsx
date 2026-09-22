@@ -12,8 +12,11 @@ export default function Footer() {
             role="img"
             aria-label="ВІДЬМАР"
           />
+          {/* "Бутикове видавництво" is already said twice above the fold —
+              under the wordmark and again as the whole point of the shelf
+              section. Here the line carries only what it publishes. */}
           <p className={styles.tagline}>
-            Бутикове видавництво книг про езотерику, містику й відьомство.
+            Книги про езотерику, містику й відьомство.
           </p>
         </div>
 
@@ -30,13 +33,16 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Two links to one act, and the one labelled "Надіслати рукопис"
+            opened a mail client — walking past the submission form that page
+            actually holds. Both now lead to the form, which carries the
+            conditions and the address anyway. */}
         <div className={styles.col}>
           <h4>Авторам</h4>
           <div className={styles.stack}>
             <Link href="/submissions" prefetch={false}>
-              Умови прийому рукописів
+              Надіслати рукопис
             </Link>
-            <a href={`mailto:${EMAIL}`}>Надіслати рукопис</a>
           </div>
         </div>
 

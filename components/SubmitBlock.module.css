@@ -16,41 +16,11 @@
   pointer-events: none;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 6vw, 90px);
-  align-items: start;
+/* One column now the conditions have gone back to /submissions. Capped so the
+   invitation keeps a readable measure instead of running the full page width. */
+.body {
+  max-width: 52ch;
   margin-top: clamp(28px, 4vw, 50px);
-}
-
-.rules {
-  display: flex;
-  flex-direction: column;
-}
-
-/* a struck mark in the margin instead of a number: the list still reads as
-   three separate conditions without counting them off */
-.rule {
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr);
-  gap: 14px;
-  align-items: baseline;
-  padding-block: 18px;
-  border-top: 1px solid var(--hair-l);
-  font-size: 0.98rem;
-}
-
-.rule::before {
-  content: "";
-  width: 10px;
-  height: 1px;
-  background: var(--gold);
-  transform: translateY(-0.4em);
-}
-
-.rules .rule:last-child {
-  border-bottom: 1px solid var(--hair-l);
 }
 
 .cta {
@@ -61,10 +31,6 @@
 }
 
 @media (max-width: 860px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
   /* 110vw hung two thirds of the stamp off the screen and paid full price
      to paint it; kept whole, it reads as a pressed seal instead of an edge */
   .seal {

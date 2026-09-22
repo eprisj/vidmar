@@ -87,7 +87,10 @@ export const status = [
   {
     n: "03",
     title: "Відкриті до співпраці",
-    body: "На першому етапі розглядаємо максимально готові до друку рукописи – завершені, вичитані й бажано відредаговані.",
+    // The conditions themselves live on /submissions and were being restated
+    // here, in the block below and twice again on that page. This line keeps
+    // only what the other three don't say: that you can write today.
+    body: "Готовий, вичитаний рукопис можна надсилати вже зараз.",
   },
 ];
 
@@ -97,8 +100,11 @@ export const submissionRules = [
   "Разом із рукописом – трохи інформації про себе.",
 ];
 
+/** Sits under the three conditions on /submissions and explains why they are
+ * what they are. The trailing clause used to repeat the conditions it had just
+ * followed, so it now carries only the reason. */
 export const submissionNote =
-  "Поки ми лише формуємо команду, тому глибоку редакторську правку сирих текстів узяти в роботу ще не маємо змоги – на першому етапі йдеться саме про максимально готові до друку рукописи.";
+  "Поки ми лише формуємо команду, тому глибоку редакторську правку сирих текстів узяти в роботу ще не маємо змоги.";
 
 /** The three sections the journal will open with. Nothing is published yet,
  * so the page shows them as what they are — planned, not written. Titles are

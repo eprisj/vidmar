@@ -62,7 +62,13 @@ export default function GenreRows({ genres }: { genres: Genre[] }) {
             onPointerEnter={() => setActive(i)}
           >
             <span className={styles.title}>{g.title}</span>
-            {g.note && <span className="micro">{g.note}</span>}
+            {/* Both main directions carry the same note, and printing
+                "Основний напрям видавництва" twice in a row read as a stutter
+                rather than as emphasis. The label marks where the group
+                starts; the row under it inherits the claim. */}
+            {g.note && g.note !== genres[i - 1]?.note && (
+              <span className="micro">{g.note}</span>
+            )}
             <span className={styles.bar} aria-hidden="true" />
           </Link>
         ))}

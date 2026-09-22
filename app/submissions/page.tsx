@@ -19,7 +19,14 @@ export const metadata: Metadata = pageMeta(
 export default function SubmissionsPage() {
   return (
     <>
-      <PageHero label="Авторам" title="Надіслати рукопис" lede="Ми вже відкриті до співпраці. Поки формуємо команду, розглядаємо максимально готові до друку рукописи." variant={3} />
+      {/* The lede used to restate both the conditions listed directly below it
+          and the caveat that follows them. It now only opens the page. */}
+      <PageHero
+        label="Авторам"
+        title="Надіслати рукопис"
+        lede="Ми відкриті до співпраці й читаємо кожен рукопис, що надходить."
+        variant={3}
+      />
 
       {/* the three conditions, set as large as the page allows */}
       <section className={`ash pad ${styles.rulesScene}`} data-field="light">

@@ -39,27 +39,33 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
 
   return (
     <>
-      <div className={styles.filters} role="group" aria-label="Фільтр за напрямом">
-        <button
-          type="button"
-          className={`${styles.chip} ${active === null ? styles.chipOn : ""}`}
-          onClick={() => setActive(null)}
-        >
-          Усі напрями
-        </button>
-        {genres.map((g) => (
+      {/* While the shelf is empty the filters have nothing to sort: they
+          printed the six directions as chips and the placeholders printed the
+          same six directly underneath, so the page said every genre twice to
+          filter nothing. They come back on their own with the first book. */}
+      {books.length > 0 && (
+        <div className={styles.filters} role="group" aria-label="Фільтр за напрямом">
           <button
-            key={g.slug}
             type="button"
-            className={`${styles.chip} ${active === g.slug ? styles.chipOn : ""}`}
-            style={{ "--tint": g.tint } as React.CSSProperties}
-            onClick={() => setActive(g.slug)}
-            aria-pressed={active === g.slug}
+            className={`${styles.chip} ${active === null ? styles.chipOn : ""}`}
+            onClick={() => setActive(null)}
           >
-            {g.title}
+            Усі напрями
           </button>
-        ))}
-      </div>
+          {genres.map((g) => (
+            <button
+              key={g.slug}
+              type="button"
+              className={`${styles.chip} ${active === g.slug ? styles.chipOn : ""}`}
+              style={{ "--tint": g.tint } as React.CSSProperties}
+              onClick={() => setActive(g.slug)}
+              aria-pressed={active === g.slug}
+            >
+              {g.title}
+            </button>
+          ))}
+        </div>
+      )}
 
       {shown.length === 0 ? (
         <p className={`body ${styles.none}`}>У цьому напрямі поки нічого не заплановано.</p>
