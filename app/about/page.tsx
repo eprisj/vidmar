@@ -88,7 +88,7 @@ export default function AboutPage() {
                 </span>
                 <div>
                   <b>Марія</b>
-                  <span>партнерка, яка колись закохала мене в читання</span>
+                  <span>партнерка</span>
                 </div>
               </div>
             </div>

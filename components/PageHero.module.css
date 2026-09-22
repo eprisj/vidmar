@@ -62,10 +62,13 @@
   animation: focusIn 1.5s var(--ease) both;
 }
 
+/* balance, not wrap: a short lede otherwise leaves its last word alone on a
+   line of its own, which on a hero reads as a mistake rather than a line */
 .lede {
   max-width: 54ch;
   font-size: clamp(0.98rem, 1.3vw, 1.15rem);
   line-height: 1.6;
+  text-wrap: balance;
   color: rgba(245, 222, 179, 0.68);
   animation: focusIn 1.5s var(--ease) 0.2s both;
 }

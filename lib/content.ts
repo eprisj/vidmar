@@ -87,24 +87,16 @@ export const positioning = "Бутикове видавництво особли
 export const focusText =
   "Основний напрям – езотерика, містика, відьомство та духовні практики. Також нам дуже цікаві трилери, психологічні романи, фентезі, містична проза й просто сильні, нестандартні художні тексти – особливо ті, які не завжди легко вписати у звичні рамки великого видавничого ринку.";
 
+/* The "now" block on the home page. It used to carry three rows; two of them
+   said again what the page says right after. "Open to manuscripts" was the
+   SubmitBlock directly below it, word for word in intent, and the note about
+   not taking raw texts is a condition for authors, which /submissions already
+   states where an author reads it. What stays is the one thing nothing else
+   on the page says: the first book is the founder's own. */
 export const status = [
   {
-    n: "01",
     title: "Готуємо перше видання",
     body: "Зараз я готую до випуску власну книгу – це перша робота видавництва.",
-  },
-  {
-    n: "02",
-    title: "Формуємо команду",
-    body: "Ми лише починаємо, тож поки що не маємо змоги брати в роботу сирі тексти, які потребують глибокої редакторської правки.",
-  },
-  {
-    n: "03",
-    title: "Відкриті до співпраці",
-    // The conditions themselves live on /submissions and were being restated
-    // here, in the block below and twice again on that page. This line keeps
-    // only what the other three don't say: that you can write today.
-    body: "Готовий, вичитаний рукопис можна надсилати вже зараз.",
   },
 ];
 
