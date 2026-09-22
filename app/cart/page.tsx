@@ -105,7 +105,7 @@ export default function CartPage() {
         variant={1}
       />
 
-      <section className="ink pad" data-field="dark" data-candle="">
+      <section className="ink padS" data-field="dark" data-candle="">
         <div className="wrapMax">
           <AuthGate
             aside={
