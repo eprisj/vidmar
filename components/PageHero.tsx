@@ -23,7 +23,7 @@ type Props = {
  */
 export default function PageHero({ label, title, lede, variant = 0, children }: Props) {
   return (
-    <ScrollProgress className={styles.root} data-field="dark" data-candle="">
+    <ScrollProgress className={`deep ${styles.root}`} data-field="dark" data-candle="">
       <Atmosphere variant={variant} watermark={false} />
       <div className={styles.ring} aria-hidden="true">
         <Seal star={false} />

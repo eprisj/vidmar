@@ -29,7 +29,7 @@ const SWARM = fireflies(22);
 
 export default function Hero() {
   return (
-    <section className={styles.root} data-field="dark">
+    <section className={`deep ${styles.root}`} data-field="dark">
       {/* the night forest as an etching: three generated planes
           (scripts/forest.mjs); the ruled sky, its mist and the moon are baked
           into the far plane */}

@@ -23,7 +23,7 @@ export default function Home() {
       {/* the dark scene: a real 1883 Doré engraving instead of the
           generated stone-and-smoke every other dark section on the site
           already uses — this is the one place that gets to be a picture */}
-      <ScrollProgress className={styles.scene} data-field="dark" data-candle="">
+      <ScrollProgress className={`deep ${styles.scene}`} data-field="dark" data-candle="">
         <div className={styles.sceneIn}>
           <div className={styles.sceneRing}>
             <Seal star={false} />

@@ -11,6 +11,22 @@
   --ink: #162e59;
   --ink-2: #1d3a6d;
   --ink-deep: #0e1d3a; /* the darker end of every blue gradient */
+
+  /* what Atmosphere's untinted stone actually settles to at its foot —
+     color-mix(--ink-deep 45%, #08111f). Written out because a gradient needs
+     a plain colour to start from; if Atmosphere's mix changes, change this
+     with it, or the hero will step into the field below again. */
+  --ink-abyss: #0b162b;
+
+  /* the blues at zero alpha, for fading a field into its neighbour: a
+     gradient run to `transparent` interpolates through transparent *black*,
+     which greys the middle of the fade */
+  --ink-0: rgba(22, 46, 89, 0);
+  --ink-2-0: rgba(29, 58, 109, 0);
+  --ink-abyss-0: rgba(11, 22, 43, 0);
+
+  /* how far a field takes to settle out of its neighbour's colour */
+  --seam: clamp(120px, 14vw, 260px);
   --ash: #f5deb3;
   --ash-2: #e8cd9c;
 
@@ -141,6 +157,38 @@ ul {
   background-color: var(--ink-2);
   background-image: var(--grain);
   color: var(--on-dark);
+}
+
+/* ---------------- seams between fields ----------------
+
+   Measured on the home page: where one blue field meets another the step is
+   20–31 per channel. That is the worst possible distance — too small to read
+   as a deliberate change of field, too large to go unnoticed, so it lands as
+   a ruled line across the full width. The wheat flips (223) are not touched:
+   that contrast is the point.
+
+   Rather than tagging each boundary by hand, a field that follows a
+   different blue opens in its neighbour's colour and settles into its own
+   over --seam. Adjacent siblings carry it, so any page built later out of
+   the same fields inherits the fix without knowing about it. */
+.deep + .ink,
+.ink + .ink-2,
+.ink-2 + .ink {
+  background-repeat: no-repeat, repeat;
+}
+
+.deep + .ink {
+  background-image: linear-gradient(to bottom, var(--ink-abyss), var(--ink-abyss-0) var(--seam)),
+    var(--grain);
+}
+
+.ink + .ink-2 {
+  background-image: linear-gradient(to bottom, var(--ink), var(--ink-0) var(--seam)), var(--grain);
+}
+
+.ink-2 + .ink {
+  background-image: linear-gradient(to bottom, var(--ink-2), var(--ink-2-0) var(--seam)),
+    var(--grain);
 }
 
 /* ---------------- layout ---------------- */
