@@ -209,17 +209,6 @@
   transform: translateX(14px);
 }
 
-.doorNum {
-  position: absolute;
-  left: clamp(16px, 3vw, 40px);
-  bottom: clamp(16px, 3vw, 36px);
-  font-size: clamp(3rem, 8vw, 7rem);
-  font-weight: 500;
-  letter-spacing: -0.06em;
-  line-height: 0.8;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
-}
 
 @media (max-width: 860px) {
   .p0,

@@ -61,7 +61,7 @@ export default function Header() {
         } ${open ? styles.isOpen : ""}`}
       >
         <div className={`wrapMax ${styles.bar}`}>
-          <Link href="/" className={styles.brand} aria-label="ВІДЬМАР — на головну">
+          <Link href="/" className={styles.brand} aria-label="ВІДЬМАР – на головну">
             <span className={styles.mark} role="img" aria-label="ВІДЬМАР" />
           </Link>
 
@@ -120,10 +120,13 @@ export default function Header() {
               key={item.href}
               href={item.href}
               tabIndex={open ? undefined : -1}
+              /* the panel is hidden with visibility, which still counts as
+                 on-screen to the prefetch observer: closed, it was pulling a
+                 payload for all five routes on every phone visit */
+              prefetch={false}
               style={{ transitionDelay: open ? `${80 + i * 60}ms` : "0ms" }}
               data-on={pathname.startsWith(item.href)}
             >
-              <span className={styles.menuNum}>{String(i + 1).padStart(2, "0")}</span>
               {item.label}
             </Link>
           ))}

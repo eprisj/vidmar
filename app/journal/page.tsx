@@ -7,8 +7,8 @@ import { pageMeta } from "@/lib/seo";
 import styles from "./journal.module.css";
 
 export const metadata: Metadata = pageMeta(
-  "Журнал — ВІДЬМАР",
-  "Журнал видавництва ВІДЬМАР — записи про підготовку першої книги зʼявляться тут ближче до випуску.",
+  "Журнал – ВІДЬМАР",
+  "Журнал видавництва ВІДЬМАР – записи про підготовку першої книги зʼявляться тут ближче до випуску.",
   "/journal",
 );
 
@@ -28,6 +28,8 @@ export default function JournalPage() {
         <img
           className={styles.plateImg}
           src="/vidmar/gravure/macbeth-cave.webp"
+          srcSet="/vidmar/gravure/macbeth-cave-sm.webp 780w, /vidmar/gravure/macbeth-cave.webp 1200w"
+          sizes="100vw"
           alt=""
           aria-hidden="true"
           loading="lazy"
@@ -46,7 +48,6 @@ export default function JournalPage() {
             {journalRubrics.map((title, i) => (
               <Reveal key={title} delay={i * 90}>
                 <article className={styles.rubric}>
-                  <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
                   <div className={styles.rubricBody}>
                     <h2 className={styles.rubricTitle}>{title}</h2>
                     <span className={styles.lines} aria-hidden="true">

@@ -59,7 +59,7 @@ export default function Hero() {
       </div>
 
       <div className={`wrapMax ${styles.foot}`}>
-        <p className="micro">Перше видання — у підготовці</p>
+        <p className="micro">Перше видання – у підготовці</p>
         <span className={styles.cue}>
           <span className="micro">прогорнути вниз</span>
           <span className={styles.cueLine} />

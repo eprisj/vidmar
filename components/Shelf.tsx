@@ -4,7 +4,7 @@ import styles from "./Shelf.module.css";
 
 /**
  * The boutique shelf: one lamp-lit engraving (scripts/shelf.mjs) standing in
- * for the whole "бутикове видавництво" line — a shelf, not a warehouse. The
+ * for the whole "бутикове видавництво" line – a shelf, not a warehouse. The
  * copy sits in the lamp's own pool of light, the one empty column the shelf
  * generator leaves for it.
  */

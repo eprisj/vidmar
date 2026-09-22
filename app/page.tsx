@@ -101,9 +101,8 @@ export default function Home() {
 
           <div className={styles.status}>
             {status.map((s, i) => (
-              <Reveal key={s.n} delay={i * 90}>
+              <Reveal key={s.title} delay={i * 90}>
                 <div className={styles.statusRow}>
-                  <span className={styles.bigNum}>{s.n}</span>
                   <span className={styles.statusTitle}>{s.title}</span>
                   <p className="body">{s.body}</p>
                 </div>

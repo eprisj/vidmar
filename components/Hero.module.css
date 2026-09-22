@@ -267,6 +267,8 @@
     justify-items: center;
     text-align: center;
     gap: 16px;
+    /* 18px put the pill on the home indicator's line */
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
   }
 
   .cue {
@@ -279,6 +281,25 @@
 
   .title {
     margin-bottom: clamp(40px, 8vh, 80px);
+  }
+
+  /* the sky is ruled in ivory lines that brighten toward the moon, and the
+     italic line was set at 74% over exactly that; it disappeared wherever a
+     lit band ran behind it */
+  .lede {
+    font-size: 1.12rem;
+    color: rgba(243, 237, 222, 0.95);
+    text-shadow: 0 1px 16px rgba(8, 8, 8, 0.95);
+  }
+
+  .title::before {
+    inset: -22% -14%;
+    background: radial-gradient(
+      closest-side,
+      rgba(10, 10, 10, 0.92),
+      rgba(10, 10, 10, 0.7) 58%,
+      transparent
+    );
   }
 }
 

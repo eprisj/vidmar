@@ -11,8 +11,8 @@ import { pageMeta } from "@/lib/seo";
 import styles from "./about.module.css";
 
 export const metadata: Metadata = pageMeta(
-  "Про нас — ВІДЬМАР",
-  "ВІДЬМАР — бутикове видавництво книг про езотерику, містику й відьомство. Лист засновника: хто ми, чому починаємо і що робимо.",
+  "Про нас – ВІДЬМАР",
+  "ВІДЬМАР – бутикове видавництво книг про езотерику, містику й відьомство. Лист засновника: хто ми, чому починаємо і що робимо.",
   "/about",
 );
 
@@ -31,7 +31,7 @@ export default function AboutPage() {
       <PageHero
         label="Про нас"
         title="Простір для особливих книг"
-        lede="Починаємо з нуля — вдвох, із любові до читання."
+        lede="Починаємо з нуля – вдвох, із любові до читання."
         variant={1}
       />
 
@@ -109,9 +109,6 @@ export default function AboutPage() {
               <span className={styles.doorArrow} aria-hidden="true">
                 →
               </span>
-            </span>
-            <span className={styles.doorNum} aria-hidden="true">
-              {String(i + 1).padStart(2, "0")}
             </span>
           </Link>
         ))}

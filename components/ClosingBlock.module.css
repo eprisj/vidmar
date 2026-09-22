@@ -27,3 +27,11 @@
   text-align: center;
   gap: clamp(24px, 3.4vw, 42px);
 }
+
+@media (max-width: 760px) {
+  /* 90svh of a phone screen for a heading, a line and a field */
+  .root {
+    min-height: auto;
+    padding-block: 72px;
+  }
+}

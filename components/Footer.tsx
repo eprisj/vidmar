@@ -17,20 +17,25 @@ export default function Footer() {
           </p>
         </div>
 
+        {/* prefetch off throughout: the footer sits at the foot of every
+            page, so its five links pulled a payload for all five routes on
+            every visit — about 300KB a phone spends before it taps anything */}
         <div className={styles.col}>
           <h4>Видавництво</h4>
           <div className={styles.stack}>
-            <Link href="/about">Про нас</Link>
-            <Link href="/genres">Напрями</Link>
-            <Link href="/catalog">Каталог</Link>
-            <Link href="/journal">Журнал</Link>
+            <Link href="/about" prefetch={false}>Про нас</Link>
+            <Link href="/genres" prefetch={false}>Напрями</Link>
+            <Link href="/catalog" prefetch={false}>Каталог</Link>
+            <Link href="/journal" prefetch={false}>Журнал</Link>
           </div>
         </div>
 
         <div className={styles.col}>
           <h4>Авторам</h4>
           <div className={styles.stack}>
-            <Link href="/submissions">Умови прийому рукописів</Link>
+            <Link href="/submissions" prefetch={false}>
+              Умови прийому рукописів
+            </Link>
             <a href={`mailto:${EMAIL}`}>Надіслати рукопис</a>
           </div>
         </div>
@@ -45,11 +50,11 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* the tagline right above already says "Бутикове видавництво" — this
+      {/* the tagline right above already says "Бутикове видавництво" – this
           line carries only what it doesn't: where the publisher stands */}
       <div className={`wrapMax ${styles.legal}`}>
         <span>© 2026 ВІДЬМАР</span>
-        <span>Перше видання — у підготовці</span>
+        <span>Перше видання – у підготовці</span>
       </div>
     </footer>
   );

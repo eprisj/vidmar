@@ -59,9 +59,14 @@
 /* the card back: dark cloth, the house's own heptagram struck in the
    centre — nothing more, the way a real deck's back carries one motif
    repeated rather than a picture of its own */
+/* #0f0d0a on the scene's own near-black read as a hole rather than a card
+   you could turn over: the cloth is lifted and lit from its centre, and the
+   plate line inside the edge is struck in the house's gold */
 .face {
-  background: #0f0d0a;
-  border: 1px solid var(--hair-d);
+  background:
+    radial-gradient(70% 55% at 50% 42%, rgba(201, 162, 75, 0.16), transparent 70%),
+    #1b1710;
+  border: 1px solid rgba(238, 230, 211, 0.3);
   display: grid;
   place-items: center;
 }
@@ -70,7 +75,7 @@
   content: "";
   position: absolute;
   inset: 10px;
-  border: 1px solid rgba(238, 230, 211, 0.14);
+  border: 1px solid rgba(201, 162, 75, 0.34);
   border-radius: 6px;
 }
 
@@ -81,7 +86,7 @@
   display: block;
   width: 62%;
   aspect-ratio: 1;
-  color: rgba(238, 230, 211, 0.5);
+  color: rgba(240, 220, 166, 0.78);
 }
 
 .back {

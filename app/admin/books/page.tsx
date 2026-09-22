@@ -99,7 +99,7 @@ export default function AdminBooksPage() {
   if (!token) {
     return (
       <main style={{ padding: 40, maxWidth: 420, margin: "0 auto", fontFamily: "sans-serif" }}>
-        <h1 style={{ fontSize: 20, marginBottom: 16 }}>Адмін — вхід</h1>
+        <h1 style={{ fontSize: 20, marginBottom: 16 }}>Адмін – вхід</h1>
         <form
           onSubmit={(e) => {
             e.preventDefault();

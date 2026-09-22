@@ -46,9 +46,18 @@
   color: var(--on-dark-mute);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 760px) {
+  /* the section above already ends on 60px of padding; another 64 here read
+     as a gap rather than a break */
+  .root {
+    padding-block: 12px 56px;
+    gap: 28px;
+  }
+
+  /* 4/5 crops so hard that a book is sliced down the middle at the frame's
+     edge; 1/1 keeps whole spines in the picture */
   .plate {
-    aspect-ratio: 4 / 5;
-    object-position: 62% 50%;
+    aspect-ratio: 1 / 1;
+    object-position: 58% 50%;
   }
 }

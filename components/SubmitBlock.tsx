@@ -14,7 +14,7 @@ type Props = {
 /** The call to authors, on ash, with the seal pressed in as a blind stamp. */
 export default function SubmitBlock({
   title = "У вас є готовий рукопис?",
-  text = "На першому етапі ми розглядаємо максимально готові до друку тексти. Надсилайте рукопис та інформацію про себе — будемо знайомитися.",
+  text = "На першому етапі ми розглядаємо максимально готові до друку тексти. Надсилайте рукопис та інформацію про себе – будемо знайомитися.",
   withConditionsLink = true,
 }: Props) {
   return (
@@ -48,9 +48,8 @@ export default function SubmitBlock({
           </Reveal>
           <Reveal delay={100}>
             <div className={styles.rules}>
-              {submissionRules.map((r, i) => (
+              {submissionRules.map((r) => (
                 <div key={r} className={styles.rule}>
-                  <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
                   <span>{r}</span>
                 </div>
               ))}

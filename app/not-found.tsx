@@ -15,7 +15,7 @@ export default function NotFound() {
         </div>
         <div className={styles.copy}>
           <span className={styles.code}>404</span>
-          <p className={styles.text}>Цієї сторінки немає — або вона ще не написана.</p>
+          <p className={styles.text}>Цієї сторінки немає – або вона ще не написана.</p>
           <Link className="pill" href="/">
             На головну
           </Link>

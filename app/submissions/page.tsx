@@ -11,7 +11,7 @@ import { pageMeta } from "@/lib/seo";
 import styles from "./submissions.module.css";
 
 export const metadata: Metadata = pageMeta(
-  "Авторам — ВІДЬМАР",
+  "Авторам – ВІДЬМАР",
   "Умови прийому рукописів у видавництво ВІДЬМАР: що ми шукаємо і як надіслати текст.",
   "/submissions",
 );
@@ -35,7 +35,6 @@ export default function SubmissionsPage() {
             {submissionRules.map((rule, i) => (
               <Reveal key={rule} delay={i * 90}>
                 <div className={styles.rule}>
-                  <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
                   <span className={styles.ruleText}>{rule}</span>
                 </div>
               </Reveal>
@@ -62,7 +61,7 @@ export default function SubmissionsPage() {
             </span>
             <span className="micro">надішліть рукопис прямо тут</span>
             <p className={styles.sendNote}>
-              Короткий опис і кілька слів про себе — повний текст попросимо
+              Короткий опис і кілька слів про себе – повний текст попросимо
               окремо, якщо зацікавимось.
             </p>
             <SubmissionForm />

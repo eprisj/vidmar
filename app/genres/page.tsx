@@ -19,7 +19,7 @@ const tilePlate: Record<string, string> = {
 };
 
 export const metadata = pageMeta(
-  "Напрями — ВІДЬМАР",
+  "Напрями – ВІДЬМАР",
   "Що видає ВІДЬМАР: езотерика, містика, відьомство й духовні практики, трилери, психологічні романи, фентезі та містична проза.",
   "/genres",
 );
@@ -30,7 +30,7 @@ export default function GenresPage() {
       <PageHero
         label="Напрями"
         title="Що ми видаємо"
-        lede="Основний напрям — езотерика, містика, відьомство та духовні практики. Також нам цікаві сильні, нестандартні тексти, яким часом затісно у звичних рамках великого видавничого ринку."
+        lede="Основний напрям – езотерика, містика, відьомство та духовні практики. Також нам цікаві сильні, нестандартні тексти, яким часом затісно у звичних рамках великого видавничого ринку."
         variant={2}
       />
 
@@ -42,6 +42,8 @@ export default function GenresPage() {
         <img
           className={styles.plateImg}
           src="/vidmar/gravure/witches-storm.webp"
+          srcSet="/vidmar/gravure/witches-storm-sm.webp 780w, /vidmar/gravure/witches-storm.webp 1200w"
+          sizes="100vw"
           alt=""
           aria-hidden="true"
           loading="lazy"
@@ -57,6 +59,7 @@ export default function GenresPage() {
             {genres.map((g, i) => (
               <Reveal
                 key={g.slug}
+                id={g.slug}
                 delay={i * 70}
                 className={`${styles.tile} ${g.primary ? styles.tilePrimary : styles.tileSecondary}`}
                 style={{ "--tint": g.tint } as React.CSSProperties}
@@ -64,6 +67,8 @@ export default function GenresPage() {
                 <img
                   className={styles.tilePlate}
                   src={`/vidmar/gravure/${tilePlate[g.slug]}.webp`}
+                  srcSet={`/vidmar/gravure/${tilePlate[g.slug]}-sm.webp 780w, /vidmar/gravure/${tilePlate[g.slug]}.webp 1200w`}
+                  sizes="(max-width: 760px) 100vw, 50vw"
                   alt=""
                   aria-hidden="true"
                   loading="lazy"
@@ -71,7 +76,6 @@ export default function GenresPage() {
                 />
                 <span className={styles.tileScrim} />
                 <span className={styles.accent} />
-                <span className={styles.tileIndex}>{String(i + 1).padStart(2, "0")}</span>
                 <div className={styles.tileIn}>
                   {g.note && <span className="micro">{g.note}</span>}
                   <span className={styles.tileTitle}>{g.title}</span>

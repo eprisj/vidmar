@@ -39,6 +39,8 @@
   align-items: flex-end;
   border: 1px solid var(--hair-d);
   border-radius: 3px;
+  /* the home page links straight at a tile, so it must clear the fixed bar */
+  scroll-margin-top: calc(var(--nav-h) + 16px);
   transition:
     transform 0.5s var(--ease),
     box-shadow 0.5s var(--ease),
@@ -102,24 +104,6 @@
   grid-column: span 3;
   aspect-ratio: 3 / 4;
   padding: clamp(16px, 2vw, 26px);
-}
-
-.tileIndex {
-  position: absolute;
-  z-index: 1;
-  top: clamp(19px, 2.8vw, 44px);
-  right: clamp(16px, 2.4vw, 40px);
-  font-size: clamp(1.1rem, 2vw, 1.6rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.32);
-  transition: color 0.4s var(--ease);
-}
-
-.tile:hover .tileIndex,
-.tile:focus-within .tileIndex {
-  color: var(--gold-hi);
 }
 
 .tileIn {

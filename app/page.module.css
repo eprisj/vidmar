@@ -128,32 +128,15 @@
 
 .statusRow {
   display: grid;
-  grid-template-columns: clamp(90px, 13vw, 190px) minmax(0, 1fr) minmax(0, 1.3fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
   gap: clamp(16px, 3vw, 48px);
-  align-items: center;
+  align-items: baseline;
   padding-block: clamp(18px, 2.4vw, 30px);
   border-top: 1px solid var(--hair-d);
 }
 
 .status .statusRow:last-child {
   border-bottom: 1px solid var(--hair-d);
-}
-
-/* big hollow numerals, the odometer figures of the reference */
-.bigNum {
-  font-size: clamp(3.2rem, 8vw, 7rem);
-  font-weight: 500;
-  letter-spacing: -0.06em;
-  line-height: 0.9;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.42);
-  font-variant-numeric: tabular-nums;
-  transition: color 0.5s var(--ease), -webkit-text-stroke-color 0.5s var(--ease);
-}
-
-.statusRow:hover .bigNum {
-  color: rgba(255, 255, 255, 0.92);
-  -webkit-text-stroke-color: transparent;
 }
 
 .statusTitle {
@@ -170,13 +153,61 @@
 
   .statusRow {
     grid-template-columns: 1fr;
-    row-gap: 10px;
+    row-gap: 8px;
+  }
+}
+
+@media (max-width: 760px) {
+  /* The scene held 110svh for one sentence, and the sentence was capped to a
+     share of the ring's own square, which on a phone is 335px wide. That put
+     the line across the engraving's face, where white on a busy plate is
+     unreadable. The ring goes back to being a mark behind the words; the
+     words get the screen's width and a plate of their own to sit on. */
+  .scene {
+    min-height: auto;
+    padding-block: 76px;
+  }
+
+  .sceneIn {
+    width: min(76vmin, 420px);
   }
 
   .sceneCopy {
-    max-width: 78%;
+    max-width: none;
+    width: 84vw;
+    padding: 26px 20px;
   }
 
+  .sceneCopy::before {
+    content: "";
+    position: absolute;
+    inset: -6% -10%;
+    z-index: -1;
+    background: radial-gradient(
+      closest-side,
+      rgba(8, 8, 8, 0.9),
+      rgba(8, 8, 8, 0.66) 62%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  .sceneText {
+    font-size: 1.32rem;
+  }
+
+  /* the full plate is 1200px wide and 631KB, for a background a phone never
+     shows more than 780px of */
+  .scene::before {
+    background-image:
+      radial-gradient(60% 55% at 50% 38%, rgba(10, 10, 10, 0.15) 0%, rgba(10, 10, 10, 0.82) 100%),
+      url("/vidmar/gravure/death-moon-sm.webp");
+  }
+
+  .letterLit {
+    font-size: 1.85rem;
+    max-width: none;
+  }
 }
 
 /* ---------- card of the day ---------- */

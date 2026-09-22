@@ -71,7 +71,9 @@
   font-size: 0.6rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #58627d;
+  /* was #58627d: a stray blue in a monochrome-and-gold house, and 2.8:1
+     against the ink under it */
+  color: var(--on-dark-mute);
 }
 
 @media (max-width: 860px) {
@@ -81,11 +83,18 @@
 }
 
 @media (max-width: 520px) {
+  /* fully stacked, the four blocks ran the footer past a full phone screen.
+     The two short link lists sit side by side instead; the wordmark and the
+     address keep the full width because neither shortens well */
   .grid {
-    grid-template-columns: 1fr;
-    /* stacked to one column, the columns' own gap reads as row spacing —
-       too tight once everything is vertical instead of side by side */
-    row-gap: 40px;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 34px;
+    column-gap: 20px;
+  }
+
+  .col:first-child,
+  .col:last-child {
+    grid-column: 1 / -1;
   }
 
   /* the footer was set at the same scale as a desktop sidebar shrunk to
@@ -102,12 +111,20 @@
   }
 
   .col h4 {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     margin-bottom: 20px;
   }
 
+  /* the links were 25px tall stacked at a 16px gap; the gap is what the
+     thumb misses, so the target is carried by the link itself */
   .stack {
-    gap: 16px;
+    gap: 2px;
+  }
+
+  .col a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   .big {
@@ -115,6 +132,6 @@
   }
 
   .legal {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
   }
 }

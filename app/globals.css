@@ -381,6 +381,54 @@ ul {
   }
 }
 
+/* ---------------- phone ---------------- */
+
+/* The whole labelling layer is set at 0.6rem, which renders 9.6px. Tracked
+   uppercase has no lowercase shapes to recognise a word by, so it needs the
+   11px floor to survive at arm's length; the controls grow to a 44px target
+   with it. */
+@media (max-width: 760px) {
+  .micro {
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+  }
+
+  .pill {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    padding: 14px 22px;
+    min-height: 48px;
+  }
+
+  /* the rule under the word has to stay on the word, so the target is grown
+     with a pseudo-element rather than by making the bordered box 44px tall */
+  .link {
+    position: relative;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+  }
+
+  .link::after {
+    content: "";
+    position: absolute;
+    inset: -13px -10px;
+  }
+
+  .body {
+    font-size: 0.95rem;
+  }
+
+  /* each section wrapped one sentence in most of a screen of padding, which
+     is what ran the home page to ten screens on a phone */
+  .pad {
+    padding-block: 60px;
+  }
+
+  .padS {
+    padding-block: 36px;
+  }
+}
+
 /* ---------------- candle ---------------- */
 
 /* a warm glow that trails the pointer across dark sections (CandleLight.tsx

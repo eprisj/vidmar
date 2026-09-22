@@ -20,7 +20,7 @@ export default function Subscribe() {
         try {
           await subscribe(email);
           setEmail("");
-          toast("готово — ви в списку");
+          toast("готово – ви в списку");
         } catch {
           toast("не вдалося підписати, спробуйте пізніше");
         } finally {

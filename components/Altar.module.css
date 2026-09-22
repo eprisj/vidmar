@@ -97,9 +97,21 @@
   color: var(--on-dark-mute);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 760px) {
+  .root {
+    padding-block: 12px 56px;
+    gap: 28px;
+  }
+
+  /* the plate is mostly ruled sky with the altar along its foot; at 4/5 the
+     empty half filled a phone screen on its own */
   .plate {
-    aspect-ratio: 4 / 5;
-    object-position: 38% 62%;
+    aspect-ratio: 1 / 1;
+    object-position: 42% 78%;
+  }
+
+  .circle {
+    width: 76vw;
+    height: 118px;
   }
 }

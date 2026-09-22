@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { Genre } from "@/lib/content";
 import Atmosphere from "./Atmosphere";
@@ -53,17 +54,17 @@ export default function GenreRows({ genres }: { genres: Genre[] }) {
     <>
       <div className={styles.list} onPointerLeave={() => setActive(null)}>
         {genres.map((g, i) => (
-          <div
+          <Link
             key={g.slug}
+            href={`/genres#${g.slug}`}
             className={`${styles.row} ${active === i ? styles.rowOn : ""}`}
             style={{ "--tint": g.tint } as CSSProperties}
             onPointerEnter={() => setActive(i)}
           >
-            <span className={styles.index}>{String(i + 1).padStart(2, "0")}</span>
             <span className={styles.title}>{g.title}</span>
             {g.note && <span className="micro">{g.note}</span>}
             <span className={styles.bar} aria-hidden="true" />
-          </div>
+          </Link>
         ))}
       </div>
 
