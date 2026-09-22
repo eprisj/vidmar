@@ -28,7 +28,7 @@ export default function JournalPage() {
         <img
           className={styles.plateImg}
           src="/vidmar/gravure/macbeth-cave.webp"
-          srcSet="/vidmar/gravure/macbeth-cave-sm.webp 780w, /vidmar/gravure/macbeth-cave.webp 1200w"
+          srcSet="/vidmar/gravure/macbeth-cave-sm.webp 780w, /vidmar/gravure/macbeth-cave.webp 1174w"
           sizes="100vw"
           alt=""
           aria-hidden="true"

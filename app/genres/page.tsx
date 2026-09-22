@@ -18,6 +18,17 @@ const tilePlate: Record<string, string> = {
   "mistyka-proza": "witches-storm",
 };
 
+/** Natural widths, needed for the srcSet descriptor: the plates are scans of
+ * different sizes, and three were cropped in from their paper margins. */
+const plateWidth: Record<string, number> = {
+  "mystique-forest": 900,
+  "macbeth-cave": 1174,
+  bluebeard: 900,
+  "death-moon": 1200,
+  "fantasy-giant": 900,
+  "witches-storm": 1138,
+};
+
 export const metadata = pageMeta(
   "Напрями – ВІДЬМАР",
   "Що видає ВІДЬМАР: езотерика, містика, відьомство й духовні практики, трилери, психологічні романи, фентезі та містична проза.",
@@ -42,7 +53,7 @@ export default function GenresPage() {
         <img
           className={styles.plateImg}
           src="/vidmar/gravure/witches-storm.webp"
-          srcSet="/vidmar/gravure/witches-storm-sm.webp 780w, /vidmar/gravure/witches-storm.webp 1200w"
+          srcSet="/vidmar/gravure/witches-storm-sm.webp 780w, /vidmar/gravure/witches-storm.webp 1138w"
           sizes="100vw"
           alt=""
           aria-hidden="true"
@@ -67,7 +78,7 @@ export default function GenresPage() {
                 <img
                   className={styles.tilePlate}
                   src={`/vidmar/gravure/${tilePlate[g.slug]}.webp`}
-                  srcSet={`/vidmar/gravure/${tilePlate[g.slug]}-sm.webp 780w, /vidmar/gravure/${tilePlate[g.slug]}.webp 1200w`}
+                  srcSet={`/vidmar/gravure/${tilePlate[g.slug]}-sm.webp 780w, /vidmar/gravure/${tilePlate[g.slug]}.webp ${plateWidth[tilePlate[g.slug]]}w`}
                   sizes="(max-width: 760px) 100vw, 50vw"
                   alt=""
                   aria-hidden="true"
