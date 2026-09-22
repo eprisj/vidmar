@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
+
+/** The admin pages are client components, so they could not name themselves and
+ * inherited the site-wide title while staying indexable like any other page. */
+export const metadata: Metadata = {
+  title: "Адміністрування – ВІДЬМАР",
+  robots: { index: false, follow: false },
+};
 
 const tabs = [
   { href: "/admin/books", label: "Книги" },

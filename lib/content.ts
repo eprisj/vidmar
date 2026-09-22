@@ -55,6 +55,20 @@ export const genres: Genre[] = [
   },
 ];
 
+/**
+ * Whether this genre should print its note.
+ *
+ * Both main directions carry the same one, and printing "Основний напрям
+ * видавництва" under each in turn read as a stutter rather than as emphasis —
+ * on the home page, and again on /genres where the tiles are already cut
+ * larger to say the same thing. The label marks where the group starts; what
+ * follows it inherits the claim.
+ */
+export function showsNote(list: Genre[], i: number): boolean {
+  const note = list[i]?.note;
+  return Boolean(note) && note !== list[i - 1]?.note;
+}
+
 /** The founder's own letter — used near-verbatim on the about page and in
  * excerpt form on the home page. Keep the voice; only line-break into
  * paragraphs for the layout. */

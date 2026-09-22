@@ -1,7 +1,7 @@
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import SubmitBlock from "@/components/SubmitBlock";
-import { genres } from "@/lib/content";
+import { genres, showsNote } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./genres.module.css";
 
@@ -88,7 +88,7 @@ export default function GenresPage() {
                 <span className={styles.tileScrim} />
                 <span className={styles.accent} />
                 <div className={styles.tileIn}>
-                  {g.note && <span className="micro">{g.note}</span>}
+                  {showsNote(genres, i) && <span className="micro">{g.note}</span>}
                   <span className={styles.tileTitle}>{g.title}</span>
                 </div>
               </Reveal>
@@ -99,7 +99,7 @@ export default function GenresPage() {
 
       <SubmitBlock
         title="Впізнали свій текст серед цих напрямів?"
-        text="Надсилайте рукопис та кілька слів про себе – будемо знайомитися."
+        text="Надсилайте його та кілька слів про себе – будемо знайомитися."
       />
     </>
   );
