@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { genres } from "@/lib/content";
-import { ApiError, submitManuscript } from "@/lib/api";
+import { apiMessage, submitManuscript } from "@/lib/api";
 import styles from "./SubmissionForm.module.css";
 
 export default function SubmissionForm() {
@@ -12,7 +12,7 @@ export default function SubmissionForm() {
   if (status === "done") {
     return (
       <p className={`body ${styles.done}`}>
-        Дякуємо! Ми отримали ваш рукопис і напишемо, коли ознайомимось.
+        Дякуємо! Лист у нас – ми прочитаємо і відповімо на вашу пошту.
       </p>
     );
   }
@@ -36,7 +36,7 @@ export default function SubmissionForm() {
           });
           setStatus("done");
         } catch (err) {
-          setError(err instanceof ApiError ? err.message : "щось пішло не так, спробуйте ще раз");
+          setError(apiMessage(err));
           setStatus("error");
         }
       }}

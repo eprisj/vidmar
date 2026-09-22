@@ -5,7 +5,7 @@ import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import AuthGate from "@/components/AuthGate";
 import { useToast } from "@/components/ToastProvider";
-import { ApiError, checkout, formatPrice, getCart, removeFromCart, type CartItem } from "@/lib/api";
+import { apiMessage, checkout, formatPrice, getCart, removeFromCart, type CartItem } from "@/lib/api";
 import styles from "@/components/Shop.module.css";
 
 function CartContents() {
@@ -76,7 +76,7 @@ function CartContents() {
               toast("замовлення оформлено – реквізити надішлемо на пошту");
               refresh();
             } catch (err) {
-              toast(err instanceof ApiError ? err.message : "не вдалося оформити замовлення");
+              toast(apiMessage(err, "не вдалося оформити замовлення"));
             } finally {
               setBusy(false);
             }

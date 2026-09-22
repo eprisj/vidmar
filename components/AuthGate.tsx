@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ApiError, getMe, login, logout, register, type User } from "@/lib/api";
+import { apiMessage, getMe, login, logout, register, type User } from "@/lib/api";
 import { useToast } from "./ToastProvider";
 import Reveal from "./Reveal";
 import styles from "./Shop.module.css";
@@ -54,7 +54,7 @@ export default function AuthGate({ aside, children }: Props) {
       setUser(account);
       toast(mode === "login" ? "з поверненням" : "акаунт створено");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "щось пішло не так, спробуйте ще раз");
+      setError(apiMessage(err));
     } finally {
       setBusy(false);
     }

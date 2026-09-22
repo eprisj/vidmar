@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Genre } from "@/lib/content";
-import { addToCart, ApiError, formatPrice, getBooks, type Book } from "@/lib/api";
+import { addToCart, apiMessage, formatPrice, getBooks, type Book } from "@/lib/api";
 import { useToast } from "./ToastProvider";
 import Reveal from "./Reveal";
 import styles from "./CatalogGrid.module.css";
@@ -25,13 +25,11 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
   async function buy(slug: string) {
     try {
       await addToCart(slug);
-      toast("додано в кошик");
+      // the cart has no nav entry of its own; without this the reader is
+      // told the book landed somewhere and not where that somewhere is
+      toast("додано в кошик – він у вашому кабінеті");
     } catch (err) {
-      if (err instanceof ApiError && err.message === "not signed in") {
-        toast("спершу увійдіть у кабінет");
-      } else {
-        toast("не вдалося додати в кошик");
-      }
+      toast(apiMessage(err, "не вдалося додати в кошик"));
     }
   }
 

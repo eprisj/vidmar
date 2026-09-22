@@ -220,3 +220,28 @@ export function formatPrice(cents: number, currency: string) {
     cents / 100,
   );
 }
+
+// --- error messages ------------------------------------------------------
+
+/** The API answers in English ("not signed in", "invalid email or password"),
+ * and the forms printed `err.message` straight to the reader, so a Ukrainian
+ * site could answer an author in English. */
+const MESSAGES: Record<string, string> = {
+  "not signed in": "спершу увійдіть у кабінет",
+  "invalid email": "перевірте адресу пошти",
+  "invalid email or password": "невірна пошта або пароль",
+  "email already registered": "ця пошта вже зареєстрована",
+  "password too short": "пароль закороткий – мінімум 8 символів",
+  "too many requests": "забагато спроб – спробуйте за кілька хвилин",
+  "cart is empty": "кошик порожній",
+  "name, email and note are required": "заповніть імʼя, пошту й кілька слів про рукопис",
+};
+
+/**
+ * A Ukrainian line for an API failure. Anything the table doesn't know falls
+ * back to `fallback` rather than leaking the server's own English wording.
+ */
+export function apiMessage(err: unknown, fallback = "щось пішло не так, спробуйте ще раз"): string {
+  if (!(err instanceof ApiError)) return fallback;
+  return MESSAGES[err.message] ?? fallback;
+}

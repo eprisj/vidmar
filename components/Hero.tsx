@@ -64,8 +64,13 @@ export default function Hero() {
           <span className="micro">прогорнути вниз</span>
           <span className={styles.cueLine} />
         </span>
-        <Link className={`pill ${styles.cta}`} href="/submissions">
-          Надіслати рукопис
+        {/* The call to authors has its own section further down, with the
+            heading that asks the question; repeating it here made the home
+            page carry the same button twice. The hero opens the site
+            instead — and on narrow screens, where the scroll cue is hidden,
+            this is the only thing to press. */}
+        <Link className={`pill ${styles.cta}`} href="/genres">
+          Що ми видаємо
         </Link>
       </div>
     </section>
