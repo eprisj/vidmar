@@ -1,4 +1,10 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "https://vidmar-api.munister.com.ua";
+/* The API answers on the site's own domain. It used to live under
+   munister.com.ua, which left accounts, the cart and checkout on the new
+   domain depending on the old one; that host still answers, so it stays a
+   way back if this one ever fails. Auth travels as a Bearer header, not a
+   cookie, so moving the hostname does not touch anyone's session. */
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE ?? "https://api.vidmar.com.ua";
 
 export class ApiError extends Error {}
 
