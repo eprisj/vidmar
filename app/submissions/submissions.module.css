@@ -13,7 +13,7 @@
   width: min(70vw, 860px);
   aspect-ratio: 1;
   transform: translateY(-50%);
-  color: rgba(36, 36, 36, 0.08);
+  color: rgba(22, 46, 89, 0.08);
   pointer-events: none;
 }
 
@@ -72,7 +72,7 @@
 .sendRing {
   position: absolute;
   inset: 0;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(245, 222, 179, 0.55);
   transform: rotate(calc(var(--p, 0.5) * 140deg - 70deg)) scale(calc(0.8 + var(--in, 1) * 0.2));
 }
 
@@ -92,7 +92,7 @@
   position: relative;
   width: clamp(40px, 5vw, 56px);
   aspect-ratio: 1;
-  color: #fff;
+  color: var(--on-dark);
 }
 
 .email {
@@ -100,7 +100,7 @@
   font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1.1;
-  color: #fff;
+  color: var(--on-dark);
   overflow-wrap: normal;
   background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
   transition: background-size 0.6s var(--ease);
@@ -114,7 +114,7 @@
   max-width: 34ch;
   font-size: 0.95rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.66);
+  color: rgba(245, 222, 179, 0.66);
 }
 
 @media (max-width: 760px) {

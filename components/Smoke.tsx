@@ -65,8 +65,9 @@ void main() {
   smoke *= smoothstep(1.05, 0.15, uv.y);
   vec2 d = (uv - u_src) * vec2(1.3, 1.0);
   float glow = exp(-dot(d, d) * 5.5);
-  // cool grey smoke; the warm tint lives only in the light under it
-  vec3 col = vec3(0.86, 0.88, 0.9) * smoke * 0.34
+  // wheat-lit smoke: the house has no neutral grey, so the body of the
+  // smoke carries the paper colour and the tint stays in the light under it
+  vec3 col = vec3(0.96, 0.87, 0.70) * smoke * 0.34
            + u_tint * glow * (0.07 + smoke * 0.55);
   gl_FragColor = vec4(col * u_int, 1.0);
 }

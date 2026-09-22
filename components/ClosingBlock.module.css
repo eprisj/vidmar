@@ -13,7 +13,7 @@
   top: 50%;
   width: min(120vmin, 1100px);
   aspect-ratio: 1;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(245, 222, 179, 0.5);
   transform: translate(-50%, -50%) rotate(calc(var(--p, 0.5) * -90deg));
   pointer-events: none;
 }

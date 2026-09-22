@@ -24,7 +24,7 @@
   width: 78%;
   height: 28px;
   transform: translateX(-50%);
-  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), transparent 75%);
+  background: radial-gradient(closest-side, rgba(8, 17, 34, 0.55), transparent 75%);
 }
 
 .stage.open {
@@ -40,7 +40,7 @@
   transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
   transform: rotateY(0deg);
   border-radius: 10px;
-  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 30px 60px -24px rgba(8, 17, 34, 0.7);
 }
 
 .open .card {
@@ -59,14 +59,14 @@
 /* the card back: dark cloth, the house's own heptagram struck in the
    centre — nothing more, the way a real deck's back carries one motif
    repeated rather than a picture of its own */
-/* #0f0d0a on the scene's own near-black read as a hole rather than a card
-   you could turn over: the cloth is lifted and lit from its centre, and the
-   plate line inside the edge is struck in the house's gold */
+/* A card has to sit above the scene, not be a hole cut in it: the face is
+   lifted a step off --ink-deep behind it and lit from its own centre, with
+   the plate line inside the edge struck in the house's gold. */
 .face {
   background:
     radial-gradient(70% 55% at 50% 42%, rgba(201, 162, 75, 0.16), transparent 70%),
-    #1b1710;
-  border: 1px solid rgba(238, 230, 211, 0.3);
+    #1a3057;
+  border: 1px solid rgba(245, 222, 179, 0.3);
   display: grid;
   place-items: center;
 }
@@ -91,7 +91,7 @@
 
 .back {
   transform: rotateY(180deg);
-  background: #16130a;
+  background: var(--ink);
   border: 1px solid var(--hair-d);
 }
 
@@ -116,10 +116,10 @@
 }
 
 .name {
-  font-family: var(--font-literata), "Georgia", serif;
+  font-family: var(--font-cormorant), "Georgia", serif;
   font-size: clamp(1.3rem, 2.2vw, 1.7rem);
   font-weight: 500;
-  color: #fff;
+  color: var(--on-dark);
 }
 
 .meaning,

@@ -11,7 +11,7 @@
   font-family: var(--font-golos), sans-serif;
   display: inline-block;
   background: var(--gold);
-  color: #16130a;
+  color: var(--ink);
   padding: 13px 24px;
   border-radius: 999px;
   font-size: 0.625rem;

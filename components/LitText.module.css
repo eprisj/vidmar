@@ -3,7 +3,7 @@
 }
 
 .word {
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(245, 222, 179, 0.2);
   transition: color 0.5s var(--ease);
 }
 

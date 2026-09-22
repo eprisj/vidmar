@@ -63,7 +63,7 @@
   border-radius: 3px;
   background:
     linear-gradient(90deg, transparent 0%, rgba(240, 220, 166, 0.28) 50%, transparent 100%) -60% 0 / 50% 100% no-repeat,
-    rgba(255, 255, 255, 0.07);
+    rgba(245, 222, 179, 0.07);
   animation: sweep 3.6s var(--ease) infinite;
 }
 

@@ -28,13 +28,13 @@
 }
 
 .chipOn {
-  color: #16130a;
+  color: var(--ink);
   background: color-mix(in srgb, var(--tint, var(--gold)) 78%, white 22%);
   border-color: transparent;
 }
 
 .chipOn:hover {
-  color: #16130a;
+  color: var(--ink);
 }
 
 .none {

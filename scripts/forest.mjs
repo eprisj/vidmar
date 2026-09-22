@@ -70,8 +70,8 @@ function ground(rng, y, amp) {
   return `${d}L${W} ${H}Z`;
 }
 
-const INK = "#0a0a0a";
-const PAPER = "#e9e1cc";
+const INK = "#0e1d3a";
+const PAPER = "#f5deb3";
 
 /* ---------- the engraved sky ---------- */
 

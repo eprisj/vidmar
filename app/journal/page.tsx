@@ -27,8 +27,8 @@ export default function JournalPage() {
       <section className={`ink ${styles.plate}`} data-field="dark">
         <img
           className={styles.plateImg}
-          src="/vidmar/gravure/macbeth-cave.webp"
-          srcSet="/vidmar/gravure/macbeth-cave-sm.webp 780w, /vidmar/gravure/macbeth-cave.webp 1174w"
+          src="/gravure/macbeth-cave.webp"
+          srcSet="/gravure/macbeth-cave-sm.webp 780w, /gravure/macbeth-cave.webp 1174w"
           sizes="100vw"
           alt=""
           aria-hidden="true"

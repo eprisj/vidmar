@@ -52,8 +52,8 @@ export default function GenresPage() {
       <section className={`ink ${styles.plate}`} data-field="dark">
         <img
           className={styles.plateImg}
-          src="/vidmar/gravure/witches-storm.webp"
-          srcSet="/vidmar/gravure/witches-storm-sm.webp 780w, /vidmar/gravure/witches-storm.webp 1138w"
+          src="/gravure/witches-storm.webp"
+          srcSet="/gravure/witches-storm-sm.webp 780w, /gravure/witches-storm.webp 1138w"
           sizes="100vw"
           alt=""
           aria-hidden="true"
@@ -77,8 +77,8 @@ export default function GenresPage() {
               >
                 <img
                   className={styles.tilePlate}
-                  src={`/vidmar/gravure/${tilePlate[g.slug]}.webp`}
-                  srcSet={`/vidmar/gravure/${tilePlate[g.slug]}-sm.webp 780w, /vidmar/gravure/${tilePlate[g.slug]}.webp ${plateWidth[tilePlate[g.slug]]}w`}
+                  src={`/gravure/${tilePlate[g.slug]}.webp`}
+                  srcSet={`/gravure/${tilePlate[g.slug]}-sm.webp 780w, /gravure/${tilePlate[g.slug]}.webp ${plateWidth[tilePlate[g.slug]]}w`}
                   sizes="(max-width: 760px) 100vw, 50vw"
                   alt=""
                   aria-hidden="true"

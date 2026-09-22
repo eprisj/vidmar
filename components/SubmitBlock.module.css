@@ -12,7 +12,7 @@
   width: min(62vw, 760px);
   aspect-ratio: 1;
   transform: translateY(-50%);
-  color: rgba(36, 36, 36, 0.09);
+  color: rgba(22, 46, 89, 0.09);
   pointer-events: none;
 }
 

@@ -20,7 +20,7 @@
 .ring {
   position: absolute;
   inset: 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(245, 222, 179, 0.5);
   animation: turn 120s linear infinite;
 }
 
@@ -38,7 +38,7 @@
   text-align: center;
   gap: clamp(16px, 2.4vw, 26px);
   max-width: 70%;
-  color: #fff;
+  color: var(--on-dark);
 }
 
 .code {
@@ -47,13 +47,13 @@
   letter-spacing: -0.07em;
   line-height: 0.82;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+  -webkit-text-stroke: 1px rgba(245, 222, 179, 0.6);
 }
 
 .text {
   font-size: clamp(1rem, 1.6vw, 1.3rem);
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(245, 222, 179, 0.72);
   text-wrap: balance;
 }
 

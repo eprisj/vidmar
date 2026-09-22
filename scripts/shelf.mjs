@@ -21,9 +21,9 @@ function mulberry32(seed) {
 }
 
 const r = (n) => Math.round(n);
-const INK = "#0a0a0a";
-const PAPER = "#e9e1cc";
-const GOLD = "#c9a24b";
+const INK = "#0e1d3a";
+const PAPER = "#f5deb3";
+const GOLD = "#c9a961";
 
 /* ---------- the wall: ruled like the sky, lit from one lamp ---------- */
 /* Same burin-ruling as the forest's sky, but the light comes from a single

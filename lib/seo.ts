@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 
-/** The site lives on a sub-path, so card and canonical URLs are written out in
- * full — a leading-slash path would resolve against the domain root and drop
- * the /vidmar segment. */
-export const SITE_URL = "https://munister.com.ua/vidmar";
+export const SITE_URL = "https://vidmar.com.ua";
 
 const OG_IMAGE = {
   url: `${SITE_URL}/og.jpg`,

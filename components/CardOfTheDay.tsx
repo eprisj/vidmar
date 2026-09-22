@@ -39,7 +39,7 @@ export default function CardOfTheDay() {
           <span className={styles.back}>
             <img
               className={styles.img}
-              src={`/vidmar/tarot/${card.file}.webp`}
+              src={`/tarot/${card.file}.webp`}
               alt=""
               aria-hidden="true"
               loading="lazy"

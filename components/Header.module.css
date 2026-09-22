@@ -26,18 +26,18 @@
   position: absolute;
   inset: 0 0 auto 0;
   height: calc(var(--nav-h) * 2);
-  background: linear-gradient(to bottom, rgba(6, 6, 6, 0.55), rgba(6, 6, 6, 0) 100%);
+  background: linear-gradient(to bottom, rgba(8, 17, 34, 0.55), rgba(8, 17, 34, 0) 100%);
   pointer-events: none;
 }
 
 .solid {
-  background: rgba(22, 22, 22, 0.86);
+  background: rgba(22, 46, 89, 0.86);
   backdrop-filter: blur(16px);
   border-color: var(--hair-d);
 }
 
 .solid.onPage {
-  background: rgba(235, 239, 238, 0.88);
+  background: rgba(245, 222, 179, 0.88);
   border-color: var(--hair-l);
 }
 
@@ -64,8 +64,8 @@
   display: block;
   width: var(--w);
   height: calc(var(--w) / 3.983);
-  -webkit-mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
-  mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
+  -webkit-mask: url("/logo-mark.png") center / contain no-repeat;
+  mask: url("/logo-mark.png") center / contain no-repeat;
   background-color: currentColor;
 }
 
@@ -94,11 +94,11 @@
    .mark is a masked background, not text, so it takes a drop-shadow instead */
 .root:not(.solid):not(.onPage) .nav a,
 .root:not(.solid):not(.onPage) .contact {
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 1px 10px rgba(8, 17, 34, 0.85);
 }
 
 .root:not(.solid):not(.onPage) .mark {
-  filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.85));
+  filter: drop-shadow(0 1px 8px rgba(8, 17, 34, 0.85));
 }
 
 .onPage .nav a {
@@ -157,7 +157,7 @@
 .contact:hover {
   background: var(--gold);
   border-color: var(--gold);
-  color: #16130a;
+  color: var(--ink);
 }
 
 /* the hit area is the button, not the two rules drawn inside it: at 24x32
@@ -191,8 +191,8 @@
   isolation: isolate;
   /* the home page's night: dark overhead, lifting toward a moonlit horizon
      so the trees along the foot read as silhouettes */
-  background: linear-gradient(to bottom, #0a0a0a, #151412 50%, #29261f);
-  color: #eee6d3;
+  background: linear-gradient(to bottom, var(--ink-deep), #132546 50%, #1d3a6d);
+  color: var(--ash);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -226,13 +226,13 @@
   border-radius: 50%;
   /* faint maria, as on the home page's moon, so it isn't a flat disc */
   background:
-    radial-gradient(circle at 36% 34%, rgba(154, 145, 124, 0.2) 0 9%, transparent 17%),
-    radial-gradient(circle at 60% 60%, rgba(154, 145, 124, 0.16) 0 7%, transparent 14%),
-    radial-gradient(circle at 44% 66%, rgba(154, 145, 124, 0.12) 0 4%, transparent 9%),
-    radial-gradient(circle at 42% 40%, #f4efe2, #e4dcc7 78%, #cfc6ae);
+    radial-gradient(circle at 36% 34%, rgba(110, 96, 62, 0.2) 0 9%, transparent 17%),
+    radial-gradient(circle at 60% 60%, rgba(110, 96, 62, 0.16) 0 7%, transparent 14%),
+    radial-gradient(circle at 44% 66%, rgba(110, 96, 62, 0.12) 0 4%, transparent 9%),
+    radial-gradient(circle at 42% 40%, #f5deb3, #e8cd9c 78%, #c9a961);
   box-shadow:
-    0 0 60px 18px rgba(233, 226, 207, 0.14),
-    0 0 180px 70px rgba(233, 226, 207, 0.07);
+    0 0 60px 18px rgba(245, 222, 179, 0.14),
+    0 0 180px 70px rgba(245, 222, 179, 0.07);
   pointer-events: none;
 }
 
@@ -274,8 +274,8 @@
   letter-spacing: 0.01em;
   line-height: 1.05;
   padding-block: 16px;
-  border-bottom: 1px solid rgba(238, 230, 211, 0.1);
-  color: rgba(238, 230, 211, 0.86);
+  border-bottom: 1px solid rgba(245, 222, 179, 0.1);
+  color: rgba(245, 222, 179, 0.86);
   opacity: 0;
   transform: translateY(14px);
   transition:
@@ -295,8 +295,8 @@
 
 /* the bar joins the menu's sky while it is open, instead of a grey band */
 .isOpen {
-  background: #0a0a0a;
-  border-color: rgba(238, 230, 211, 0.08);
+  background: var(--ink-deep);
+  border-color: rgba(245, 222, 179, 0.08);
 }
 
 @media (max-width: 860px) {

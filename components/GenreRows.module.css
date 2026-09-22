@@ -78,7 +78,7 @@
   transition:
     opacity 0.35s var(--ease),
     scale 0.5s var(--ease);
-  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 40px 80px -30px rgba(8, 17, 34, 0.9);
 }
 
 .panelOn {
@@ -101,7 +101,7 @@
   position: absolute;
   z-index: 2;
   inset: 16%;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(245, 222, 179, 0.55);
 }
 
 .panelTitle {
@@ -114,7 +114,7 @@
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.15;
-  color: #fff;
+  color: var(--on-dark);
 }
 
 @media (max-width: 760px) {

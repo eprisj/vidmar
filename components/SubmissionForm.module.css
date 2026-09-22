@@ -16,7 +16,7 @@
 .form textarea {
   flex: 1;
   min-width: 180px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(245, 222, 179, 0.04);
   border: 1px solid var(--hair-d);
   border-radius: 6px;
   color: inherit;

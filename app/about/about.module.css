@@ -16,7 +16,7 @@
   font-weight: 500;
   letter-spacing: -0.055em;
   line-height: 0.92;
-  color: #fff;
+  color: var(--on-dark);
   margin-block: clamp(22px, 3vw, 36px) clamp(44px, 7vw, 110px);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .person b {
-  font-family: var(--font-literata), "Georgia", serif;
+  font-family: var(--font-cormorant), "Georgia", serif;
   color: var(--on-dark);
   font-size: clamp(1.4rem, 2.6vw, 2.2rem);
   font-weight: 500;
@@ -133,7 +133,7 @@
   padding: 9px;
   border-radius: 50%;
   border: 1px solid var(--hair-d);
-  color: #fff;
+  color: var(--on-dark);
   box-sizing: border-box;
 }
 
@@ -157,7 +157,7 @@
   place-items: center;
   overflow: hidden;
   isolation: isolate;
-  color: #fff;
+  color: var(--on-dark);
   border-top: 1px solid var(--hair-d);
 }
 
@@ -169,7 +169,7 @@
   position: absolute;
   width: min(80%, 620px);
   aspect-ratio: 1;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(245, 222, 179, 0.4);
   transition:
     transform 1.4s var(--ease),
     color 0.6s var(--ease);
@@ -177,7 +177,7 @@
 
 .door:hover .doorRing {
   transform: rotate(40deg) scale(1.06);
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(245, 222, 179, 0.75);
 }
 
 .doorIn {

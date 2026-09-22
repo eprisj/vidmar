@@ -20,9 +20,9 @@ function mulberry32(seed) {
 }
 
 const r = (n) => Math.round(n * 10) / 10;
-const INK = "#0a0a0a";
-const PAPER = "#e9e1cc";
-const GOLD = "#c9a24b";
+const INK = "#0e1d3a";
+const PAPER = "#f5deb3";
+const GOLD = "#c9a961";
 
 /* ---------- the wall: ruled like the sky, lit by three candles ---------- */
 

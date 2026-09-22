@@ -16,7 +16,7 @@
   top: 46%;
   width: min(118vmin, 1080px);
   aspect-ratio: 1;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(245, 222, 179, 0.5);
   transform: translateY(-50%) rotate(calc(var(--p, 0.5) * 150deg - 75deg));
   pointer-events: none;
   will-change: transform;
@@ -51,11 +51,11 @@
    with the brand mark. */
 .title {
   font-size: clamp(2.8rem, 10vw, 9rem);
-  font-family: var(--font-literata), "Georgia", serif;
+  font-family: var(--font-cormorant), "Georgia", serif;
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 0.98;
-  color: #fff;
+  color: var(--on-dark);
   max-width: 13ch;
   text-wrap: balance;
   margin-bottom: 0.08em;
@@ -66,7 +66,7 @@
   max-width: 54ch;
   font-size: clamp(0.98rem, 1.3vw, 1.15rem);
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(245, 222, 179, 0.68);
   animation: focusIn 1.5s var(--ease) 0.2s both;
 }
 
@@ -91,7 +91,7 @@
   bottom: 0;
   width: 1px;
   height: clamp(40px, 6vw, 72px);
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(245, 222, 179, 0.16);
   overflow: hidden;
 }
 
@@ -100,7 +100,7 @@
   position: absolute;
   inset: 0 0 auto 0;
   height: 40%;
-  background: #fff;
+  background: var(--on-dark);
   animation: drop 2.8s var(--ease) infinite;
 }
 

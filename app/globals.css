@@ -1,27 +1,33 @@
 /* ВІДЬМАР — design tokens and shared primitives.
-   Monochrome and stark: near-black stone, ash-grey daylight, white type.
-   Gold appears only as a vein of light, never as decoration. */
+   Two colours carry the house: a deep night blue and wheat. The pair runs
+   10.2:1, so either one can sit on the other at any size. Every muted step
+   was measured against both fields it can land on, not just the primary one
+   — the light mute is set for the darker wheat (--ash-2, 4.7:1) rather than
+   the lighter, which is what keeps it legible in either. Gold is wheat taken
+   down, not a third colour. */
 
 :root {
-  /* fields */
-  --ink: #161616;
-  --ink-2: #242424;
-  --ash: #ebefee;
-  --ash-2: #d8dcda;
+  /* fields — night blue, and the wheat daylight it inverts into */
+  --ink: #162e59;
+  --ink-2: #1d3a6d;
+  --ink-deep: #0e1d3a; /* the darker end of every blue gradient */
+  --ash: #f5deb3;
+  --ash-2: #e8cd9c;
 
   /* type */
-  --on-dark: #ffffff;
-  --on-dark-mute: #848484;
-  --on-light: #242424;
-  --on-light-mute: #6f716f;
+  --on-dark: #f5deb3; /* wheat on blue — 10.2:1 */
+  --on-dark-mute: #a9b8d1; /* 6.7:1 on ink, 5.6:1 on ink-2 */
+  --on-light: #162e59; /* blue on wheat — 10.2:1 */
+  --on-light-mute: #44587c; /* 5.5:1 on ash, 4.7:1 on ash-2 */
 
-  /* the single accent: a vein of gold in the dark */
-  --gold: #c2a054;
-  --gold-hi: #f0dca6;
+  /* the accent: wheat pushed into metal */
+  --gold: #c9a961; /* 6.0:1 on blue */
+  --gold-hi: #f5deb3;
+  --gold-deep: #8a6f33; /* the dark end of gold gradients */
 
   /* hairlines */
-  --hair-d: rgba(255, 255, 255, 0.14);
-  --hair-l: rgba(36, 36, 36, 0.16);
+  --hair-d: rgba(245, 222, 179, 0.18);
+  --hair-l: rgba(22, 46, 89, 0.18);
 
   /* metrics */
   --gut: clamp(16px, 4.2vw, 64px);
@@ -286,7 +292,7 @@ ul {
 .pill:hover {
   background: var(--gold);
   border-color: var(--gold);
-  color: #16130a;
+  color: var(--ink);
   transform: translateY(-1px);
   box-shadow: 0 10px 26px -14px rgba(201, 162, 75, 0.7);
 }
@@ -304,7 +310,7 @@ ul {
 .ash-2 .pill:hover {
   background: var(--gold);
   border-color: var(--gold);
-  color: #16130a;
+  color: var(--ink);
 }
 
 .pill--solid {

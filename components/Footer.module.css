@@ -15,8 +15,8 @@
   height: calc(128px / 3.983);
   margin-bottom: 18px;
   color: var(--on-dark);
-  -webkit-mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
-  mask: url("/vidmar/logo-mark.png") center / contain no-repeat;
+  -webkit-mask: url("/logo-mark.png") center / contain no-repeat;
+  mask: url("/logo-mark.png") center / contain no-repeat;
   background-color: currentColor;
 }
 
@@ -71,8 +71,8 @@
   font-size: 0.6rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  /* was #58627d: a stray blue in a monochrome-and-gold house, and 2.8:1
-     against the ink under it */
+  /* was #58627d, hardcoded and 2.8:1 against the ink under it; the token
+     is the same family and measured, so it stays legible if the field moves */
   color: var(--on-dark-mute);
 }
 

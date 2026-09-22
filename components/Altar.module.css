@@ -67,18 +67,18 @@
   width: clamp(220px, 30vw, 340px);
   height: clamp(120px, 15vw, 170px);
   transform: translate(-50%, -18%);
-  border: 1px dashed rgba(233, 225, 204, 0.16);
+  border: 1px dashed rgba(245, 222, 179, 0.16);
   border-radius: 50%;
   pointer-events: none;
 }
 
 .title {
-  font-family: var(--font-literata), "Georgia", serif;
+  font-family: var(--font-cormorant), "Georgia", serif;
   font-size: clamp(1.8rem, 3.4vw, 2.6rem);
   font-weight: 500;
   letter-spacing: -0.015em;
   line-height: 1.1;
-  color: #fff;
+  color: var(--on-dark);
 }
 
 /* a struck rule instead of the gap alone doing the separating — tapered
