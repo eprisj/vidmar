@@ -95,5 +95,13 @@ export default function GoogleButton({
   }, [clientId, mode]);
 
   if (!clientId) return null;
-  return <div ref={box} style={{ minHeight: 44, width: "100%", display: "flex", justifyContent: "center" }} />;
+  // colorScheme light: the site runs color-scheme dark, and a frame whose
+  // scheme differs from its host's gets an opaque white backdrop painted
+  // under it, a white box around Google's dark pill
+  return (
+    <div
+      ref={box}
+      style={{ minHeight: 44, width: "100%", display: "flex", justifyContent: "center", colorScheme: "light" }}
+    />
+  );
 }
