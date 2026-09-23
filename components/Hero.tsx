@@ -45,9 +45,16 @@ export default function Hero() {
       </div>
 
       <div className={`wrapMax ${styles.title}`}>
+        {/* The name is already the wordmark in the header, a few centimetres
+            above; set again here in Golos it read as a second, different
+            logo. It stays in the markup as the page's h1 for search and
+            screen readers, and the hand carries the screen instead. The line
+            break is set by hand: left to wrap, "й" was stranded alone. */}
         <h1 className={styles.word}>Відьмар</h1>
         <p className={styles.lede}>
-          видаємо книги про езотерику, містику й відьомство.
+          видаємо книги про езотерику,
+          <br />
+          містику й відьомство.
         </p>
       </div>
 

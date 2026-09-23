@@ -120,43 +120,37 @@
   pointer-events: none;
 }
 
-/* the name in the reading face, set wide: the hand stays for the slogan */
+/* visually hidden, still the h1: see Hero.tsx */
 .word {
-  font-family: var(--font-golos), sans-serif;
-  font-size: var(--fs-display);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  /* the tracking hangs off the last letter; pull it back so it centres */
-  margin-right: -0.07em;
-  line-height: 0.86;
-  color: var(--ivory);
-  text-shadow: 0 0 42px rgba(240, 220, 166, 0.14);
-  /* the foot of the letters thins into the mist */
-  -webkit-mask-image: linear-gradient(to bottom, #000 52%, rgba(0, 0, 0, 0.28) 100%);
-  mask-image: linear-gradient(to bottom, #000 52%, rgba(0, 0, 0, 0.28) 100%);
-  animation: emerge 2.2s var(--ease) 0.5s both;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* The one place the hand is allowed to speak: the slogan under the mark,
-   never a paragraph. Golos stays next in the stack as a plain safety
+/* The one place the hand is allowed to speak: a short slogan, never a
+   sentence to be read as prose. Golos stays next in the stack as a plain safety
    net, not as a per-glyph patch — the Ukrainian letters are drawn into the
    face itself (see layout.tsx), because relying on fallback here is what
    put upright serif letters inside a cursive word. The hand runs wider and
    lighter than a text face, so it is set larger and tracked out rather than
    dropped into Golos's own size. */
 .lede {
-  margin-top: clamp(18px, 2.4vw, 30px);
-  max-width: 26ch;
   font-family: var(--font-hand), var(--font-golos), sans-serif;
-  font-size: var(--fs-h3);
-  line-height: 1.15;
+  /* the hand is the headline now, so it is set as one */
+  font-size: clamp(2.3rem, 4.6vw, 4.6rem);
+  line-height: 1.12;
   letter-spacing: 0.015em;
-  color: var(--ash-2);
+  color: var(--ash);
   /* the hand is far thinner than the italic that stood here, and it lands on
      a sky ruled in light lines; without this it frays into the branches */
-  text-shadow: 0 1px 20px rgba(8, 17, 34, 0.9);
-  animation: emerge 2.2s var(--ease) 0.85s both;
+  text-shadow: 0 2px 28px rgba(8, 17, 34, 0.95), 0 0 2px rgba(8, 17, 34, 0.9);
+  animation: emerge 2.2s var(--ease) 0.5s both;
 }
 
 @keyframes emerge {
@@ -296,9 +290,8 @@
      italic line was set at 74% over exactly that; it disappeared wherever a
      lit band ran behind it */
   .lede {
-    font-size: 1.5rem;
-    color: var(--ash);
-    text-shadow: 0 1px 16px rgba(8, 17, 34, 0.95);
+    font-size: clamp(1.75rem, 7.6vw, 2.4rem);
+    text-shadow: 0 1px 16px rgba(8, 17, 34, 0.95), 0 0 2px rgba(8, 17, 34, 0.9);
   }
 
   .title::before {
@@ -314,7 +307,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .firefly,
-  .word,
   .lede,
   .cueLine::after,
   .back,

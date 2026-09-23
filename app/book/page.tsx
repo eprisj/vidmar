@@ -131,10 +131,12 @@ function BookView() {
 
           {book.description && <p className={styles.desc}>{book.description}</p>}
           {book.excerpt && (
-            <blockquote className={styles.excerpt}>
-              <span className="micro">уривок</span>
-              <p>{book.excerpt}</p>
-            </blockquote>
+            <figure className={styles.excerpt}>
+              <blockquote>
+                <p>{book.excerpt}</p>
+              </blockquote>
+              <figcaption className="micro">з книги</figcaption>
+            </figure>
           )}
 
           <dl className={styles.specs}>

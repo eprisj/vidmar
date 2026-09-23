@@ -152,19 +152,60 @@
   color: var(--on-dark);
 }
 
+/* The excerpt used to sit in a tinted box with a gold rule down its side and
+   a caption on top – the shape of a UI notice, not of a quotation – and it
+   was set in the hand, which runs the words of a whole sentence together
+   ("Мирахували"). It is the one piece of the book on the page, so it is set
+   as a quotation instead: open, in the reading face, large enough to read
+   from across the room, hung off a guillemet. The hand stays for slogans. */
 .excerpt {
+  position: relative;
+  margin: 6px 0 0;
+  padding: 26px 0 4px 56px;
+  border-top: 1px solid var(--hair-d);
+}
+
+.excerpt::before {
+  content: "«";
+  position: absolute;
+  left: -4px;
+  top: 12px;
+  font-family: var(--font-golos), sans-serif;
+  font-size: 5rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0.6;
+}
+
+.excerpt blockquote {
   margin: 0;
-  padding: 18px 22px;
-  border-left: 2px solid var(--gold);
-  background: rgba(8, 17, 34, 0.3);
 }
 
 .excerpt p {
-  margin: 6px 0 0;
-  font-family: var(--font-hand), var(--font-golos), sans-serif;
-  font-size: 1.6rem;
-  line-height: 1.3;
-  color: var(--on-dark);
+  margin: 0;
+  max-width: 30ch;
+  font-family: var(--font-golos), sans-serif;
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--ash);
+  text-wrap: balance;
+}
+
+.excerpt figcaption {
+  margin-top: 14px;
+  color: var(--gold);
+}
+
+@media (max-width: 520px) {
+  .excerpt {
+    padding-left: 40px;
+  }
+
+  .excerpt::before {
+    font-size: 3.8rem;
+  }
 }
 
 .specs {
