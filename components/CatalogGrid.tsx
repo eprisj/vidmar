@@ -29,6 +29,23 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
     getBooks().then(setBooks);
   }, []);
 
+  // /genres links in as ?g=<slug>. Read here rather than with
+  // useSearchParams: under `output: export` that would push the whole grid
+  // behind a Suspense boundary for one value read once.
+  useEffect(() => {
+    const g = new URLSearchParams(window.location.search).get("g");
+    if (g && genres.some((x) => x.slug === g)) setGenre(g);
+  }, [genres]);
+
+  // keep the address in step with the chips, so a filtered shelf can be
+  // shared or come back to
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (genre) url.searchParams.set("g", genre);
+    else url.searchParams.delete("g");
+    if (url.href !== window.location.href) window.history.replaceState(null, "", url);
+  }, [genre]);
+
   const shown = useMemo(() => {
     if (!books) return [];
     const needle = q.trim().toLowerCase();

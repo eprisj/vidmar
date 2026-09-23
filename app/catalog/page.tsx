@@ -3,6 +3,7 @@ import PageHero from "@/components/PageHero";
 import CatalogGrid from "@/components/CatalogGrid";
 import { genres } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
+import styles from "./catalog.module.css";
 
 export const metadata: Metadata = pageMeta(
   "Каталог – ВІДЬМАР",
@@ -21,7 +22,8 @@ export default function CatalogPage() {
         compact
       />
 
-      <section className="ink pad" data-field="dark" data-candle="">
+      {/* /genres links here as /catalog?g=<slug>#books */}
+      <section id="books" className={`ink pad ${styles.books}`} data-field="dark" data-candle="">
         <div className="wrapMax">
           <CatalogGrid genres={genres} />
         </div>

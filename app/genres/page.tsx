@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import { genres, showsNote } from "@/lib/content";
@@ -91,7 +92,20 @@ export default function GenresPage() {
                 <span className={styles.accent} />
                 <div className={styles.tileIn}>
                   {showsNote(genres, i) && <span className="micro">{g.note}</span>}
-                  <span className={styles.tileTitle}>{g.title}</span>
+                  {/* the tiles already lifted and brightened on hover as if
+                      they led somewhere, and led nowhere; the title link is
+                      stretched over the whole tile and opens the catalogue
+                      filtered to this direction */}
+                  <Link
+                    className={styles.tileLink}
+                    href={`/catalog?g=${g.slug}#books`}
+                    prefetch={false}
+                  >
+                    <span className={styles.tileTitle}>{g.title}</span>
+                  </Link>
+                  <span className={`micro ${styles.tileCue}`} aria-hidden="true">
+                    книги напряму →
+                  </span>
                 </div>
               </Reveal>
             ))}

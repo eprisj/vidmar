@@ -1,0 +1,4 @@
+/* arriving from /genres with #books, the section must clear the fixed bar */
+.books {
+  scroll-margin-top: var(--nav-h);
+}
