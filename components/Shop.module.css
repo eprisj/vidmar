@@ -299,3 +299,27 @@
   color: var(--on-dark);
   font-weight: 600;
 }
+
+/* "або поштою" between the Google button and the form; hidden while the
+   Google button is not there (no client id yet), so it never divides
+   nothing from the form */
+.or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.82rem;
+  color: var(--on-dark-mute);
+}
+
+.or::before,
+.or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--hair-d);
+}
+
+.authCard > div:empty,
+.authCard > div:empty + .or {
+  display: none;
+}

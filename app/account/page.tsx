@@ -236,7 +236,8 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
           setBusy(true);
           setError("");
           try {
-            await changePassword(current, next);
+            await changePassword(user.has_password === false ? "" : current, next);
+            if (user.has_password === false) onSaved({ ...user, has_password: true });
             setCurrent("");
             setNext("");
             toast("пароль змінено, інші пристрої вийшли з акаунта");
@@ -247,19 +248,29 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
           }
         }}
       >
-        <span className={styles.subhead}>Пароль</span>
+        <span className={styles.subhead}>{user.has_password === false ? "Встановити пароль" : "Пароль"}</span>
+        {user.google && (
+          <span className={styles.googleOn}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.2 14.6 2.2 12 2.2 6.6 2.2 2.3 6.6 2.3 12s4.3 9.8 9.7 9.8c5.6 0 9.3-3.9 9.3-9.5 0-.6-.1-1.1-.2-1.6H12z" />
+            </svg>
+            Вхід через Google підключено
+          </span>
+        )}
         {/* lets the browser's password manager tie the new password to this account */}
         <input type="email" value={user.email} autoComplete="username" readOnly hidden />
-        <label className={styles.field}>
-          <span>Поточний пароль</span>
-          <input
-            type="password"
-            value={current}
-            onChange={(e) => setCurrent(e.target.value)}
-            autoComplete="current-password"
-            required
-          />
-        </label>
+        {user.has_password !== false && (
+          <label className={styles.field}>
+            <span>Поточний пароль</span>
+            <input
+              type="password"
+              value={current}
+              onChange={(e) => setCurrent(e.target.value)}
+              autoComplete="current-password"
+              required
+            />
+          </label>
+        )}
         <label className={styles.field}>
           <span>Новий пароль, від 8 символів</span>
           <input
@@ -277,8 +288,12 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
           </p>
         )}
         <div className={styles.formEnd}>
-          <button type="submit" className="pill" disabled={busy || !current || next.length < 8}>
-            {busy ? "Змінюємо…" : "Змінити пароль"}
+          <button
+            type="submit"
+            className="pill"
+            disabled={busy || (user.has_password !== false && !current) || next.length < 8}
+          >
+            {busy ? "Зберігаємо…" : user.has_password === false ? "Встановити пароль" : "Змінити пароль"}
           </button>
         </div>
       </form>
@@ -319,9 +334,15 @@ function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }
   return (
     <div className={styles.cabinet}>
       <header className={styles.top}>
-        <div>
-          <h2 className={styles.hello}>{first ? `Вітаємо, ${first}` : "Вітаємо"}</h2>
-          <p className={styles.email}>{user.email}</p>
+        <div className={styles.who}>
+          {user.avatar_url && (
+            // Google's own avatar URL: a plain img, not next/image (static export)
+            <img className={styles.avatar} src={user.avatar_url} alt="" width={48} height={48} referrerPolicy="no-referrer" />
+          )}
+          <div>
+            <h2 className={styles.hello}>{first ? `Вітаємо, ${first}` : "Вітаємо"}</h2>
+            <p className={styles.email}>{user.email}</p>
+          </div>
         </div>
         <button type="button" className="pill" onClick={signOut}>
           Вийти

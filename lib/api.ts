@@ -346,7 +346,33 @@ export type User = {
   created_at?: string;
   delivery?: Delivery | null;
   newsletter?: boolean;
+  /** signed in with Google at least once */
+  google?: boolean;
+  avatar_url?: string | null;
+  /** false for an account made through Google that never set a password */
+  has_password?: boolean;
 };
+
+export async function googleClientId(): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_BASE}/auth/google/config`, { cache: "no-store" });
+    return res.ok ? (await res.json()).clientId : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function googleSignIn(credential: string): Promise<User> {
+  const res = await fetch(`${API_BASE}/auth/google`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ credential }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new ApiError(data?.error || "не вдалося увійти через Google");
+  return data;
+}
 
 export type ProfilePatch = Partial<{ name: string; phone: string; delivery: Delivery | null; newsletter: boolean }>;
 

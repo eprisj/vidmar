@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiMessage, getMe, login, logout, register, type User } from "@/lib/api";
 import { useToast } from "./ToastProvider";
+import GoogleButton from "./GoogleButton";
 import styles from "./Shop.module.css";
 
 type Props = {
@@ -79,6 +80,18 @@ export default function AuthGate({ aside, children }: Props) {
               {m === "login" ? "Вхід" : "Реєстрація"}
             </button>
           ))}
+        </div>
+
+        <GoogleButton
+          mode={mode}
+          onUser={(u) => {
+            setUser(u);
+            toast("ви увійшли через Google");
+          }}
+          onError={setError}
+        />
+        <div className={styles.or}>
+          <span>або поштою</span>
         </div>
 
         <form className={styles.form} onSubmit={submit}>
