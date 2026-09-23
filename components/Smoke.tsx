@@ -97,6 +97,9 @@ export default function Smoke({
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
+    // a full-screen fragment shader is the single heaviest thing on the site;
+    // on a phone it cost smooth scrolling for a haze most people never saw
+    if (window.matchMedia("(max-width: 760px), (pointer: coarse)").matches) return;
     const gl = canvas.getContext("webgl", { antialias: false, premultipliedAlpha: false });
     if (!gl || gl.isContextLost()) return;
 

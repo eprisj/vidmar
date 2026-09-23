@@ -55,7 +55,7 @@
 }
 
 .big {
-  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-size: var(--fs-h3);
   letter-spacing: -0.035em;
   color: var(--on-dark);
 }

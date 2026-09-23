@@ -12,7 +12,7 @@
 }
 
 .greet {
-  font-size: clamp(2.6rem, 8vw, 7rem);
+  font-size: var(--fs-h1);
   font-weight: 500;
   letter-spacing: -0.055em;
   line-height: 0.92;
@@ -52,14 +52,14 @@
 }
 
 .lit0 {
-  font-size: clamp(1.5rem, 3.4vw, 3rem);
+  font-size: var(--fs-h2);
   line-height: 1.16;
   letter-spacing: -0.04em;
   font-weight: 500;
 }
 
 .lit1 {
-  font-size: clamp(1.2rem, 2.3vw, 2rem);
+  font-size: var(--fs-h3);
   line-height: 1.26;
   letter-spacing: -0.03em;
   font-weight: 500;
@@ -67,7 +67,7 @@
 
 /* the one line that is the reason for everything, set as large as it goes */
 .lit2 {
-  font-size: clamp(2rem, 6.6vw, 6rem);
+  font-size: var(--fs-h1);
   line-height: 1.02;
   letter-spacing: -0.055em;
   font-weight: 500;
@@ -76,7 +76,7 @@
 }
 
 .lit3 {
-  font-size: clamp(1.1rem, 1.9vw, 1.6rem);
+  font-size: var(--fs-lede);
   line-height: 1.4;
   letter-spacing: -0.02em;
   font-weight: 400;
@@ -117,9 +117,11 @@
 .person b {
   font-family: var(--font-hand), var(--font-golos), sans-serif;
   color: var(--on-dark);
-  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  /* the hand's x-height is about two thirds of Golos's: set on the plain
+     h3 step it read a size smaller than the line beneath it */
+  font-size: calc(var(--fs-h3) * 1.5);
+  font-weight: 400;
+  letter-spacing: 0;
   line-height: 1.05;
 }
 
@@ -192,7 +194,7 @@
 }
 
 .doorTitle {
-  font-size: clamp(1.8rem, 4.6vw, 4.2rem);
+  font-size: var(--fs-h2);
   font-weight: 500;
   letter-spacing: -0.05em;
   line-height: 0.98;
@@ -200,7 +202,7 @@
 }
 
 .doorArrow {
-  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-size: var(--fs-h3);
   line-height: 1;
   transition: transform 0.6s var(--ease);
 }

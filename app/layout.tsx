@@ -22,7 +22,7 @@ import "./globals.css";
  * at the point where г's stroke actually ends. Nothing is borrowed from
  * another typeface, so the line keeps one hand throughout. */
 const denistina = localFont({
-  src: "./fonts/denistina_ua.ttf",
+  src: "./fonts/denistina_ua.woff2",
   variable: "--font-hand",
   display: "swap",
 });

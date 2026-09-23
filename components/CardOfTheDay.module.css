@@ -117,8 +117,8 @@
 
 .name {
   font-family: var(--font-hand), var(--font-golos), sans-serif;
-  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
-  font-weight: 500;
+  font-size: calc(var(--fs-h3) * 1.4);
+  font-weight: 400;
   color: var(--on-dark);
 }
 

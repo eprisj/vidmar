@@ -51,7 +51,7 @@
    short display lines like this one */
 .title {
   text-shadow: 0 2px 30px rgba(8, 17, 34, 0.55);
-  font-size: clamp(2.8rem, 10vw, 9rem);
+  font-size: var(--fs-h1);
   font-family: var(--font-hand), var(--font-golos), sans-serif;
   font-weight: 400;
   letter-spacing: 0;
@@ -67,7 +67,7 @@
    line of its own, which on a hero reads as a mistake rather than a line */
 .lede {
   max-width: 54ch;
-  font-size: clamp(0.98rem, 1.3vw, 1.15rem);
+  font-size: var(--fs-lede);
   line-height: 1.6;
   text-wrap: balance;
   color: rgba(245, 222, 179, 0.84);

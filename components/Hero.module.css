@@ -123,7 +123,7 @@
 /* the name in the reading face, set wide: the hand stays for the slogan */
 .word {
   font-family: var(--font-golos), sans-serif;
-  font-size: clamp(3rem, 12vw, 11rem);
+  font-size: var(--fs-display);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -149,7 +149,7 @@
   margin-top: clamp(18px, 2.4vw, 30px);
   max-width: 26ch;
   font-family: var(--font-hand), var(--font-golos), sans-serif;
-  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  font-size: var(--fs-h3);
   line-height: 1.15;
   letter-spacing: 0.015em;
   color: var(--ash-2);

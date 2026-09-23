@@ -60,6 +60,17 @@
   }
 }
 
+/* Turning a group inside an SVG is not composited: the browser redraws every
+   tick on every frame, for a turn too slow to notice. Phones keep the
+   draw-in and the scroll turn (which move the whole svg) and drop the rest. */
+@media (max-width: 760px), (pointer: coarse) {
+  .ring,
+  .star,
+  .moon {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .seal,
   .ring,
