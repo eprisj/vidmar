@@ -54,21 +54,23 @@ function BookCard({ b }: { b: Book }) {
       </Link>
       <span className={styles.bookFoot}>
         <span className={styles.priceBox}>
-          {price != null ? (
-            <>
-              <span className={styles.price}>{formatPrice(price, b.currency)}</span>
-              {was != null && <s className={styles.was}>{formatPrice(was, b.currency)}</s>}
-            </>
-          ) : (
-            from != null && <span className={styles.price}>від {formatPrice(from, b.currency)}</span>
-          )}
-          <span className={styles.formats}>
-            {b.print_price_cents != null && (
-              <span className={b.in_stock ? "" : styles.out} title={b.in_stock ? "" : "Немає в наявності"}>
-                папір
-              </span>
+          <span className={styles.priceRow}>
+            {price != null ? (
+              <>
+                <span className={styles.price}>{formatPrice(price, b.currency)}</span>
+                {was != null && <s className={styles.was}>{formatPrice(was, b.currency)}</s>}
+              </>
+            ) : (
+              from != null && <span className={styles.price}>від {formatPrice(from, b.currency)}</span>
             )}
-            {b.ebook_price_cents != null && <span>e-book</span>}
+          </span>
+          <span className={styles.formats}>
+            {[
+              b.print_price_cents != null && (b.in_stock ? "папір" : "папір закінчився"),
+              b.ebook_price_cents != null && "e-book",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </span>
         </span>
         {f && price != null && (
@@ -169,8 +171,7 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
     <>
       {demo && (
         <p className={styles.demo}>
-          <b>Демонстраційний каталог.</b> Книги й автори вигадані, щоб показати, як працюватиме
-          магазин. Оформити замовлення можна, але надсилати гроші не потрібно.
+          <b>Демо-каталог.</b> Книги й автори вигадані, платити за замовлення не потрібно.
         </p>
       )}
 

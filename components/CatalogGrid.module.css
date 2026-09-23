@@ -223,10 +223,10 @@ a.card:hover .arrow {
 }
 
 .seg button {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 500;
   padding: 8px 14px;
-  min-height: 38px;
+  min-height: 44px;
   border-radius: 999px;
   color: var(--on-dark-mute);
   cursor: pointer;
@@ -352,10 +352,16 @@ a.card:hover .arrow {
 
 .priceBox {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 8px;
+  flex-direction: column;
+  gap: 3px;
   min-width: 0;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
 }
 
 .price {
@@ -370,10 +376,6 @@ a.card:hover .arrow {
   color: var(--on-dark-mute);
 }
 
-.priceBox .formats {
-  flex-basis: 100%;
-  margin-top: 4px;
-}
 
 .add {
   flex: none;
@@ -412,21 +414,8 @@ a.card:hover .arrow {
 }
 
 .formats {
-  display: inline-flex;
-  gap: 6px;
-}
-
-.formats span {
-  font-size: 0.72rem;
-  padding: 3px 8px;
-  border: 1px solid var(--hair-d);
-  border-radius: 999px;
+  font-size: 0.8rem;
   color: var(--on-dark-mute);
-}
-
-.formats .out {
-  text-decoration: line-through;
-  opacity: 0.7;
 }
 
 @media (max-width: 760px) {
@@ -450,6 +439,20 @@ a.card:hover .arrow {
 
   .bookTitle {
     font-size: 0.95rem;
+  }
+
+  /* two cards to a row leave ~125px beside the 44px button: price and old
+     price stay on one line, so neighbouring cards keep their prices level */
+  .priceRow {
+    gap: 6px;
+  }
+
+  .price {
+    font-size: 1rem;
+  }
+
+  .was {
+    font-size: 0.75rem;
   }
 }
 

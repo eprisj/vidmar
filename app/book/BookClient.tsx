@@ -114,13 +114,28 @@ function BookView({ initial }: { initial: Book[] }) {
     });
   }, []);
 
-  // the phone bar shows once the buy buttons have scrolled away
+  // the phone bar shows once the buy buttons have scrolled up out of view.
+  // Measured on scroll, not by an IntersectionObserver: a jump from below
+  // the buttons straight back to the top (iOS status-bar tap) never crosses
+  // the threshold, so the observer never fired and the bar stayed over them.
   useEffect(() => {
-    const el = buyRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setBarOn(!e.isIntersecting && e.boundingClientRect.top < 0));
-    io.observe(el);
-    return () => io.disconnect();
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const el = buyRef.current;
+      setBarOn(!!el && el.getBoundingClientRect().bottom < 0);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [book]);
 
   if (book === undefined) return <div className={styles.loading} aria-busy="true" />;

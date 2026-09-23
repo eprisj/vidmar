@@ -78,7 +78,7 @@
 
 .line {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr) auto auto 36px;
+  grid-template-columns: 76px minmax(0, 1fr) auto auto 44px;
   grid-template-areas: "thumb info ctl price x";
   gap: 18px;
   align-items: center;
@@ -169,8 +169,8 @@
 }
 
 .qty button {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   font-size: 1.1rem;
   cursor: pointer;
@@ -236,8 +236,8 @@
   grid-area: x;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
   color: var(--on-dark-mute);
@@ -757,6 +757,12 @@
   color: var(--gold);
 }
 
+/* the total and the button, pinned to the bottom of a phone: the summary
+   itself sits under five panels there, a long scroll from the lines */
+.phoneBar {
+  display: none;
+}
+
 /* ---------------- narrow ---------------- */
 
 @media (max-width: 1000px) {
@@ -771,7 +777,7 @@
 
 @media (max-width: 640px) {
   .line {
-    grid-template-columns: 64px minmax(0, 1fr) 36px;
+    grid-template-columns: 64px minmax(0, 1fr) 44px;
     grid-template-areas:
       "thumb info x"
       "thumb ctl ctl"
@@ -805,6 +811,48 @@
   .grid2,
   .pay {
     grid-template-columns: 1fr;
+  }
+
+  .phoneBar {
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px var(--gut) calc(10px + env(safe-area-inset-bottom));
+    background: var(--ink-abyss);
+    border-top: 1px solid var(--hair-d);
+    box-shadow: 0 -16px 30px -18px rgba(0, 0, 0, 0.8);
+  }
+
+  .phoneBar span {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phoneBar small {
+    font-size: 0.75rem;
+    color: var(--on-dark-mute);
+  }
+
+  .phoneBar b {
+    font-size: 1.25rem;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .phoneBar .pill {
+    flex: 0 0 auto;
+    min-width: 150px;
+  }
+
+  /* room under the page for the bar */
+  .root:has(.phoneBar) {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
 
   .picksGrid {

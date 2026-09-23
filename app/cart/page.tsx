@@ -518,7 +518,7 @@ export default function CartPage() {
                   Оплата
                 </h2>
                 <div className={styles.pay} role="radiogroup" aria-labelledby="c-pay">
-                  {available.map((m) => {
+                  {available.filter((m) => m.enabled).map((m) => {
                     const info = PAY_INFO[m.id];
                     const on = chosen === m.id;
                     return (
@@ -551,6 +551,16 @@ export default function CartPage() {
                     );
                   })}
                 </div>
+                {available.some((m) => !m.enabled) && (
+                  <p className={styles.hint}>
+                    Незабаром:{" "}
+                    {available
+                      .filter((m) => !m.enabled)
+                      .map((m) => (m.id === "mono" ? "картка онлайн (monobank, Apple Pay, Google Pay)" : PAY_INFO[m.id].title))
+                      .join(", ")}
+                    .
+                  </p>
+                )}
                 {!onlyPrint && methods.some((m) => m.id === "cod") && (
                   <p className={styles.hint}>Накладений платіж доступний, коли в кошику лише паперові книги.</p>
                 )}
@@ -606,6 +616,16 @@ export default function CartPage() {
                     ? `Оплатити ${formatPrice(total, "UAH")}`
                     : "Підтвердити замовлення"}
               </button>
+
+              <div className={styles.phoneBar} aria-hidden="true">
+                <span>
+                  <small>До сплати</small>
+                  <b>{formatPrice(total, "UAH")}</b>
+                </span>
+                <button type="submit" className="pill pill--solid" disabled={busy} tabIndex={-1}>
+                  {busy ? "Оформлюємо…" : chosen && ONLINE.includes(chosen) ? "Оплатити" : "Оформити"}
+                </button>
+              </div>
 
               <ul className={styles.trust}>
                 {chosen && ONLINE.includes(chosen) && (

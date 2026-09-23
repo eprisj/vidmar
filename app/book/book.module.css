@@ -27,6 +27,9 @@
 
 .crumbs a {
   color: var(--gold);
+  /* 44px to the finger, same line to the eye */
+  padding-block: 11px;
+  margin-block: -11px;
 }
 
 .layout {
@@ -86,7 +89,9 @@
 
 .formats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* minmax(0, …): a bare 1fr won't shrink under the card's content, which
+     pushed the page 1px wide at tablet width */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin-top: 6px;
 }

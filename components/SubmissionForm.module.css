@@ -21,7 +21,8 @@
   border-radius: 6px;
   color: inherit;
   font: inherit;
-  font-size: 0.95rem;
+  /* 16px: under it iOS Safari zooms the page when a field takes focus */
+  font-size: 1rem;
   padding: 12px 14px;
 }
 
