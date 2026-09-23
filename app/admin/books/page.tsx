@@ -5,6 +5,7 @@ import {
   ApiError,
   createBook,
   deleteBook,
+  uploadEbook,
   formatPrice,
   listAdminBooks,
   updateBook,
@@ -48,6 +49,7 @@ export default function AdminBooksPage() {
   const [books, setBooks] = useState<AdminBook[]>([]);
   const [form, setForm] = useState<BookInput>(EMPTY);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [upload, setUpload] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -334,6 +336,7 @@ export default function AdminBooksPage() {
             <th>напрям</th>
             <th>статус</th>
             <th>папір / e-book</th>
+            <th>файли e-book</th>
             <th></th>
           </tr>
         </thead>
@@ -348,6 +351,33 @@ export default function AdminBooksPage() {
                 {b.print_price_cents == null ? "–" : formatPrice(b.print_price_cents, b.currency)} /{" "}
                 {b.ebook_price_cents == null ? "–" : formatPrice(b.ebook_price_cents, b.currency)}
                 {b.is_demo && <span style={{ color: "#a67c00" }}> · демо</span>}
+              </td>
+              <td style={{ fontSize: 12 }}>
+                {(["pdf", "epub"] as const).map((kind) => (
+                  <label key={kind} style={{ display: "block", cursor: "pointer" }}>
+                    {kind.toUpperCase()}: {b[`ebook_${kind}`] ? "✓" : "немає"}{" "}
+                    <u>{upload[`${b.id}-${kind}`] ?? "завантажити"}</u>
+                    <input
+                      type="file"
+                      accept={kind === "pdf" ? "application/pdf" : ".epub,application/epub+zip"}
+                      hidden
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const key = `${b.id}-${kind}`;
+                        try {
+                          await uploadEbook(token, b.id, kind, file, (p) =>
+                            setUpload((u) => ({ ...u, [key]: `${Math.round(p * 100)}%` })),
+                          );
+                          setUpload((u) => ({ ...u, [key]: "готово" }));
+                          refresh();
+                        } catch {
+                          setUpload((u) => ({ ...u, [key]: "помилка" }));
+                        }
+                      }}
+                    />
+                  </label>
+                ))}
               </td>
               <td style={{ display: "flex", gap: 6 }}>
                 <button onClick={() => startEdit(b)}>ред.</button>

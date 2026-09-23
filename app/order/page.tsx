@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { FORMAT_LABEL, formatPrice, lookupOrder, type PublicOrder } from "@/lib/api";
+import { FORMAT_LABEL, ebookUrl, formatPrice, lookupOrder, type PublicOrder } from "@/lib/api";
 import styles from "../cart/cart.module.css";
 
 const STATUS: Record<string, string> = {
@@ -17,6 +17,7 @@ const STATUS: Record<string, string> = {
 function OrderView() {
   const params = useSearchParams();
   const [order, setOrder] = useState<PublicOrder | null | undefined>(undefined);
+  const token = params.get("t") || "";
 
   useEffect(() => {
     lookupOrder(params.get("id") || "", params.get("t") || "").then(setOrder);
@@ -47,6 +48,29 @@ function OrderView() {
                 {FORMAT_LABEL[i.format]}
                 {i.quantity > 1 && ` × ${i.quantity}`}
               </span>
+              {i.format === "ebook" && i.slug && (
+                <span className={styles.lineCtl}>
+                  {["paid", "shipped", "fulfilled"].includes(order.status) ? (
+                    <>
+                      {i.has_pdf && (
+                        <a className="pill" href={ebookUrl(order.id, token, i.slug, "pdf")}>
+                          Завантажити PDF
+                        </a>
+                      )}
+                      {i.has_epub && (
+                        <a className="pill" href={ebookUrl(order.id, token, i.slug, "epub")}>
+                          EPUB
+                        </a>
+                      )}
+                      {!i.has_pdf && !i.has_epub && (
+                        <span className={styles.lineMeta}>Файл готуємо, надішлемо на пошту</span>
+                      )}
+                    </>
+                  ) : (
+                    <span className={styles.lineMeta}>Завантаження відкриється після оплати</span>
+                  )}
+                </span>
+              )}
             </div>
             <span className={styles.lineSum}>{formatPrice(i.price_cents * i.quantity, order.currency)}</span>
           </li>

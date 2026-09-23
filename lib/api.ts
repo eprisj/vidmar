@@ -114,8 +114,12 @@ export type PublicOrder = OrderSummary & {
   np_warehouse: string | null;
   ttn: string | null;
   is_demo: boolean;
-  items: (OrderItem & { format: Format })[];
+  items: (OrderItem & { format: Format; slug: string | null; has_pdf: boolean; has_epub: boolean })[];
 };
+
+export function ebookUrl(orderId: number, token: string, slug: string, kind: "pdf" | "epub") {
+  return `${API_BASE}/orders/lookup/${orderId}/file/${encodeURIComponent(slug)}/${kind}?t=${encodeURIComponent(token)}`;
+}
 
 export async function lookupOrder(id: string, token: string): Promise<PublicOrder | null> {
   const res = await fetch(`${API_BASE}/orders/lookup/${encodeURIComponent(id)}?t=${encodeURIComponent(token)}`, {
@@ -132,6 +136,9 @@ export async function getBooks(): Promise<Book[]> {
 
 export type AdminBook = Book & {
   id: number;
+  stock?: number | null;
+  ebook_pdf?: string | null;
+  ebook_epub?: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -195,6 +202,28 @@ export function createBook(token: string, input: BookInput) {
 
 export function updateBook(token: string, id: number, input: Partial<BookInput>) {
   return adminRequest(`/admin/books/${id}`, token, { method: "PUT", body: JSON.stringify(input) });
+}
+
+/** Sent in ~900KB parts: the proxy in front of the API refuses bodies over 1MB. */
+export async function uploadEbook(
+  token: string,
+  id: number,
+  kind: "pdf" | "epub",
+  file: File,
+  onProgress?: (share: number) => void,
+) {
+  const CHUNK = 900 * 1024;
+  const parts = Math.max(1, Math.ceil(file.size / CHUNK));
+  for (let i = 0; i < parts; i++) {
+    const body = file.slice(i * CHUNK, (i + 1) * CHUNK);
+    const res = await fetch(`${API_BASE}/admin/books/${id}/ebook/${kind}?part=${i}${i === parts - 1 ? "&last=1" : ""}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/octet-stream" },
+      body,
+    });
+    if (!res.ok) throw new ApiError(`upload failed (${res.status})`);
+    onProgress?.((i + 1) / parts);
+  }
 }
 
 export function deleteBook(token: string, id: number) {

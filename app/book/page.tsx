@@ -76,7 +76,7 @@ function BookView() {
         </div>
 
         <div className={styles.info}>
-          {book.is_demo && <span className={styles.demoTag}>Демонстраційна книга</span>}
+          {book.is_demo && <span className={styles.demoTag}>демонстраційне видання</span>}
           <h1 className={styles.title}>{book.title}</h1>
           {book.author && <p className={styles.author}>{book.author}</p>}
 
