@@ -33,7 +33,7 @@ export default function CardOfTheDay() {
         <span className={styles.card}>
           <span className={styles.face}>
             <span className={styles.ring} aria-hidden="true">
-              <Seal ticks={48} star />
+              <Seal ticks={42} star />
             </span>
           </span>
           <span className={styles.back}>

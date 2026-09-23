@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
-import ClosingBlock from "@/components/ClosingBlock";
 import { journalRubrics } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./journal.module.css";
@@ -63,8 +62,6 @@ export default function JournalPage() {
           </div>
         </div>
       </section>
-
-      <ClosingBlock title="Не пропустіть перший запис" />
     </>
   );
 }

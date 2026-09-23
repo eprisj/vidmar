@@ -27,15 +27,39 @@ export default function ScrollProgress({ children, className = "", as: Tag = "se
       return;
     }
 
+    // The values ease toward the scroll position instead of snapping to it.
+    // Bound 1:1, every wheel notch and every throttled touch-scroll event on
+    // iOS landed as a visible jolt of the ring; eased, it turns like
+    // something with weight and keeps turning a moment after the hand stops.
     let raf = 0;
-    const update = () => {
-      raf = 0;
+    let p = -1;
+    let settle = -1;
+    const measure = () => {
       const r = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
-      const settle = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.75)));
+      return {
+        p: Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height))),
+        settle: Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.75))),
+      };
+    };
+    const write = () => {
       el.style.setProperty("--p", p.toFixed(4));
       el.style.setProperty("--in", settle.toFixed(4));
+    };
+    const update = () => {
+      raf = 0;
+      const t = measure();
+      if (p < 0) {
+        p = t.p;
+        settle = t.settle;
+      } else {
+        p += (t.p - p) * 0.12;
+        settle += (t.settle - settle) * 0.12;
+      }
+      write();
+      if (Math.abs(t.p - p) > 0.0005 || Math.abs(t.settle - settle) > 0.0005) {
+        raf = requestAnimationFrame(update);
+      }
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);

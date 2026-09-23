@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { EMAIL } from "@/lib/content";
 import forest from "@/assets/forest/mid.svg";
 import styles from "./Header.module.css";
 
@@ -32,13 +31,24 @@ export default function Header() {
     setOnPage(field?.dataset.field === "light");
   }, []);
 
+  // once per frame at most: elementsFromPoint forces a layout, and running
+  // it on every scroll event made the whole page stutter under the bar
   useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        sync();
+      });
+    };
     sync();
-    window.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      window.removeEventListener("scroll", sync);
-      window.removeEventListener("resize", sync);
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, [sync]);
 
@@ -79,9 +89,6 @@ export default function Header() {
           </nav>
 
           <div className={styles.tools}>
-            <a className={styles.contact} href={`mailto:${EMAIL}`}>
-              Написати нам
-            </a>
             <button
               type="button"
               className={`${styles.burger} ${open ? styles.burgerOpen : ""}`}

@@ -80,9 +80,9 @@
    on a dark one, so uniform opacity reads fine on cloth and washes out on paper */
 .nav a {
   font-family: var(--font-golos), sans-serif;
-  font-size: 0.625rem;
+  font-size: 0.69rem;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--on-dark-mute);
   transition: color 0.3s var(--ease);
@@ -92,8 +92,7 @@
 /* the scrim above holds the field steady, but a branch or a bright ruled
    line can still land exactly behind a label; this closes the last gap.
    .mark is a masked background, not text, so it takes a drop-shadow instead */
-.root:not(.solid):not(.onPage) .nav a,
-.root:not(.solid):not(.onPage) .contact {
+.root:not(.solid):not(.onPage) .nav a {
   text-shadow: 0 1px 10px rgba(8, 17, 34, 0.85);
 }
 
@@ -128,37 +127,6 @@
   flex: none;
 }
 
-.contact {
-  font-family: var(--font-golos), sans-serif;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--on-dark-mute);
-  border-radius: 999px;
-  padding: 10px 18px;
-  min-height: 40px;
-  cursor: pointer;
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--on-dark-mute);
-  transition:
-    background 0.3s var(--ease),
-    color 0.3s var(--ease),
-    border-color 0.3s var(--ease);
-}
-
-.onPage .contact {
-  border-color: var(--on-light-mute);
-  color: var(--on-light-mute);
-}
-
-.contact:hover {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--ink);
-}
 
 /* the hit area is the button, not the two rules drawn inside it: at 24x32
    this was the smallest target on the site and sat right at the screen edge */
@@ -321,10 +289,5 @@
 
   .burgerOpen span:last-child {
     transform: translateY(-3.25px) rotate(-45deg);
-  }
-
-  /* on a phone the address sits in the open menu's footer instead */
-  .contact {
-    display: none;
   }
 }

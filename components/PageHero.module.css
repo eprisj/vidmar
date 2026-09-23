@@ -17,7 +17,9 @@
   width: min(118vmin, 1080px);
   aspect-ratio: 1;
   color: rgba(245, 222, 179, 0.5);
-  transform: translateY(-50%) rotate(calc(var(--p, 0.5) * 150deg - 75deg));
+  /* a quarter turn across the whole hero, not most of a half: at 150deg the
+     dial spun visibly under every flick of the wheel */
+  transform: translateY(-50%) rotate(calc(var(--p, 0.5) * 70deg - 35deg));
   pointer-events: none;
   will-change: transform;
 }
@@ -28,8 +30,8 @@
   display: flex;
   flex-direction: column;
   gap: clamp(16px, 2.2vw, 26px);
-  /* drifts up a little as the page is scrolled away */
-  transform: translateY(calc((var(--p, 0.5) - 0.5) * -90px));
+  /* no scroll drift: the text used to slide against the page as it was
+     scrolled, so the one thing the reader was trying to read moved */
 }
 
 .label {
@@ -50,6 +52,7 @@
    Cormorant stays reserved for the wordmark alone, so this doesn't compete
    with the brand mark. */
 .title {
+  text-shadow: 0 2px 30px rgba(8, 17, 34, 0.55);
   font-size: clamp(2.8rem, 10vw, 9rem);
   font-family: var(--font-cormorant), "Georgia", serif;
   font-weight: 500;
@@ -69,7 +72,8 @@
   font-size: clamp(0.98rem, 1.3vw, 1.15rem);
   line-height: 1.6;
   text-wrap: balance;
-  color: rgba(245, 222, 179, 0.68);
+  color: rgba(245, 222, 179, 0.84);
+  text-shadow: 0 1px 14px rgba(8, 17, 34, 0.7);
   animation: focusIn 1.5s var(--ease) 0.2s both;
 }
 
@@ -117,14 +121,30 @@
   }
 }
 
+/* a page whose point is below the fold: the hero states it and gets out
+   of the way instead of holding most of a screen */
+.compact {
+  min-height: 62svh;
+}
+
 @media (max-width: 760px) {
   .root {
     min-height: 74svh;
   }
 
+  .compact {
+    min-height: 0;
+    padding-top: calc(var(--nav-h) + 72px);
+    padding-bottom: 44px;
+  }
+
+  /* the dial sat right under the lede and its ticks crossed the words;
+     on a phone it stays in the upper corner, clear of the text column */
   .ring {
-    right: -52vw;
-    width: 130vw;
+    right: -58vw;
+    top: 22%;
+    width: 120vw;
+    opacity: 0.7;
   }
 }
 

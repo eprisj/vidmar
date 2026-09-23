@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import type { Genre } from "@/lib/content";
 import { addToCart, apiMessage, formatPrice, getBooks, type Book } from "@/lib/api";
 import { useToast } from "./ToastProvider";
+import Link from "next/link";
 import Reveal from "./Reveal";
+import Seal from "./Seal";
 import styles from "./CatalogGrid.module.css";
 
 /**
@@ -65,6 +67,13 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
         </div>
       )}
 
+      {books.length === 0 && (
+        <div className={styles.head}>
+          <span className="micro micro--bright">напрями видавництва</span>
+          <span className={`micro ${styles.hint}`}>оберіть напрям, щоб дізнатися більше</span>
+        </div>
+      )}
+
       {shown.length === 0 ? (
         <p className={`body ${styles.none}`}>У цьому напрямі поки нічого не заплановано.</p>
       ) : (
@@ -72,48 +81,54 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
           {shown.map((g, i) => {
             const genreBooks = books.filter((b) => b.genre_slug === g.slug);
             if (genreBooks.length === 0) {
+              // a clothbound volume with its title stamped on and nothing
+              // inside yet: tall empty dashed slots read as a page that had
+              // failed to load, and on a phone six of them ran to four screens
               return (
-                <Reveal
-                  key={g.slug}
-                  delay={i * 60}
-                  className={styles.card}
-                  style={{ "--tint": g.tint } as React.CSSProperties}
-                >
-                  <span className={styles.spine} aria-hidden="true" />
-                  <span className={styles.shimmer} aria-hidden="true" />
-                  <span className={styles.cardGenre}>{g.title}</span>
-                  <span className={`micro ${styles.cardState}`}>Готується</span>
+                <Reveal key={g.slug} delay={i * 50} className={styles.slot}>
+                  <Link
+                    href={`/genres#${g.slug}`}
+                    prefetch={false}
+                    className={styles.card}
+                    style={{ "--tint": g.tint } as React.CSSProperties}
+                  >
+                    <span className={styles.spine} aria-hidden="true" />
+                    <span className={styles.frame} aria-hidden="true" />
+                    <span className={styles.emblem} aria-hidden="true">
+                      <Seal ticks={0} emblem />
+                    </span>
+                    <span className={styles.cardTitle}>{g.title}</span>
+                    <span className={styles.foot}>
+                      <span className={`micro ${styles.cardState}`}>Готується</span>
+                      <span className={styles.arrow} aria-hidden="true">
+                        →
+                      </span>
+                    </span>
+                  </Link>
                 </Reveal>
               );
             }
             return genreBooks.map((book, bi) => (
-              <Reveal
-                key={book.slug}
-                delay={(i + bi) * 60}
-                className={`${styles.card} ${styles.cardReal}`}
-                style={{ "--tint": g.tint } as React.CSSProperties}
-              >
-                {book.cover_url && (
-                  <img className={styles.cover} src={book.cover_url} alt="" loading="lazy" decoding="async" />
-                )}
-                <span className={styles.spine} aria-hidden="true" />
-                <span className={styles.cardGenre}>{book.title}</span>
-                {book.author && <span className={`micro ${styles.cardState}`}>{book.author}</span>}
-                {book.price_cents != null && (
-                  <span style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
-                    <span className="micro">{formatPrice(book.price_cents, book.currency)}</span>
-                    <button
-                      type="button"
-                      className="pill"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        buy(book.slug);
-                      }}
-                    >
-                      У кошик
-                    </button>
-                  </span>
-                )}
+              <Reveal key={book.slug} delay={(i + bi) * 50} className={styles.slot}>
+                <article
+                  className={`${styles.card} ${styles.cardReal}`}
+                  style={{ "--tint": g.tint } as React.CSSProperties}
+                >
+                  {book.cover_url && (
+                    <img className={styles.cover} src={book.cover_url} alt="" loading="lazy" decoding="async" />
+                  )}
+                  <span className={styles.spine} aria-hidden="true" />
+                  <span className={styles.cardTitle}>{book.title}</span>
+                  {book.author && <span className={`micro ${styles.cardState}`}>{book.author}</span>}
+                  {book.price_cents != null && (
+                    <span className={styles.buy}>
+                      <span className="micro micro--bright">{formatPrice(book.price_cents, book.currency)}</span>
+                      <button type="button" className="pill" onClick={() => buy(book.slug)}>
+                        У кошик
+                      </button>
+                    </span>
+                  )}
+                </article>
               </Reveal>
             ));
           })}

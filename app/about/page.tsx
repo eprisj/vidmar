@@ -102,7 +102,7 @@ export default function AboutPage() {
           <Link key={d.href} href={d.href} className={styles.door} data-candle="">
             <Atmosphere variant={d.variant} watermark={false} />
             <span className={styles.doorRing} aria-hidden="true">
-              <Seal star={false} ticks={72} />
+              <Seal star={false} ticks={70} />
             </span>
             <span className={styles.doorIn}>
               <span className="micro micro--bright">{d.label}</span>

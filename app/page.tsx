@@ -5,7 +5,6 @@ import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
 import Reveal from "@/components/Reveal";
 import SubmitBlock from "@/components/SubmitBlock";
-import ClosingBlock from "@/components/ClosingBlock";
 import ScrollProgress from "@/components/ScrollProgress";
 import LitText from "@/components/LitText";
 import GenreRows from "@/components/GenreRows";
@@ -113,8 +112,6 @@ export default function Home() {
       </section>
 
       <SubmitBlock />
-
-      <ClosingBlock />
     </>
   );
 }

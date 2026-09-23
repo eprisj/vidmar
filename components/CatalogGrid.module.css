@@ -43,37 +43,158 @@
   color: var(--on-dark-mute);
 }
 
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: clamp(22px, 3vw, 36px);
+}
+
+.hint {
+  color: var(--on-dark-mute);
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: clamp(18px, 2.4vw, 28px);
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: clamp(16px, 2.2vw, 28px);
 }
 
-/* the placeholder itself: a book-cover proportion, a dashed edge instead of
-   a printed one — a slot waiting for a spine, not a book pretending to
-   exist. The genre's own tint marks which direction it belongs to, faint,
-   the way the tint does everywhere else on the site. */
+.slot {
+  display: flex;
+}
+
+/* A closed clothbound volume, title stamped on the board. The cloth is the
+   genre's own tint lifted toward the page's blue, so the six read as one
+   set in six colours rather than six holes in the shelf. */
 .card {
   position: relative;
-  aspect-ratio: 2 / 3;
-  border: 1px dashed var(--hair-d);
-  border-radius: 6px;
+  flex: 1;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 6px;
-  padding: 16px;
-  background: color-mix(in srgb, var(--tint, transparent) 10%, transparent);
-  transition: border-color 0.4s var(--ease);
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 26px 20px 44px 32px;
+  text-align: center;
+  border-radius: 3px 7px 7px 3px;
+  background:
+    radial-gradient(120% 80% at 70% 0%, rgba(245, 222, 179, 0.07), transparent 60%),
+    linear-gradient(160deg, color-mix(in srgb, var(--tint, var(--ink-2)) 55%, var(--ink-2)), var(--ink-deep));
+  box-shadow:
+    0 1px 0 rgba(245, 222, 179, 0.08) inset,
+    0 18px 40px -22px rgba(4, 9, 20, 0.9);
+  transition:
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease);
 }
 
-.card:hover {
-  border-color: color-mix(in srgb, var(--tint, var(--gold)) 70%, white 20%);
+a.card:hover,
+a.card:focus-visible {
+  transform: translateY(-6px);
+  box-shadow:
+    0 1px 0 rgba(245, 222, 179, 0.12) inset,
+    0 28px 50px -24px rgba(4, 9, 20, 0.95);
 }
 
+/* the spine: a darker band with a single raised rule where the board hinges */
+.spine {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 14px;
+  background: linear-gradient(to right, rgba(4, 9, 20, 0.55), rgba(4, 9, 20, 0.15));
+  box-shadow: 1px 0 0 rgba(245, 222, 179, 0.12);
+  pointer-events: none;
+}
+
+/* the stamped gold border every bound cover carries */
+.frame {
+  position: absolute;
+  inset: 10px 10px 10px 24px;
+  border: 1px solid rgba(201, 169, 97, 0.34);
+  border-radius: 2px;
+  pointer-events: none;
+  transition: border-color 0.5s var(--ease);
+}
+
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(201, 169, 97, 0.14);
+  border-radius: 1px;
+}
+
+a.card:hover .frame,
+a.card:focus-visible .frame {
+  border-color: rgba(201, 169, 97, 0.7);
+}
+
+.emblem {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  color: var(--gold);
+  opacity: 0.85;
+}
+
+.cardTitle {
+  position: relative;
+  font-family: var(--font-cormorant), "Georgia", serif;
+  font-size: clamp(1.2rem, 1.6vw, 1.45rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: 0;
+  color: var(--on-dark);
+  text-wrap: balance;
+}
+
+.foot {
+  position: absolute;
+  left: 36px;
+  right: 22px;
+  bottom: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardState {
+  position: relative;
+  color: var(--gold);
+}
+
+.arrow {
+  color: var(--gold);
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: transform 0.4s var(--ease);
+}
+
+a.card:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* a real book: the cover image is the board, text sits on a scrim at the foot */
 .cardReal {
-  border-style: solid;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: left;
+  gap: 6px;
+  padding: 18px 16px 16px 26px;
+}
+
+.cardReal::before {
+  content: "";
+  position: absolute;
+  inset: 40% 0 0;
+  z-index: -1;
+  background: linear-gradient(to bottom, transparent, rgba(8, 17, 34, 0.88));
 }
 
 .cover {
@@ -82,50 +203,39 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
+  z-index: -2;
 }
 
-.spine {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 10px;
-  background: color-mix(in srgb, var(--tint, var(--gold)) 55%, transparent);
-  opacity: 0.5;
+.buy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
 }
 
-/* the same "not yet written" sweep the journal's rubric lines use */
-.shimmer {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(115deg, transparent 30%, rgba(240, 220, 166, 0.1) 50%, transparent 70%) -140% 0 / 240% 100%
-      no-repeat;
-  animation: sweep 4.2s var(--ease) infinite;
-  pointer-events: none;
-}
-
-@keyframes sweep {
-  to {
-    background-position: 140% 0;
+@media (max-width: 760px) {
+  /* two volumes to a row: one per row stretched each to most of a screen */
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
   }
-}
 
-.cardGenre {
-  position: relative;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: var(--on-dark-mute);
-}
+  .card {
+    padding: 18px 12px 38px 26px;
+    gap: 10px;
+  }
 
-.cardState {
-  position: relative;
-  color: color-mix(in srgb, var(--tint, var(--gold)) 75%, white 25%);
-}
+  .frame {
+    inset: 7px 7px 7px 20px;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .shimmer {
-    animation: none;
+  .cardTitle {
+    font-size: 1.12rem;
+  }
+
+  .foot {
+    left: 30px;
+    right: 16px;
+    bottom: 20px;
   }
 }

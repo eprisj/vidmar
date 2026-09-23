@@ -47,7 +47,7 @@ export default function Footer() {
         </div>
 
         <div className={styles.col}>
-          <h4>Написати нам</h4>
+          <h4>Контакти</h4>
           <div className={styles.stack}>
             <a className={styles.big} href={`mailto:${EMAIL}`}>
               {EMAIL}

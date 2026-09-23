@@ -10,6 +10,8 @@ type Props = {
   lede?: string;
   /** picks one of Atmosphere's hand-cut seams, so each page opens on its own rock */
   variant?: number;
+  /** a shorter hero for pages whose content is the point */
+  compact?: boolean;
   children?: ReactNode;
 };
 
@@ -21,9 +23,9 @@ type Props = {
  * away from — so the rock's own seam and gold veins carry the atmosphere
  * alone now.
  */
-export default function PageHero({ label, title, lede, variant = 0, children }: Props) {
+export default function PageHero({ label, title, lede, variant = 0, compact = false, children }: Props) {
   return (
-    <ScrollProgress className={`deep ${styles.root}`} data-field="dark" data-candle="">
+    <ScrollProgress className={`deep ${styles.root} ${compact ? styles.compact : ""}`} data-field="dark" data-candle="">
       <Atmosphere variant={variant} watermark={false} />
       <div className={styles.ring} aria-hidden="true">
         <Seal star={false} />

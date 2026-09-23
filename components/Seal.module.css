@@ -1,3 +1,9 @@
+@property --sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 380deg;
+}
+
 .seal {
   position: absolute;
   inset: 0;
@@ -5,6 +11,20 @@
   height: 100%;
   overflow: visible;
   color: currentColor;
+  /* the ring is drawn in once, the way a compass needle sweeps a full turn
+     before it settles; a soft trailing edge instead of a hard wipe */
+  -webkit-mask: conic-gradient(from 0deg, #000 calc(var(--sweep) - 24deg), transparent var(--sweep));
+  mask: conic-gradient(from 0deg, #000 calc(var(--sweep) - 24deg), transparent var(--sweep));
+  animation: draw 2.6s cubic-bezier(0.65, 0, 0.25, 1) 0.15s both;
+}
+
+@keyframes draw {
+  from {
+    --sweep: 0deg;
+  }
+  to {
+    --sweep: 380deg;
+  }
 }
 
 .ring,
@@ -24,9 +44,32 @@
   }
 }
 
+/* each moon brightens in turn, a slow round of the cycle, never a blink */
+.moon {
+  animation: wax 14s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 2s);
+}
+
+@keyframes wax {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .seal,
   .ring,
-  .star {
+  .star,
+  .moon {
     animation: none;
+  }
+
+  .seal {
+    -webkit-mask: none;
+    mask: none;
   }
 }

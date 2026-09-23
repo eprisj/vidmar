@@ -78,7 +78,7 @@ export default function GenreRows({ genres }: { genres: Genre[] }) {
           <Atmosphere />
           <span className={styles.panelTint} />
           <span className={styles.panelSeal}>
-            <Seal ticks={48} star={false} />
+            <Seal ticks={42} star={false} />
           </span>
           <span className={styles.panelTitle}>{current?.title}</span>
         </div>
