@@ -234,14 +234,15 @@ export type AdminBook = Book & {
   updated_at: string;
 };
 
-function adminHeaders(token: string) {
-  return { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
-}
-
-async function adminRequest(path: string, token: string, init?: RequestInit) {
+/* The admin signs in with a login and password; the API answers with an
+   HttpOnly session cookie, so nothing secret lives in the page or in
+   localStorage any more. The `token` argument the calls below still take is
+   ignored: it is kept so the pages did not all have to change at once. */
+async function adminRequest(path: string, _token: string, init?: RequestInit) {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: { ...adminHeaders(token), ...(init?.headers || {}) },
+    credentials: "include",
+    headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
     cache: "no-store",
   });
   if (!res.ok) {
@@ -318,7 +319,8 @@ export async function uploadEbook(
     const body = file.slice(i * CHUNK, (i + 1) * CHUNK);
     const res = await fetch(`${API_BASE}/admin/books/${id}/ebook/${kind}?part=${i}${i === parts - 1 ? "&last=1" : ""}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/octet-stream" },
+      credentials: "include",
+      headers: { "Content-Type": "application/octet-stream" },
       body,
     });
     if (!res.ok) throw new ApiError(`upload failed (${res.status})`);
@@ -495,6 +497,38 @@ export type AdminStats = {
   books_live: number;
   books: number;
 };
+
+export async function adminLogin(login: string, password: string): Promise<{ login: string }> {
+  const res = await fetch(`${API_BASE}/admin/auth/login`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ login, password }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new ApiError(data?.error === "too many requests" ? "забагато спроб, зачекайте кілька хвилин" : data?.error || "не вдалося увійти");
+  return data;
+}
+
+export async function adminMe(): Promise<{ login: string } | null> {
+  const res = await fetch(`${API_BASE}/admin/auth/me`, { credentials: "include", cache: "no-store" });
+  return res.ok ? res.json() : null;
+}
+
+export async function adminLogout() {
+  await fetch(`${API_BASE}/admin/auth/logout`, { method: "POST", credentials: "include" }).catch(() => {});
+}
+
+export async function adminChangePassword(current: string, next: string) {
+  const res = await fetch(`${API_BASE}/admin/auth/password`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ current, next }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new ApiError(data?.error || "не вдалося змінити пароль");
+}
 
 export function getAdminStats(token: string, demo = false): Promise<AdminStats> {
   return adminRequest(`/admin/stats${demo ? "?demo=1" : ""}`, token);

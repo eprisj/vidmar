@@ -78,7 +78,7 @@ function RevenueChart({ days }: { days: AdminStats["days"] }) {
 }
 
 export default function Dashboard() {
-  const { token, fail } = useAdmin();
+  const { token, base, fail } = useAdmin();
   const [demo, setDemo] = useState(false);
   const [st, setSt] = useState<AdminStats | null>(null);
   const [error, setError] = useState("");
@@ -124,7 +124,7 @@ export default function Dashboard() {
               <span className={s.kpiValue}>{st.orders_30}</span>
               <span className={s.kpiNote}>сьогодні {st.orders_today}</span>
             </div>
-            <Link href="/admin/orders?status=awaiting_payment" className={s.kpi}>
+            <Link href={`${base}/orders?status=awaiting_payment`} className={s.kpi}>
               <span className={s.kpiLabel}>Чекають оплати</span>
               <span className={s.kpiValue}>{st.by_status.awaiting_payment ?? 0}</span>
               <span className={s.kpiNote}>на {uah(st.awaiting_sum)}</span>
@@ -148,7 +148,7 @@ export default function Dashboard() {
             <section className={s.panel}>
               <div className={s.panelHead}>
                 <h2 className={s.h2}>Замовлення за статусом</h2>
-                <Link href="/admin/orders" className={s.btnGhost}>
+                <Link href={`${base}/orders`} className={s.btnGhost}>
                   Усі
                 </Link>
               </div>
@@ -156,7 +156,7 @@ export default function Dashboard() {
                 {ORDER_FLOW.map((k) => {
                   const n = st.by_status[k] ?? 0;
                   return (
-                    <Link key={k} href={`/admin/orders?status=${k}`} className={s.statusRow}>
+                    <Link key={k} href={`${base}/orders?status=${k}`} className={s.statusRow}>
                       <span className={`${s.pill} ${s[`s_${k}`]}`}>{ORDER_STATUS[k]}</span>
                       <span className={s.meter}>
                         <span style={{ width: `${totalOrders ? (n / totalOrders) * 100 : 0}%` }} />
@@ -203,7 +203,7 @@ export default function Dashboard() {
             <section className={s.panel}>
               <div className={s.panelHead}>
                 <h2 className={s.h2}>Закінчуються</h2>
-                <Link href="/admin/books" className={s.btnGhost}>
+                <Link href={`${base}/books`} className={s.btnGhost}>
                   Склад
                 </Link>
               </div>
@@ -236,20 +236,20 @@ export default function Dashboard() {
           </div>
 
           <div className={s.kpis}>
-            <Link href="/admin/users" className={s.kpi}>
+            <Link href={`${base}/users`} className={s.kpi}>
               <span className={s.kpiLabel}>Читачів з акаунтом</span>
               <span className={s.kpiValue}>{st.users}</span>
             </Link>
-            <Link href="/admin/subscribers" className={s.kpi}>
+            <Link href={`${base}/subscribers`} className={s.kpi}>
               <span className={s.kpiLabel}>Підписників</span>
               <span className={s.kpiValue}>{st.subscribers}</span>
             </Link>
-            <Link href="/admin/manuscripts" className={s.kpi}>
+            <Link href={`${base}/manuscripts`} className={s.kpi}>
               <span className={s.kpiLabel}>Рукописів</span>
               <span className={s.kpiValue}>{st.submissions}</span>
               <span className={s.kpiNote}>за тиждень {st.submissions_7}</span>
             </Link>
-            <Link href="/admin/books" className={s.kpi}>
+            <Link href={`${base}/books`} className={s.kpi}>
               <span className={s.kpiLabel}>Книг у каталозі</span>
               <span className={s.kpiValue}>{st.books_live}</span>
               <span className={s.kpiNote}>усього {st.books}</span>

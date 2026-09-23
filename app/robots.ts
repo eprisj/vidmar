@@ -6,14 +6,14 @@ import { SITE_URL } from "@/lib/seo";
 export const dynamic = "force-static";
 
 /** The site had no robots.txt at all, so crawlers had no statement of intent
- * and no pointer to the sitemap. Admin is disallowed here as well as carrying
- * its own noindex. */
+ * and no pointer to the sitemap. The admin is deliberately not named here:
+ * robots.txt is public, and a Disallow line would hand out its address. It
+ * carries its own noindex instead. */
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: "/admin/",
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

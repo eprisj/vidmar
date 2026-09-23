@@ -66,12 +66,10 @@ export default function Header() {
     return () => document.body.classList.remove("is-loading");
   }, [open]);
 
-  // the admin is its own application with its own navigation
-  if (pathname?.startsWith("/admin")) return null;
-
   return (
     <>
       <header
+        data-site-chrome=""
         className={`${styles.root} ${solid || open ? styles.solid : ""} ${
           onPage && !open ? styles.onPage : ""
         } ${open ? styles.isOpen : ""} ${
@@ -128,6 +126,7 @@ export default function Header() {
           header would become the containing block for this fixed panel and
           collapse it to the header's own (tiny) height */}
       <div
+        data-site-chrome=""
         className={`${styles.menu} ${open ? styles.menuOpen : ""}`}
         aria-hidden={!open}
       >

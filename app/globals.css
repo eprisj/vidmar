@@ -548,7 +548,10 @@ ul {
   color: var(--on-dark-mute);
 }
 
-/* the admin brings its own chrome: no site footer under it */
+/* the admin brings its own chrome: no site header, menu or footer around
+   it. Hidden by what is on the page rather than by the address, so the
+   admin's address never has to appear in code every visitor downloads. */
+body:has([data-admin-app]) [data-site-chrome],
 body:has([data-admin-app]) footer[data-field] {
   display: none;
 }
