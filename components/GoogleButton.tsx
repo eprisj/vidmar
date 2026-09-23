@@ -47,47 +47,53 @@ export default function GoogleButton({
   onError: (msg: string) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
+  const [clientId, setClientId] = useState<string | null>(null);
   const cb = useRef({ onUser, onError });
   cb.current = { onUser, onError };
 
+  // 1: is Google configured at all, and is its script here
   useEffect(() => {
     let alive = true;
-    (async () => {
-      const clientId = await googleClientId();
-      if (!clientId || !alive) return;
+    googleClientId().then(async (id) => {
+      if (!id) return;
       try {
         await loadGsi();
+        if (alive) setClientId(id);
       } catch {
-        return;
+        /* blocked or offline: the email form still works */
       }
-      if (!alive || !box.current || !window.google) return;
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        ux_mode: "popup",
-        callback: async ({ credential }: { credential: string }) => {
-          try {
-            cb.current.onUser(await googleSignIn(credential));
-          } catch (e) {
-            cb.current.onError(e instanceof Error ? e.message : "не вдалося увійти через Google");
-          }
-        },
-      });
-      window.google.accounts.id.renderButton(box.current, {
-        type: "standard",
-        theme: "filled_black",
-        size: "large",
-        shape: "pill",
-        text: mode === "register" ? "signup_with" : "signin_with",
-        locale: "uk",
-        width: Math.min(box.current.clientWidth || 320, 400),
-      });
-      setReady(true);
-    })();
+    });
     return () => {
       alive = false;
     };
-  }, [mode]);
+  }, []);
 
-  return <div ref={box} style={{ minHeight: ready ? 44 : 0, width: "100%", display: "flex", justifyContent: "center" }} />;
+  // 2: only then is the box on the page, visible and measurable, to draw into
+  useEffect(() => {
+    if (!clientId || !box.current || !window.google) return;
+    window.google.accounts.id.initialize({
+      client_id: clientId,
+      ux_mode: "popup",
+      callback: async ({ credential }: { credential: string }) => {
+        try {
+          cb.current.onUser(await googleSignIn(credential));
+        } catch (e) {
+          cb.current.onError(e instanceof Error ? e.message : "не вдалося увійти через Google");
+        }
+      },
+    });
+    box.current.innerHTML = "";
+    window.google.accounts.id.renderButton(box.current, {
+      type: "standard",
+      theme: "filled_black",
+      size: "large",
+      shape: "pill",
+      text: mode === "register" ? "signup_with" : "signin_with",
+      locale: "uk",
+      width: Math.min(box.current.clientWidth || 320, 400),
+    });
+  }, [clientId, mode]);
+
+  if (!clientId) return null;
+  return <div ref={box} style={{ minHeight: 44, width: "100%", display: "flex", justifyContent: "center" }} />;
 }

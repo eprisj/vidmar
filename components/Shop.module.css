@@ -319,7 +319,11 @@
   background: var(--hair-d);
 }
 
-.authCard > div:empty,
-.authCard > div:empty + .or {
+/* the divider shows only when the Google button actually rendered before it */
+.authCard > .or {
   display: none;
+}
+
+.authCard > div:has(iframe, [role="button"]) + .or {
+  display: flex;
 }
