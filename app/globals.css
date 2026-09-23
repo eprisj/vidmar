@@ -7,6 +7,11 @@
    down, not a third colour. */
 
 :root {
+  /* the page has no light surface at all, so tell the browser once rather
+     than fight its light-mode defaults component by component: native
+     autofill, the scrollbar thumb and date/time pickers all follow this */
+  color-scheme: dark;
+
   /* fields — night blue, and the wheat daylight it inverts into */
   --ink: #162e59;
   --ink-2: #1d3a6d;

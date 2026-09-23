@@ -16,11 +16,12 @@ export const metadata: Metadata = pageMeta(
   "/about",
 );
 
-/** where the page goes next — two large doors, not a second copy of the
- * directions list or the author block that the other pages already carry */
+/** Where the page goes next. There was a second door here, to
+ * /submissions — but that repeated, at nearly full screen height, an
+ * invitation the header nav, the footer and the home page all already
+ * carry. One destination, not the loudest possible copy of the sitemap. */
 const doors = [
   { href: "/genres", label: "що ми видаємо", title: "Напрями видавництва", variant: 2 },
-  { href: "/submissions", label: "для авторів", title: "Надіслати рукопис", variant: 3 },
 ];
 
 export default function AboutPage() {

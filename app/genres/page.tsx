@@ -1,6 +1,5 @@
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
-import SubmitBlock from "@/components/SubmitBlock";
 import { genres, showsNote } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./genres.module.css";
@@ -97,10 +96,10 @@ export default function GenresPage() {
         </div>
       </section>
 
-      <SubmitBlock
-        title="Впізнали свій текст серед цих напрямів?"
-        text="Надсилайте його та кілька слів про себе – будемо знайомитися."
-      />
+      {/* the call to send a manuscript already runs once on the home page
+          and in the header/footer nav — repeating it here, full-width,
+          right after a page about genres, was the site asking twice on
+          two consecutive clicks */}
     </>
   );
 }

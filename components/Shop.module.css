@@ -14,7 +14,10 @@
   border-radius: 6px;
   color: inherit;
   font: inherit;
-  font-size: 0.95rem;
+  /* 16px is the line iOS Safari uses to decide whether to zoom the page on
+     focus; the 0.95rem this used to be (15.2px) sat just under it, so
+     tapping the email field on a phone zoomed the whole page in. */
+  font-size: 1rem;
   padding: 12px 14px;
 }
 
@@ -25,6 +28,23 @@
 .form input:focus {
   outline: none;
   border-color: var(--gold);
+}
+
+/* Chrome (and Safari) repaint an autofilled field with their own light
+   background the instant a saved email/password lands in it, regardless of
+   page theme — on a night-and-wheat form that's a bright rectangle punched
+   into the dark. The transition delay is the standard way to override the
+   fill colour: Chrome animates -webkit-box-shadow but not background-color
+   on autofill, so a huge delay on a same-colour shadow beats it there while
+   leaving everything else instant. */
+.form input:-webkit-autofill,
+.form input:-webkit-autofill:hover,
+.form input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--on-dark);
+  -webkit-box-shadow: 0 0 0 1000px var(--ink) inset;
+  box-shadow: 0 0 0 1000px var(--ink) inset;
+  transition: background-color 600000s 0s, color 600000s 0s;
+  caret-color: var(--on-dark);
 }
 
 .form button {
