@@ -149,12 +149,6 @@
   color: var(--on-dark-mute);
 }
 
-.sku {
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  color: var(--on-dark-mute);
-  font-variant-numeric: tabular-nums;
-}
 
 .lineCtl {
   grid-area: ctl;
@@ -326,38 +320,42 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(201, 169, 97, 0.5);
-  background: rgba(201, 169, 97, 0.07);
 }
 
-.carrier b {
-  display: block;
+.carrierText {
   font-size: 0.95rem;
-  font-weight: 600;
   color: var(--on-dark);
 }
 
-.carrier small {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.82rem;
-  color: var(--on-dark-mute);
-}
-
-.carrierMark {
+/* brand marks sit on white, the way payment and carrier logos are shown
+   everywhere: their own colours stay true on the night background */
+.logoTile {
   flex: none;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  height: 44px;
+  min-width: 60px;
+  padding: 0 10px;
   border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  background: var(--gold);
+  background: #fff;
+}
+
+.logoTile img {
+  display: block;
+  max-height: 26px;
+  max-width: 110px;
+  width: auto;
+  height: auto;
+}
+
+.tileIcon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .np {
@@ -455,20 +453,22 @@
 
 .pay {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
 }
 
 .payOpt {
   position: relative;
   display: flex;
-  gap: 12px;
-  padding: 16px;
+  align-items: center;
+  gap: 14px;
+  min-height: 68px;
+  padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid var(--hair-d);
   background: rgba(8, 17, 34, 0.3);
   cursor: pointer;
-  transition: border-color 0.25s var(--ease), background 0.25s var(--ease);
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
 }
 
 .payOpt input {
@@ -477,8 +477,8 @@
   pointer-events: none;
 }
 
-.payOpt:hover:not(.payOff) {
-  border-color: rgba(201, 169, 97, 0.6);
+.payOpt:hover {
+  border-color: rgba(245, 222, 179, 0.4);
 }
 
 .payOpt:has(input:focus-visible) {
@@ -486,81 +486,40 @@
   outline-offset: 2px;
 }
 
-.payOn {
-  border-color: var(--gold);
-  background: rgba(201, 169, 97, 0.1);
-  box-shadow: 0 0 0 1px var(--gold) inset;
-}
-
-.payOff {
-  cursor: not-allowed;
-  opacity: 0.55;
+.payOn,
+.payOn:hover {
+  border-color: var(--on-dark);
+  background: rgba(245, 222, 179, 0.06);
 }
 
 .payDot {
   flex: none;
-  width: 18px;
-  height: 18px;
-  margin-top: 2px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: 1.5px solid var(--on-dark-mute);
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
 
 .payOn .payDot {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 4px var(--ink-deep) inset, 0 0 0 9px var(--gold) inset;
-}
-
-.payBody {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
+  border-color: var(--on-dark);
+  box-shadow: 0 0 0 4px var(--ink-deep) inset, 0 0 0 10px var(--on-dark) inset;
 }
 
 .payTitle {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
   font-size: 0.98rem;
   font-weight: 600;
   color: var(--on-dark);
 }
 
-.payTitle em {
-  font-style: normal;
-  font-size: 0.72rem;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 999px;
-  color: var(--on-dark-mute);
-  border: 1px solid var(--hair-d);
+.payOpt .logoTile {
+  height: 40px;
+  min-width: 56px;
 }
 
-.payNote {
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: var(--on-dark-mute);
-}
-
-.marks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.marks span {
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--on-dark);
-  background: rgba(245, 222, 179, 0.08);
-  border: 1px solid rgba(245, 222, 179, 0.12);
+.payOpt .logoTile img {
+  max-height: 24px;
+  max-width: 90px;
 }
 
 /* ---------------- summary ---------------- */
@@ -653,34 +612,6 @@
   font-size: 0.9rem;
 }
 
-.trust {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.trust li {
-  position: relative;
-  padding-left: 22px;
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: var(--on-dark-mute);
-}
-
-.trust li::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 0.45em;
-  width: 10px;
-  height: 5px;
-  border-left: 1.5px solid var(--gold);
-  border-bottom: 1.5px solid var(--gold);
-  transform: rotate(-45deg);
-}
 
 /* ---------------- empty / done ---------------- */
 
@@ -848,6 +779,14 @@
   .phoneBar .pill {
     flex: 0 0 auto;
     min-width: 150px;
+  }
+
+  .phoneBar {
+    transition: transform 0.3s var(--ease);
+  }
+
+  .phoneBarOff {
+    transform: translateY(110%);
   }
 
   /* room under the page for the bar */

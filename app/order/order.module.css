@@ -271,9 +271,11 @@ a.itemTitle:hover {
   color: var(--gold);
 }
 
-.sku {
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
+.itemMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
 }
 
 .files {

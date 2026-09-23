@@ -320,12 +320,8 @@
 .skuLine {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 18px;
-  margin: -4px 0 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: var(--on-dark-mute);
-  font-variant-numeric: tabular-nums;
+  gap: 8px;
+  margin: 0;
 }
 
 .formatName {
@@ -452,41 +448,6 @@
   justify-content: center;
 }
 
-.perks {
-  list-style: none;
-  margin: 4px 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border: 1px solid var(--hair-d);
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-.perks li {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 16px;
-  border-left: 1px solid var(--hair-d);
-  background: rgba(8, 17, 34, 0.25);
-}
-
-.perks li:first-child {
-  border-left: 0;
-}
-
-.perks b {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--on-dark);
-}
-
-.perks span {
-  font-size: 0.8rem;
-  line-height: 1.45;
-  color: var(--on-dark-mute);
-}
 
 .section {
   display: flex;
@@ -542,18 +503,6 @@
 }
 
 @media (max-width: 760px) {
-  .perks {
-    grid-template-columns: 1fr;
-  }
-
-  .perks li {
-    border-left: 0;
-    border-top: 1px solid var(--hair-d);
-  }
-
-  .perks li:first-child {
-    border-top: 0;
-  }
 
   .badge {
     right: -8px;

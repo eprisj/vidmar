@@ -18,16 +18,19 @@
 .top {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(22, 46, 89, 0.2);
 }
 
+/* the wordmark itself, painted in night through its own outline */
 .brand {
-  font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.04em;
+  width: 104px;
+  height: 26px;
+  background: var(--ink);
+  -webkit-mask: url(/logo-mark.svg) left center / contain no-repeat;
+  mask: url(/logo-mark.svg) left center / contain no-repeat;
 }
 
 .kind {
@@ -106,12 +109,6 @@
   border-color: var(--ink);
 }
 
-.note {
-  margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: rgba(22, 46, 89, 0.78);
-}
 
 @media (max-width: 360px) {
   .qr {

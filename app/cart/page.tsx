@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import BookCover from "@/components/BookCover";
 import {
@@ -46,7 +46,12 @@ function Line({ l }: { l: CartLine }) {
         <span className={styles.tags}>
           <span className={styles.tag}>{FORMAT_LABEL[l.format]}</span>
           {l.format === "ebook" && <span className={styles.tagQuiet}>PDF + EPUB</span>}
-          {sku && <span className={styles.sku}>SKU {sku}</span>}
+          {sku && (
+            <span className="skuTag">
+              <i>Арт.</i>
+              {sku}
+            </span>
+          )}
         </span>
       </div>
       <div className={styles.lineCtl}>
@@ -153,9 +158,6 @@ function Placed({ order }: { order: PlacedOrder }) {
             ? "Платіжна сторінка не відкрилась. Оплатити можна зі сторінки замовлення, спроба займе хвилину."
             : "Реквізити для переказу чекають на сторінці замовлення. Щойно гроші надійдуть, ми відправимо книги."}
       </p>
-      <p className={styles.hint}>
-        Збережіть посилання на сторінку замовлення: там статус, номер накладної і файли електронних книг.
-      </p>
       <Link className="pill pill--solid" href={link} prefetch={false}>
         {cod ? "Сторінка замовлення" : "Перейти до оплати"}
       </Link>
@@ -177,6 +179,30 @@ export default function CartPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState<PlacedOrder | null>(null);
+  const [summaryOn, setSummaryOn] = useState(false);
+  const summaryRef = useRef<HTMLElement>(null);
+
+  // the phone bar steps aside once the real summary is on screen: two
+  // "До сплати" and two buttons at once read as a glitch
+  useEffect(() => {
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const r = summaryRef.current?.getBoundingClientRect();
+      setSummaryOn(!!r && r.top < window.innerHeight - 80 && r.bottom > 0);
+    };
+    const on = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", on, { passive: true });
+    window.addEventListener("resize", on);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", on);
+      window.removeEventListener("resize", on);
+    };
+  }, [mounted, lines.length]);
 
   useEffect(() => {
     setMounted(true);
@@ -346,7 +372,6 @@ export default function CartPage() {
                     />
                   </label>
                 </div>
-                <p className={styles.hint}>Щоб звʼязатися щодо замовлення. Жодних розсилок без вашої згоди.</p>
               </section>
 
               <section className={styles.card} id="delivery" aria-labelledby="c-delivery">
@@ -356,25 +381,21 @@ export default function CartPage() {
                 {needsDelivery ? (
                   <>
                     <div className={styles.carrier}>
-                      <span className={styles.carrierMark} aria-hidden="true">
-                        НП
+                      <span className={styles.logoTile}>
+                        <img src="/pay/np.webp" alt="Нова пошта" width={120} height={34} />
                       </span>
-                      <span>
-                        <b>Нова пошта, відділення або поштомат</b>
-                        <small>1–3 дні після відправлення, вартість за тарифом перевізника</small>
-                      </span>
+                      <span className={styles.carrierText}>Відділення або поштомат</span>
                     </div>
                     <NovaPoshta city={city} setCity={setCity} warehouse={warehouse} setWarehouse={setWarehouse} />
                   </>
                 ) : (
                   <div className={styles.carrier}>
-                    <span className={styles.carrierMark} aria-hidden="true">
-                      @
+                    <span className={styles.logoTile} aria-hidden="true">
+                      <svg viewBox="0 0 24 24" className={styles.tileIcon}>
+                        <path d="M6 3h8l4 4v14H6z M14 3v4h4 M9 12h6 M9 16h6" />
+                      </svg>
                     </span>
-                    <span>
-                      <b>Електронна доставка</b>
-                      <small>PDF та EPUB відкриються на сторінці замовлення одразу після оплати</small>
-                    </span>
+                    <span className={styles.carrierText}>PDF та EPUB на сторінці замовлення</span>
                   </div>
                 )}
               </section>
@@ -388,48 +409,29 @@ export default function CartPage() {
                     const info = PAY_INFO[m.id];
                     const on = chosen === m.id;
                     return (
-                      <label
-                        key={m.id}
-                        className={`${styles.payOpt} ${on ? styles.payOn : ""} ${m.enabled ? "" : styles.payOff}`}
-                      >
+                      <label key={m.id} className={`${styles.payOpt} ${on ? styles.payOn : ""}`}>
                         <input
                           type="radio"
                           name="pay"
                           value={m.id}
                           checked={on}
-                          disabled={!m.enabled}
                           onChange={() => setMethod(m.id)}
                         />
                         <span className={styles.payDot} aria-hidden="true" />
-                        <span className={styles.payBody}>
-                          <span className={styles.payTitle}>
-                            {info.title}
-                            {!m.enabled && <em>підключаємо</em>}
-                          </span>
-                          <span className={styles.payNote}>{info.note}</span>
-                          <span className={styles.marks}>
-                            {info.marks.map((mk) => (
-                              <span key={mk}>{mk}</span>
-                            ))}
-                          </span>
+                        <span className={styles.logoTile} aria-hidden="true">
+                          {info.logo ? (
+                            <img src={info.logo} alt="" />
+                          ) : (
+                            <svg viewBox="0 0 24 24" className={styles.tileIcon}>
+                              <path d="M3 9.5L12 4l9 5.5 M5 10v8 M9.5 10v8 M14.5 10v8 M19 10v8 M3 20h18" />
+                            </svg>
+                          )}
                         </span>
+                        <span className={styles.payTitle}>{info.title}</span>
                       </label>
                     );
                   })}
                 </div>
-                {available.some((m) => !m.enabled) && (
-                  <p className={styles.hint}>
-                    Незабаром:{" "}
-                    {available
-                      .filter((m) => !m.enabled)
-                      .map((m) => (m.id === "mono" ? "картка онлайн (monobank, Apple Pay, Google Pay)" : PAY_INFO[m.id].title))
-                      .join(", ")}
-                    .
-                  </p>
-                )}
-                {!onlyPrint && methods.some((m) => m.id === "cod") && (
-                  <p className={styles.hint}>Накладений платіж доступний, коли в кошику лише паперові книги.</p>
-                )}
               </section>
 
               <section className={styles.card} aria-labelledby="c-comment">
@@ -447,7 +449,7 @@ export default function CartPage() {
               </section>
             </div>
 
-            <aside className={styles.summary} aria-label="Підсумок">
+            <aside className={styles.summary} aria-label="Підсумок" ref={summaryRef}>
               <h2 className={styles.h2}>Разом</h2>
               <dl className={styles.rows}>
                 <div>
@@ -483,7 +485,7 @@ export default function CartPage() {
                     : "Підтвердити замовлення"}
               </button>
 
-              <div className={styles.phoneBar} aria-hidden="true">
+              <div className={`${styles.phoneBar} ${summaryOn ? styles.phoneBarOff : ""}`} aria-hidden="true">
                 <span>
                   <small>До сплати</small>
                   <b>{formatPrice(total, "UAH")}</b>
@@ -493,15 +495,6 @@ export default function CartPage() {
                 </button>
               </div>
 
-              <ul className={styles.trust}>
-                {chosen && ONLINE.includes(chosen) && (
-                  <li>Дані картки вводяться на захищеній сторінці банку, ми їх не бачимо</li>
-                )}
-                {chosen === "iban" && <li>Реквізити зʼявляться на сторінці замовлення одразу після оформлення</li>}
-                {chosen === "cod" && <li>Платите лише тоді, коли забираєте посилку</li>}
-                <li>Без реєстрації: сторінка замовлення відкривається за посиланням</li>
-                {needsDelivery && <li>Номер накладної зʼявиться на сторінці замовлення</li>}
-              </ul>
             </aside>
           </form>
         )}

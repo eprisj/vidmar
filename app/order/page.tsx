@@ -253,10 +253,17 @@ function OrderView() {
                     ) : (
                       <span className={styles.itemTitle}>{i.title}</span>
                     )}
-                    <span className={styles.muted}>
-                      {FORMAT_LABEL[i.format]}
-                      {i.quantity > 1 && ` × ${i.quantity}`}
-                      {i.sku && <span className={styles.sku}> · SKU {i.sku}</span>}
+                    <span className={styles.itemMeta}>
+                      <span className={styles.muted}>
+                        {FORMAT_LABEL[i.format]}
+                        {i.quantity > 1 && ` × ${i.quantity}`}
+                      </span>
+                      {i.sku && (
+                        <span className="skuTag">
+                          <i>Арт.</i>
+                          {i.sku}
+                        </span>
+                      )}
                     </span>
                     {i.format === "ebook" && i.slug && (
                       <span className={styles.files}>

@@ -9,8 +9,14 @@ import styles from "./ReaderCard.module.css";
  * when, without naming whose it is. */
 export const readerUrl = (code: string) => `${SITE_URL}/r?c=${encodeURIComponent(code)}`;
 
-const since = (iso?: string) =>
-  iso ? new Date(iso).toLocaleDateString("uk-UA", { month: "long", year: "numeric" }) : "";
+// "з вересня 2026": the month in the genitive, which toLocaleDateString
+// won't give with a bare month and year ("вересень 2026 р.")
+const MONTHS = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+const since = (iso?: string) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+};
 
 /**
  * The reader's card: a permanent code as a QR, set like a library ticket.
@@ -46,7 +52,7 @@ export default function ReaderCard({ code, name, createdAt }: { code: string; na
   return (
     <div className={styles.card}>
       <div className={styles.top}>
-        <span className={styles.brand}>ВІДЬМАР</span>
+        <span className={styles.brand} role="img" aria-label="ВІДЬМАР" />
         <span className={styles.kind}>картка читача</span>
       </div>
 
@@ -78,10 +84,6 @@ export default function ReaderCard({ code, name, createdAt }: { code: string; na
           Зберегти QR
         </button>
       </div>
-      <p className={styles.note}>
-        Код ваш назавжди. Назвіть його чи покажіть QR, коли звертаєтесь щодо замовлення: так ми одразу знайдемо ваш
-        акаунт.
-      </p>
     </div>
   );
 }

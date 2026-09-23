@@ -12,7 +12,6 @@ import {
   formatSku,
   getBook,
   getBooks,
-  getPayMethods,
   oldPrice,
   type Book,
   type Format,
@@ -76,7 +75,6 @@ function BookView({ initial }: { initial: Book[] }) {
   const [format, setFormat] = useState<Format>(baked ? startFormat(baked) : "print");
   const [qty, setQty] = useState(1);
   const [barOn, setBarOn] = useState(false);
-  const [payNote, setPayNote] = useState("");
   const buyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -99,20 +97,6 @@ function BookView({ initial }: { initial: Book[] }) {
     });
   }, [slug]);
 
-  // named from what the shop really takes today, not from what it will
-  useEffect(() => {
-    getPayMethods().then((ms) => {
-      const on = new Set(ms.filter((m) => m.enabled).map((m) => m.id));
-      const parts = [
-        on.has("mono") && "карткою, Apple Pay чи Google Pay",
-        on.has("liqpay") && "у Приват24",
-        on.has("iban") && "переказом на рахунок",
-        on.has("cod") && "при отриманні (для паперових)",
-      ].filter(Boolean) as string[];
-      const text = parts.join(", ");
-      setPayNote(text.charAt(0).toUpperCase() + text.slice(1));
-    });
-  }, []);
 
   // the phone bar shows once the buy buttons have scrolled up out of view.
   // Measured on scroll, not by an IntersectionObserver: a jump from below
@@ -231,8 +215,18 @@ function BookView({ initial }: { initial: Book[] }) {
           <h1 className={styles.title}>{book.title}</h1>
           {book.author && <p className={styles.author}>{book.author}</p>}
           <p className={styles.skuLine}>
-            {sku && <span>Артикул {sku}</span>}
-            {book.isbn && <span>ISBN {book.isbn}</span>}
+            {sku && (
+              <span className="skuTag">
+                <i>Артикул</i>
+                {sku}
+              </span>
+            )}
+            {book.isbn && (
+              <span className="skuTag">
+                <i>ISBN</i>
+                {book.isbn}
+              </span>
+            )}
           </p>
 
           <div className={styles.formats} role="radiogroup" aria-label="Формат">
@@ -306,20 +300,6 @@ function BookView({ initial }: { initial: Book[] }) {
             )}
           </div>
 
-          <ul className={styles.perks}>
-            <li>
-              <b>Доставка</b>
-              <span>Новою поштою у відділення чи поштомат, 1–3 дні</span>
-            </li>
-            <li>
-              <b>Оплата</b>
-              <span>{payNote || "…"}</span>
-            </li>
-            <li>
-              <b>Електронна версія</b>
-              <span>PDF та EPUB, завантаження одразу після оплати</span>
-            </li>
-          </ul>
 
           {book.description && (
             <div className={styles.section}>

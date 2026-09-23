@@ -51,7 +51,7 @@ function Orders() {
   if (orders.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>Замовлень поки немає. Ті, що оформите, увійшовши в кабінет, зʼявляться тут.</p>
+        <p>Замовлень поки немає.</p>
         <Link className="pill pill--solid" href="/catalog">
           До каталогу
         </Link>
@@ -156,7 +156,6 @@ function Profile({ user, onSaved }: { user: User; onSaved: (u: User) => void }) 
           />
         </label>
       </div>
-      <p className={styles.hint}>Імʼя й телефон підставляться в кошик, щоб не вводити їх щоразу.</p>
       {error && (
         <p className={styles.error} role="alert">
           {error}
@@ -206,7 +205,6 @@ function Delivery({ user, onSaved }: { user: User; onSaved: (u: User) => void })
   return (
     <div className={styles.form}>
       <NovaPoshta city={city} setCity={setCity} warehouse={warehouse} setWarehouse={setWarehouse} />
-      <p className={styles.hint}>Це відділення буде вже обране в кошику. Змінити його для окремого замовлення можна там же.</p>
       <div className={styles.formEnd}>
         {d && (
           <button type="button" className={styles.textBtn} disabled={busy} onClick={() => save(true)}>
@@ -263,7 +261,7 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
           />
         </label>
         <label className={styles.field}>
-          <span>Новий пароль</span>
+          <span>Новий пароль, від 8 символів</span>
           <input
             type="password"
             value={next}
@@ -273,7 +271,6 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
             required
           />
         </label>
-        <p className={styles.hint}>Мінімум 8 символів. Після зміни з акаунта вийдуть усі інші пристрої.</p>
         {error && (
           <p className={styles.error} role="alert">
             {error}
@@ -308,7 +305,6 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
           <span className={styles.switch} aria-hidden="true" />
           <span>
             <b>Новини видавництва</b>
-            <small>Лист, коли виходить нова книга. Нічого більше.</small>
           </span>
         </label>
       </div>
@@ -379,15 +375,7 @@ export default function AccountPage() {
       <section className={`ink ${styles.root}`} data-field="dark">
         <div className="wrapMax">
           <AuthGate
-            aside={
-              <>
-                <p>
-                  <b>Що дає акаунт.</b> Історію замовлень з посиланнями на кожне, збережені імʼя, телефон і
-                  відділення Нової пошти для швидкого оформлення, і картку читача з QR-кодом.
-                </p>
-                <p>Купувати можна й без акаунта: кошик працює для всіх.</p>
-              </>
-            }
+            aside={<p>Історія замовлень, збережена адреса доставки й картка читача з QR-кодом.</p>}
           >
             {(user, signOut) => <Cabinet user={user} signOut={signOut} />}
           </AuthGate>

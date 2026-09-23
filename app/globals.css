@@ -511,3 +511,39 @@ ul {
   mix-blend-mode: screen;
 }
 }
+
+/* ---------------- article code ---------------- */
+
+/* SKU / ISBN as a small stamped tag: the label muted, the code in even
+   figures, so a line of them reads as data and not as a sentence */
+.skuTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--hair-d);
+  background: rgba(8, 17, 34, 0.35);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-dark);
+  white-space: nowrap;
+}
+
+.skuTag i {
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--on-dark-mute);
+}
+
+/* a solid button with nothing to do yet: a quiet outline, not a faded
+   wheat block (at half opacity over the night it turned a muddy grey) */
+.pill--solid:disabled,
+.pill--solid:disabled:hover {
+  opacity: 1;
+  background: transparent;
+  border-color: var(--hair-d);
+  color: var(--on-dark-mute);
+}
