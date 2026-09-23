@@ -28,7 +28,7 @@ export default function JournalPage() {
         <img
           className={styles.plateImg}
           src="/gravure/macbeth-cave.webp"
-          srcSet="/gravure/macbeth-cave-sm.webp 780w, /gravure/macbeth-cave.webp 1174w"
+          srcSet="/gravure/macbeth-cave-sm.webp 780w, /gravure/macbeth-cave-md.webp 1200w, /gravure/macbeth-cave.webp 1761w"
           sizes="100vw"
           alt=""
           aria-hidden="true"

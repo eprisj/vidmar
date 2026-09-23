@@ -17,15 +17,18 @@ const tilePlate: Record<string, string> = {
   "mistyka-proza": "witches-storm",
 };
 
-/** Natural widths, needed for the srcSet descriptor: the plates are scans of
- * different sizes, and three were cropped in from their paper margins. */
+/** Native width of each plate's largest export, for the srcSet descriptor.
+ * Restored from the pre-optimisation scans in git history (2x–3x what the
+ * site had been serving) and re-cropped/re-duotoned at that size, so the
+ * banner and every tile have a real 1600–1800px source instead of the same
+ * ~900–1200px file stretched across a retina screen. */
 const plateWidth: Record<string, number> = {
-  "mystique-forest": 900,
-  "macbeth-cave": 1174,
-  bluebeard: 900,
-  "death-moon": 1200,
-  "fantasy-giant": 900,
-  "witches-storm": 1138,
+  "mystique-forest": 1600,
+  "macbeth-cave": 1761,
+  bluebeard: 1600,
+  "death-moon": 1400,
+  "fantasy-giant": 1600,
+  "witches-storm": 1707,
 };
 
 export const metadata = pageMeta(
@@ -52,7 +55,7 @@ export default function GenresPage() {
         <img
           className={styles.plateImg}
           src="/gravure/witches-storm.webp"
-          srcSet="/gravure/witches-storm-sm.webp 780w, /gravure/witches-storm.webp 1138w"
+          srcSet="/gravure/witches-storm-sm.webp 780w, /gravure/witches-storm-md.webp 1200w, /gravure/witches-storm.webp 1707w"
           sizes="100vw"
           alt=""
           aria-hidden="true"
@@ -77,7 +80,7 @@ export default function GenresPage() {
                 <img
                   className={styles.tilePlate}
                   src={`/gravure/${tilePlate[g.slug]}.webp`}
-                  srcSet={`/gravure/${tilePlate[g.slug]}-sm.webp 780w, /gravure/${tilePlate[g.slug]}.webp ${plateWidth[tilePlate[g.slug]]}w`}
+                  srcSet={`/gravure/${tilePlate[g.slug]}-sm.webp 780w, /gravure/${tilePlate[g.slug]}-md.webp 1200w, /gravure/${tilePlate[g.slug]}.webp ${plateWidth[tilePlate[g.slug]]}w`}
                   sizes="(max-width: 760px) 100vw, 50vw"
                   alt=""
                   aria-hidden="true"
