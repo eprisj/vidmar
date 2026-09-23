@@ -12,7 +12,7 @@ export const readerUrl = (code: string) => `${SITE_URL}/r?c=${encodeURIComponent
 // "з вересня 2026": the month in the genitive, which toLocaleDateString
 // won't give with a bare month and year ("вересень 2026 р.")
 const MONTHS = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
-const since = (iso?: string) => {
+export const since = (iso?: string) => {
   if (!iso) return "";
   const d = new Date(iso);
   return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;

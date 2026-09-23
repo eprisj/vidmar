@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { checkReader } from "@/lib/api";
+import { since } from "@/components/ReaderCard";
 import styles from "./r.module.css";
 
 function Check() {
@@ -28,7 +29,7 @@ function Check() {
       <h1 className={styles.h1}>{ok ? "Дійсна картка читача" : "Такої картки немає"}</h1>
       <p className={styles.p}>
         {ok && res?.since
-          ? `Читач видавництва ВІДЬМАР з ${new Date(res.since).toLocaleDateString("uk-UA", { month: "long", year: "numeric" })}.`
+          ? `Читач видавництва ВІДЬМАР з ${since(res.since)}.`
           : "Перевірте код: він має вигляд VR-XXXX-XXXX."}
       </p>
       <Link className="pill" href="/catalog">
