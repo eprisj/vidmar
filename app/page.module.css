@@ -55,7 +55,6 @@
   gap: clamp(16px, 2.4vw, 26px);
   max-width: 64%;
   /* the statement comes out of focus as it arrives, like the reference */
-  filter: blur(calc((1 - var(--in, 1)) * 9px));
   opacity: calc(0.15 + var(--in, 1) * 0.85);
 }
 

@@ -416,11 +416,13 @@ ul {
 
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(12px);
+  /* short and barely staggered: a second-long fade with delays made content
+     arrive after the scroll had stopped, which looked like lag */
   transition:
-    opacity 1s var(--ease),
-    transform 1s var(--ease);
-  transition-delay: var(--d, 0ms);
+    opacity 0.5s var(--ease),
+    transform 0.5s var(--ease);
+  transition-delay: calc(var(--d, 0ms) * 0.4);
 }
 
 .reveal.in {

@@ -84,7 +84,6 @@
   text-align: center;
   gap: clamp(14px, 2vw, 22px);
   max-width: 76%;
-  filter: blur(calc((1 - var(--in, 1)) * 9px));
   opacity: calc(0.15 + var(--in, 1) * 0.85);
 }
 

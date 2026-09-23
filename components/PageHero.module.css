@@ -60,7 +60,7 @@
   max-width: 13ch;
   text-wrap: balance;
   margin-bottom: 0.08em;
-  animation: focusIn 1.5s var(--ease) both;
+  animation: focusIn 0.8s var(--ease) both;
 }
 
 /* balance, not wrap: a short lede otherwise leaves its last word alone on a
@@ -72,18 +72,16 @@
   text-wrap: balance;
   color: rgba(245, 222, 179, 0.84);
   text-shadow: 0 1px 14px rgba(8, 17, 34, 0.7);
-  animation: focusIn 1.5s var(--ease) 0.2s both;
+  animation: focusIn 0.8s var(--ease) 0.1s both;
 }
 
 /* comes out of blur, the way the reference's lines do */
 @keyframes focusIn {
   from {
-    filter: blur(14px);
     opacity: 0;
     transform: translateY(18px);
   }
   to {
-    filter: blur(0);
     opacity: 1;
     transform: none;
   }
