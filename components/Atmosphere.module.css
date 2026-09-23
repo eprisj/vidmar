@@ -17,8 +17,7 @@
   position: absolute;
   inset: -10%;
   background:
-    radial-gradient(60% 90% at 18% 40%, rgba(245, 222, 179, 0.07), transparent 62%),
-    radial-gradient(55% 80% at 86% 62%, rgba(245, 222, 179, 0.05), transparent 60%),
+    radial-gradient(60% 90% at 18% 40%, rgba(201, 169, 97, 0.05), transparent 62%),
     linear-gradient(
       104deg,
       color-mix(in srgb, var(--tint, var(--ink-deep)) 25%, var(--ink-deep)) 12%,
@@ -27,39 +26,6 @@
       color-mix(in srgb, var(--tint, #1a3260) 55%, #1a3260) 74%,
       color-mix(in srgb, var(--tint, var(--ink-deep)) 25%, var(--ink-deep)) 96%
     );
-}
-
-/* the seam of light: a narrow, slightly bent shaft — position/angle come
-   from --seam-x/--seam-rot/--seam-w when a variant is set */
-.seam {
-  position: absolute;
-  inset: -20% 0;
-  left: var(--seam-x, 46%);
-  width: var(--seam-w, 16%);
-  background: linear-gradient(
-    180deg,
-    rgba(245, 222, 179, 0.02) 0%,
-    rgba(245, 222, 179, 0.5) 34%,
-    rgba(245, 222, 179, 0.72) 52%,
-    rgba(245, 222, 179, 0.3) 70%,
-    rgba(245, 222, 179, 0.02) 100%
-  );
-  filter: blur(38px);
-  transform: rotate(var(--seam-rot, 9deg)) scaleX(0.7);
-  opacity: 0.5;
-}
-
-/* the hard edges where the rock breaks */
-.edges {
-  position: absolute;
-  inset: -12%;
-  background:
-    linear-gradient(101deg, transparent 42%, rgba(245, 222, 179, 0.34) 43.2%, transparent 44.6%),
-    linear-gradient(97deg, transparent 56%, rgba(245, 222, 179, 0.16) 57.2%, transparent 58.4%),
-    linear-gradient(112deg, transparent 28%, rgba(245, 222, 179, 0.1) 29.2%, transparent 30.4%);
-  filter: blur(6px);
-  opacity: 0.5;
-  transform: rotate(var(--edge-rot, 0deg));
 }
 
 /* the publisher's mark, oversized and cropped by the tile edge — ties
@@ -83,8 +49,7 @@
     linear-gradient(86deg, transparent 71.8%, rgba(194, 160, 84, 0.24) 72.2%, transparent 72.8%);
   -webkit-mask-image: radial-gradient(60% 45% at 48% 52%, #000 10%, transparent 78%);
   mask-image: radial-gradient(60% 45% at 48% 52%, #000 10%, transparent 78%);
-  filter: blur(1.6px);
-  opacity: 0.55;
+  opacity: 0.35;
   mix-blend-mode: screen;
 }
 
@@ -109,9 +74,5 @@
   .root {
     --seam-x: 40%;
     --seam-w: 26%;
-  }
-
-  .seam {
-    filter: blur(30px);
   }
 }

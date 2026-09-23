@@ -45,8 +45,6 @@ export default function Atmosphere({ className = "", tint, variant, watermark = 
 
   return (
     <div className={`${styles.root} ${className}`} style={style} aria-hidden="true">
-      <span className={styles.seam} />
-      <span className={styles.edges} />
       {seam && watermark && (
         <span className={styles.mark}>
           <Seal />

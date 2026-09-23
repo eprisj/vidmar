@@ -2,3 +2,9 @@
 .books {
   scroll-margin-top: var(--nav-h);
 }
+
+/* the hero already opens the page; the shelf follows it without a second
+   screen-high gap (.pad is sized for the home page's scene breaks) */
+.books.books {
+  padding-top: clamp(28px, 3.5vw, 48px);
+}

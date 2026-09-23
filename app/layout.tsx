@@ -48,6 +48,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="uk"
       className={`${denistina.variable} ${golos.variable}`}
     >
+      <head>
+        {/* the header's cart badge, the catalogue and the book page all ask the
+            API; the TLS handshake to it starts while the HTML is still parsing */}
+        <link rel="preconnect" href="https://api.vidmar.com.ua" crossOrigin="anonymous" />
+      </head>
       <body>
         <ToastProvider>
           <Header />

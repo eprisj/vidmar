@@ -41,7 +41,6 @@ export default function PageHero({ label, title, lede, variant = 0, compact = fa
         {lede && <p className={styles.lede}>{lede}</p>}
         {children}
       </div>
-      <span className={styles.cue} aria-hidden="true" />
     </ScrollProgress>
   );
 }

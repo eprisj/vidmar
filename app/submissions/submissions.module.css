@@ -30,14 +30,12 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  counter-reset: rule;
   border-top: 1px solid var(--hair-d);
 }
 
 .rules li {
-  counter-increment: rule;
   display: grid;
-  grid-template-columns: 2.2em 1fr;
+  grid-template-columns: 1.4em 1fr;
   align-items: baseline;
   padding-block: 16px;
   border-bottom: 1px solid var(--hair-d);
@@ -48,12 +46,13 @@
   color: var(--on-dark);
 }
 
+/* a short gold rule, not a counter: the list is three conditions, not steps */
 .rules li::before {
-  content: "0" counter(rule);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  color: var(--gold);
+  content: "";
+  width: 0.7em;
+  height: 1px;
+  align-self: center;
+  background: var(--gold);
 }
 
 .note {

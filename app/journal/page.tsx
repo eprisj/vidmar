@@ -15,9 +15,9 @@ export default function JournalPage() {
   return (
     <>
       <PageHero
+        compact
         label="Журнал"
         title="Скоро тут будуть записи"
-        lede="Журнал видавництва запрацює, коли вийде перша книга. Ось із чого він почнеться."
         variant={5}
       />
 

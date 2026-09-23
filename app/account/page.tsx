@@ -61,8 +61,8 @@ export default function AccountPage() {
       <PageHero
         label="Кабінет"
         title="Ваш кабінет"
-        lede="Тут живуть ваші замовлення та їхній стан. Поки полиця порожня, акаунт знадобиться, щойно вийде перше видання."
         variant={2}
+        compact
       />
 
       <section className={`ink padS ${styles.scene}`} data-field="dark" data-candle="">

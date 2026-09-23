@@ -1,6 +1,6 @@
 .root {
   position: relative;
-  min-height: 88svh;
+  min-height: 60svh;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -16,7 +16,8 @@
   top: 46%;
   width: min(118vmin, 1080px);
   aspect-ratio: 1;
-  color: rgba(245, 222, 179, 0.5);
+  /* a watermark, not a second subject: at 0.5 the dial competed with the title */
+  color: rgba(245, 222, 179, 0.16);
   /* a quarter turn across the whole hero, not most of a half: at 150deg the
      dial spun visibly under every flick of the wheel */
   transform: translateY(-50%) rotate(calc(var(--p, 0.5) * 70deg - 35deg));
@@ -87,45 +88,17 @@
   }
 }
 
-/* a thin line at the bottom edge, drawing downward: there is more below */
-.cue {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 1px;
-  height: clamp(40px, 6vw, 72px);
-  background: rgba(245, 222, 179, 0.16);
-  overflow: hidden;
-}
-
-.cue::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 40%;
-  background: var(--on-dark);
-  animation: drop 2.8s var(--ease) infinite;
-}
-
-@keyframes drop {
-  0% {
-    transform: translateY(-100%);
-  }
-  62%,
-  100% {
-    transform: translateY(280%);
-  }
-}
-
 /* a page whose point is below the fold: the hero states it and gets out
    of the way instead of holding most of a screen */
 .compact {
-  min-height: 62svh;
+  min-height: 0;
+  padding-top: calc(var(--nav-h) + clamp(56px, 7vw, 100px));
+  padding-bottom: clamp(40px, 5vw, 64px);
 }
 
 @media (max-width: 760px) {
   .root {
-    min-height: 74svh;
+    min-height: 56svh;
   }
 
   .compact {
@@ -146,8 +119,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .title,
-  .lede,
-  .cue::after {
+  .lede {
     animation: none;
   }
 }

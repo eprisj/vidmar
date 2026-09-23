@@ -103,15 +103,17 @@ function BookCard({ b }: { b: Book }) {
   );
 }
 
-export default function CatalogGrid({ genres }: { genres: Genre[] }) {
-  const [books, setBooks] = useState<Book[] | null>(null);
+export default function CatalogGrid({ genres, initial = null }: { genres: Genre[]; initial?: Book[] | null }) {
+  // the shelf as it stood at build time paints at once; the API then brings
+  // prices and stock up to date instead of the reader waiting on it
+  const [books, setBooks] = useState<Book[] | null>(initial);
   const [genre, setGenre] = useState<string | null>(null);
   const [format, setFormat] = useState<FormatFilter>("all");
   const [sort, setSort] = useState<Sort>("order");
   const [q, setQ] = useState("");
 
   useEffect(() => {
-    getBooks().then(setBooks);
+    getBooks().then((b) => setBooks((prev) => (b.length || !prev ? b : prev)));
   }, []);
 
   // /genres links in as ?g=<slug>. Read here rather than with

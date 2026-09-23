@@ -42,9 +42,9 @@ export default function GenresPage() {
   return (
     <>
       <PageHero
+        compact
         label="Напрями"
         title="Що ми видаємо"
-        lede="Книги, яким часом затісно у звичних рамках великого видавничого ринку."
         variant={2}
       />
 

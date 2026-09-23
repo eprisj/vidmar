@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import CatalogGrid from "@/components/CatalogGrid";
 import { genres } from "@/lib/content";
+import { getBooks } from "@/lib/api";
 import { pageMeta } from "@/lib/seo";
 import styles from "./catalog.module.css";
 
@@ -11,13 +12,14 @@ export const metadata: Metadata = pageMeta(
   "/catalog",
 );
 
-export default function CatalogPage() {
+export default async function CatalogPage() {
+  // baked in at build; an unreachable API just means the client fetches it
+  const initial = await getBooks().catch(() => []);
   return (
     <>
       <PageHero
         label="Каталог"
         title="Книги ВІДЬМАР"
-        lede="Паперові й електронні видання. Паперові доставляємо Новою поштою по всій Україні, електронні надходять одразу після оплати."
         variant={4}
         compact
       />
@@ -25,7 +27,7 @@ export default function CatalogPage() {
       {/* /genres links here as /catalog?g=<slug>#books */}
       <section id="books" className={`ink pad ${styles.books}`} data-field="dark" data-candle="">
         <div className="wrapMax">
-          <CatalogGrid genres={genres} />
+          <CatalogGrid genres={genres} initial={initial.length ? initial : null} />
         </div>
       </section>
     </>
