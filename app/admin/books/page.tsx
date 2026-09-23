@@ -37,6 +37,16 @@ const EMPTY: BookInput = {
   excerpt: "",
   cover_pos: "",
   is_demo: false,
+  sku: "",
+  print_old_price_cents: null,
+  ebook_old_price_cents: null,
+  series: "",
+  language: "Українська",
+  translator: "",
+  illustrator: "",
+  dimensions: "",
+  weight_g: null,
+  age_rating: "",
 };
 
 const uah = (c: number | null | undefined) => (c == null ? "" : c / 100);
@@ -103,6 +113,16 @@ export default function AdminBooksPage() {
       excerpt: book.excerpt || "",
       cover_pos: book.cover_pos || "",
       is_demo: !!book.is_demo,
+      sku: book.sku || "",
+      print_old_price_cents: book.print_old_price_cents ?? null,
+      ebook_old_price_cents: book.ebook_old_price_cents ?? null,
+      series: book.series || "",
+      language: book.language || "",
+      translator: book.translator || "",
+      illustrator: book.illustrator || "",
+      dimensions: book.dimensions || "",
+      weight_g: book.weight_g ?? null,
+      age_rating: book.age_rating || "",
     });
   }
 
@@ -258,6 +278,89 @@ export default function AdminBooksPage() {
           </label>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
+          <label style={{ flex: 1 }}>
+            стара ціна папір, грн
+            <input
+              type="number"
+              placeholder="для знижки"
+              value={uah(form.print_old_price_cents)}
+              onChange={(e) => setForm({ ...form, print_old_price_cents: cents(e.target.value) })}
+              style={{ padding: 8, width: "100%" }}
+            />
+          </label>
+          <label style={{ flex: 1 }}>
+            стара ціна e-book, грн
+            <input
+              type="number"
+              placeholder="для знижки"
+              value={uah(form.ebook_old_price_cents)}
+              onChange={(e) => setForm({ ...form, ebook_old_price_cents: cents(e.target.value) })}
+              style={{ padding: 8, width: "100%" }}
+            />
+          </label>
+          <label style={{ width: 150 }}>
+            SKU (артикул)
+            <input
+              placeholder="авто: VDM-0001"
+              value={form.sku ?? ""}
+              onChange={(e) => setForm({ ...form, sku: e.target.value.toUpperCase() })}
+              style={{ padding: 8, width: "100%" }}
+            />
+          </label>
+        </div>
+        <p style={{ fontSize: 12, color: "#666", margin: 0 }}>
+          Стара ціна показується закресленою лише якщо вона більша за поточну. До SKU формат додає -P (папір) чи -E (e-book).
+        </p>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input
+            placeholder="серія"
+            value={form.series ?? ""}
+            onChange={(e) => setForm({ ...form, series: e.target.value })}
+            style={{ padding: 8, flex: 1 }}
+          />
+          <input
+            placeholder="мова"
+            value={form.language ?? ""}
+            onChange={(e) => setForm({ ...form, language: e.target.value })}
+            style={{ padding: 8, flex: 1 }}
+          />
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input
+            placeholder="перекладач"
+            value={form.translator ?? ""}
+            onChange={(e) => setForm({ ...form, translator: e.target.value })}
+            style={{ padding: 8, flex: 1 }}
+          />
+          <input
+            placeholder="ілюстратор"
+            value={form.illustrator ?? ""}
+            onChange={(e) => setForm({ ...form, illustrator: e.target.value })}
+            style={{ padding: 8, flex: 1 }}
+          />
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input
+            placeholder="формат, напр. 145×215 мм"
+            value={form.dimensions ?? ""}
+            onChange={(e) => setForm({ ...form, dimensions: e.target.value })}
+            style={{ padding: 8, flex: 2 }}
+          />
+          <input
+            type="number"
+            placeholder="вага, г"
+            value={form.weight_g ?? ""}
+            onChange={(e) => setForm({ ...form, weight_g: int(e.target.value) })}
+            style={{ padding: 8, flex: 1 }}
+          />
+          <input
+            placeholder="вік, напр. 16+"
+            value={form.age_rating ?? ""}
+            onChange={(e) => setForm({ ...form, age_rating: e.target.value })}
+            style={{ padding: 8, flex: 1 }}
+          />
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
           <input
             type="number"
             placeholder="сторінок"
@@ -331,6 +434,7 @@ export default function AdminBooksPage() {
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
         <thead>
           <tr style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
+            <th>SKU</th>
             <th>slug</th>
             <th>назва</th>
             <th>напрям</th>
@@ -343,6 +447,7 @@ export default function AdminBooksPage() {
         <tbody>
           {books.map((b) => (
             <tr key={b.id} style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ whiteSpace: "nowrap", fontFamily: "monospace" }}>{b.sku}</td>
               <td>{b.slug}</td>
               <td>{b.title}</td>
               <td>{b.genre_slug}</td>
@@ -350,6 +455,8 @@ export default function AdminBooksPage() {
               <td>
                 {b.print_price_cents == null ? "–" : formatPrice(b.print_price_cents, b.currency)} /{" "}
                 {b.ebook_price_cents == null ? "–" : formatPrice(b.ebook_price_cents, b.currency)}
+                <br />
+                <small style={{ color: "#666" }}>залишок: {b.stock ?? "∞"}</small>
                 {b.is_demo && <span style={{ color: "#a67c00" }}> · демо</span>}
               </td>
               <td style={{ fontSize: 12 }}>

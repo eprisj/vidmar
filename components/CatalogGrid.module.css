@@ -275,14 +275,59 @@ a.card:hover .arrow {
   width: 100%;
 }
 
-.book > :first-child {
+.bookLink {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.coverBox {
+  position: relative;
+  display: block;
   margin-bottom: 10px;
   transition: transform 0.5s var(--ease);
 }
 
-.book:hover > :first-child,
-.book:focus-visible > :first-child {
+.bookLink:hover .coverBox,
+.bookLink:focus-visible .coverBox {
   transform: translateY(-6px);
+}
+
+.badges {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.badges span {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.8);
+}
+
+.badgeSale {
+  color: var(--ink);
+  background: var(--gold);
+}
+
+.badgeLow {
+  color: var(--on-dark);
+  background: rgba(11, 22, 43, 0.88);
+  border: 1px solid rgba(201, 169, 97, 0.6);
+}
+
+.badgeOut {
+  color: var(--on-dark-mute);
+  background: rgba(11, 22, 43, 0.88);
+  border: 1px solid var(--hair-d);
 }
 
 .bookTitle {
@@ -299,16 +344,72 @@ a.card:hover .arrow {
 
 .bookFoot {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.priceBox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  min-width: 0;
 }
 
 .price {
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.was {
+  font-size: 0.8rem;
+  color: var(--on-dark-mute);
+}
+
+.priceBox .formats {
+  flex-basis: 100%;
+  margin-top: 4px;
+}
+
+.add {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 97, 0.55);
+  color: var(--gold);
+  cursor: pointer;
+  transition:
+    background 0.25s var(--ease),
+    color 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.add svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.add:hover {
+  background: var(--gold);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.addOn {
+  background: rgba(201, 169, 97, 0.16);
 }
 
 .formats {

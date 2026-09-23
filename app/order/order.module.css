@@ -1,0 +1,395 @@
+.root {
+  min-height: 100svh;
+  padding-top: calc(var(--nav-h) + clamp(28px, 4vw, 56px));
+  padding-bottom: clamp(60px, 8vw, 110px);
+  background:
+    radial-gradient(ellipse 60% 40% at 85% 0%, rgba(201, 169, 97, 0.08), transparent 70%),
+    linear-gradient(to bottom, var(--ink-abyss), var(--ink) 55%);
+}
+
+.loading {
+  min-height: 60vh;
+}
+
+.missing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  max-width: 560px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: clamp(24px, 3.5vw, 40px);
+}
+
+.h1 {
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ---------------- steps ---------------- */
+
+.steps {
+  list-style: none;
+  display: flex;
+  margin: 10px 0 0;
+  padding: 0;
+  max-width: 720px;
+}
+
+.steps li {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--on-dark-mute);
+}
+
+/* the rail between dots: gold up to the current step */
+.steps li::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  right: 0;
+  height: 2px;
+  background: var(--hair-d);
+}
+
+.steps li:last-child::before {
+  display: none;
+}
+
+.steps li.stepOn::before {
+  background: linear-gradient(to right, var(--gold), var(--hair-d));
+}
+
+.steps li.stepOn:has(+ .stepOn)::before {
+  background: var(--gold);
+}
+
+.stepDot {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--hair-d);
+  background: var(--ink-abyss);
+}
+
+.stepOn {
+  color: var(--on-dark) !important;
+}
+
+.stepOn .stepDot {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+/* ---------------- layout ---------------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+  gap: clamp(16px, 2.6vw, 32px);
+  align-items: start;
+}
+
+.main,
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(18px, 2.4vw, 26px);
+  border: 1px solid var(--hair-d);
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(29, 58, 109, 0.42), rgba(11, 22, 43, 0.5));
+}
+
+.paidPanel {
+  border-color: rgba(159, 211, 168, 0.45);
+  background: linear-gradient(160deg, rgba(60, 120, 90, 0.18), rgba(11, 22, 43, 0.5));
+}
+
+.panelTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--on-dark);
+}
+
+.muted {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--on-dark-mute);
+}
+
+.demo,
+.notice {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--on-dark);
+  border: 1px solid rgba(201, 169, 97, 0.45);
+  background: rgba(201, 169, 97, 0.08);
+}
+
+.error {
+  margin: 0;
+  color: #f4b8b8;
+  font-size: 0.9rem;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  word-break: break-all;
+}
+
+/* ---------------- requisites ---------------- */
+
+.req {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--hair-d);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.req > div {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  border-top: 1px solid var(--hair-d);
+}
+
+.req > div:first-child {
+  border-top: 0;
+}
+
+.req dt {
+  font-size: 0.82rem;
+  color: var(--on-dark-mute);
+}
+
+.req dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--on-dark);
+}
+
+.copy {
+  flex: none;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--gold);
+  border: 1px solid rgba(201, 169, 97, 0.4);
+  cursor: pointer;
+  transition: background 0.2s var(--ease);
+}
+
+.copy:hover {
+  background: rgba(201, 169, 97, 0.12);
+}
+
+.payBtns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.payBtns .pill:disabled {
+  opacity: 0.6;
+}
+
+/* ---------------- items ---------------- */
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px solid var(--hair-d);
+}
+
+.item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.thumb > div {
+  width: 60px;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.itemTitle {
+  font-weight: 600;
+  color: var(--on-dark);
+}
+
+a.itemTitle:hover {
+  color: var(--gold);
+}
+
+.sku {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.itemSum {
+  font-weight: 600;
+  color: var(--gold);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- side ---------------- */
+
+.rows {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.rows dt {
+  color: var(--on-dark-mute);
+}
+
+.rows dd {
+  margin: 0;
+  text-align: right;
+  color: var(--on-dark);
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 14px;
+  border-top: 1px solid var(--hair-d);
+}
+
+.total strong {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.addr {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--on-dark);
+}
+
+.ttn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ttnRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.track {
+  font-size: 0.88rem;
+  color: var(--gold);
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.keep {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--on-dark-mute);
+}
+
+.keep a {
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .req > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .steps li {
+    font-size: 0.75rem;
+  }
+
+  .payBtns .pill {
+    width: 100%;
+    justify-content: center;
+  }
+}

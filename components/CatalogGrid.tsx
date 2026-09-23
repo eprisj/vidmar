@@ -3,19 +3,104 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Genre } from "@/lib/content";
-import { formatPrice, getBooks, type Book } from "@/lib/api";
+import { discountPct, formatPrice, getBooks, oldPrice, type Book, type Format } from "@/lib/api";
+import { addLine, useCart } from "@/lib/cart";
+import { useToast } from "./ToastProvider";
 import BookCover from "./BookCover";
 import Reveal from "./Reveal";
 import Seal from "./Seal";
 import styles from "./CatalogGrid.module.css";
 
 type FormatFilter = "all" | "print" | "ebook";
-type Sort = "order" | "cheap" | "dear";
+type Sort = "order" | "cheap" | "dear" | "sale";
 
 /** lowest price across the formats a book is actually sold in */
 function fromPrice(b: Book) {
   const p = [b.print_price_cents, b.ebook_price_cents].filter((v): v is number => v != null);
   return p.length ? Math.min(...p) : null;
+}
+
+/** the format a one-tap add should take: paper while there is paper */
+function quickFormat(b: Book): Format | null {
+  if (b.print_price_cents != null && b.in_stock) return "print";
+  if (b.ebook_price_cents != null) return "ebook";
+  return null;
+}
+
+function BookCard({ b }: { b: Book }) {
+  const toast = useToast();
+  const cart = useCart();
+  const from = fromPrice(b);
+  const f = quickFormat(b);
+  const price = f && (f === "print" ? b.print_price_cents : b.ebook_price_cents);
+  const was = f ? oldPrice(b, f) : null;
+  const inCart = cart.some((l) => l.slug === b.slug);
+  const href = `/book?s=${b.slug}`;
+  const soldOut = b.print_price_cents != null && !b.in_stock && b.ebook_price_cents == null;
+
+  return (
+    <div className={styles.book}>
+      <Link href={href} prefetch={false} className={styles.bookLink}>
+        <span className={styles.coverBox}>
+          <BookCover title={b.title} author={b.author} src={b.cover_url} pos={b.cover_pos} />
+          <span className={styles.badges}>
+            {was != null && price != null && <span className={styles.badgeSale}>−{discountPct(price, was)}%</span>}
+            {b.stock_left != null && b.stock_left > 0 && <span className={styles.badgeLow}>Останні {b.stock_left}</span>}
+            {soldOut && <span className={styles.badgeOut}>Немає</span>}
+          </span>
+        </span>
+        <span className={styles.bookTitle}>{b.title}</span>
+        {b.author && <span className={styles.bookAuthor}>{b.author}</span>}
+      </Link>
+      <span className={styles.bookFoot}>
+        <span className={styles.priceBox}>
+          {price != null ? (
+            <>
+              <span className={styles.price}>{formatPrice(price, b.currency)}</span>
+              {was != null && <s className={styles.was}>{formatPrice(was, b.currency)}</s>}
+            </>
+          ) : (
+            from != null && <span className={styles.price}>від {formatPrice(from, b.currency)}</span>
+          )}
+          <span className={styles.formats}>
+            {b.print_price_cents != null && (
+              <span className={b.in_stock ? "" : styles.out} title={b.in_stock ? "" : "Немає в наявності"}>
+                папір
+              </span>
+            )}
+            {b.ebook_price_cents != null && <span>e-book</span>}
+          </span>
+        </span>
+        {f && price != null && (
+          <button
+            type="button"
+            className={`${styles.add} ${inCart ? styles.addOn : ""}`}
+            aria-label={inCart ? `«${b.title}» у кошику` : `Додати «${b.title}» у кошик`}
+            title={inCart ? "У кошику" : f === "print" ? "У кошик (паперова)" : "У кошик (електронна)"}
+            onClick={() => {
+              if (f === "ebook" && inCart) return;
+              addLine({
+                slug: b.slug,
+                format: f,
+                title: b.title,
+                author: b.author,
+                price_cents: price,
+                cover_url: b.cover_url,
+                cover_pos: b.cover_pos ?? null,
+                sku: b.sku ?? null,
+                old_price_cents: was,
+              });
+              toast(`«${b.title}» у кошику`);
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              {inCart ? <path d="M5 12.5l4.5 4.5L19 7.5" /> : <path d="M6 8h12l-1.2 11H7.2zM9 8V6.5a3 3 0 0 1 6 0V8M12 11.5v5M9.5 14h5" />}
+            </svg>
+          </button>
+        )}
+      </span>
+    </div>
+  );
 }
 
 export default function CatalogGrid({ genres }: { genres: Genre[] }) {
@@ -53,9 +138,18 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
       (b) =>
         (!genre || b.genre_slug === genre) &&
         (format === "all" || (format === "print" ? b.print_price_cents != null : b.ebook_price_cents != null)) &&
-        (!needle || `${b.title} ${b.author ?? ""}`.toLowerCase().includes(needle)),
+        (!needle || `${b.title} ${b.author ?? ""} ${b.sku ?? ""} ${b.isbn ?? ""}`.toLowerCase().includes(needle)),
     );
     if (sort === "order") return list;
+    if (sort === "sale") {
+      const off = (b: Book) => {
+        const f = quickFormat(b);
+        const now = f && (f === "print" ? b.print_price_cents : b.ebook_price_cents);
+        const was = f ? oldPrice(b, f) : null;
+        return now != null && was != null ? discountPct(now, was) : 0;
+      };
+      return [...list].sort((a, b) => off(b) - off(a));
+    }
     return [...list].sort((a, b) => {
       const d = (fromPrice(a) ?? 1e9) - (fromPrice(b) ?? 1e9);
       return sort === "cheap" ? d : -d;
@@ -126,7 +220,7 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
           <input
             className={styles.search}
             type="search"
-            placeholder="Пошук за назвою чи автором"
+            placeholder="Назва, автор, артикул чи ISBN"
             aria-label="Пошук"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -140,6 +234,7 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
             <option value="order">Спершу нові</option>
             <option value="cheap">Спершу дешевші</option>
             <option value="dear">Спершу дорожчі</option>
+            <option value="sale">Спершу зі знижкою</option>
           </select>
         </div>
       </div>
@@ -148,31 +243,11 @@ export default function CatalogGrid({ genres }: { genres: Genre[] }) {
         <p className={`body ${styles.none}`}>Нічого не знайшлось. Спробуйте інший напрям чи формат.</p>
       ) : (
         <div className={styles.books}>
-          {shown.map((b, i) => {
-            const from = fromPrice(b);
-            return (
-              <Reveal key={b.slug} delay={Math.min(i, 6) * 40} className={styles.slot}>
-                <Link href={`/book?s=${b.slug}`} prefetch={false} className={styles.book}>
-                  <BookCover title={b.title} author={b.author} src={b.cover_url} pos={b.cover_pos} />
-                  <span className={styles.bookTitle}>{b.title}</span>
-                  {b.author && <span className={styles.bookAuthor}>{b.author}</span>}
-                  <span className={styles.bookFoot}>
-                    {from != null && (
-                      <span className={styles.price}>від {formatPrice(from, b.currency)}</span>
-                    )}
-                    <span className={styles.formats}>
-                      {b.print_price_cents != null && (
-                        <span className={b.in_stock ? "" : styles.out} title={b.in_stock ? "" : "Немає в наявності"}>
-                          папір
-                        </span>
-                      )}
-                      {b.ebook_price_cents != null && <span>e-book</span>}
-                    </span>
-                  </span>
-                </Link>
-              </Reveal>
-            );
-          })}
+          {shown.map((b, i) => (
+            <Reveal key={b.slug} delay={Math.min(i, 6) * 40} className={styles.slot}>
+              <BookCard b={b} />
+            </Reveal>
+          ))}
         </div>
       )}
     </>

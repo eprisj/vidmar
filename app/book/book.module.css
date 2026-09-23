@@ -274,3 +274,334 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---------------- product card (23.09.2026) ---------------- */
+
+.crumbs {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+.crumbHere {
+  color: var(--on-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 40ch;
+}
+
+.coverWrap {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 14px;
+  right: -10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--gold);
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.8);
+}
+
+.series {
+  font-size: 0.85rem;
+  color: var(--gold);
+}
+
+.skuLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin: -4px 0 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--on-dark-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.formatName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formatSale {
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--gold);
+}
+
+.formatPrice {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+}
+
+.formatPrice s {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--on-dark-mute);
+}
+
+.formatOut .formatPrice {
+  color: var(--on-dark-mute);
+}
+
+.priceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+  padding-top: 6px;
+}
+
+.bigPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--on-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.bigPrice s {
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--on-dark-mute);
+}
+
+.stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+}
+
+.stock::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.stockOk {
+  color: #9fd3a8;
+}
+
+.stockLow {
+  color: var(--gold);
+}
+
+.stockOut {
+  color: var(--on-dark-mute);
+}
+
+.qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--hair-d);
+  border-radius: 999px;
+  min-height: 46px;
+}
+
+.qty button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  cursor: pointer;
+  color: var(--on-dark);
+}
+
+.qty button:hover:not(:disabled) {
+  color: var(--gold);
+}
+
+.qty button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.qty output {
+  min-width: 26px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.addBtn {
+  min-width: 220px;
+  justify-content: center;
+}
+
+.perks {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--hair-d);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.perks li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-left: 1px solid var(--hair-d);
+  background: rgba(8, 17, 34, 0.25);
+}
+
+.perks li:first-child {
+  border-left: 0;
+}
+
+.perks b {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--on-dark);
+}
+
+.perks span {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--on-dark-mute);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hair-d);
+}
+
+.h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--on-dark);
+}
+
+.section .desc {
+  margin: 0;
+}
+
+.section .specs {
+  margin: 0;
+  padding-top: 0;
+  border-top: 0;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.section .specs > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 34%) 1fr;
+  gap: 16px;
+  padding: 9px 0;
+  border-bottom: 1px dashed rgba(245, 222, 179, 0.12);
+}
+
+.section .specs dt {
+  font-size: 0.88rem;
+}
+
+.section .specs dd {
+  margin: 0;
+}
+
+.relatedPrice {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* phone buy bar: slides up once the main buttons scroll away */
+.bar {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .perks {
+    grid-template-columns: 1fr;
+  }
+
+  .perks li {
+    border-left: 0;
+    border-top: 1px solid var(--hair-d);
+  }
+
+  .perks li:first-child {
+    border-top: 0;
+  }
+
+  .badge {
+    right: -8px;
+  }
+
+  .buy .qty {
+    flex: 0 0 auto;
+  }
+
+  .buy .addBtn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .bar {
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px var(--gut) calc(10px + env(safe-area-inset-bottom));
+    /* solid, no backdrop blur: live blur was taken off phones site-wide */
+    background: var(--ink-abyss);
+    border-top: 1px solid var(--hair-d);
+    box-shadow: 0 -16px 30px -18px rgba(0, 0, 0, 0.8);
+    transform: translateY(110%);
+    transition: transform 0.35s var(--ease);
+  }
+
+  .barOn {
+    transform: none;
+  }
+
+  .barInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .barInfo b {
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .barInfo span {
+    font-size: 0.8rem;
+    color: var(--gold);
+  }
+}

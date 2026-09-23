@@ -14,6 +14,9 @@ export type CartLine = {
   price_cents: number;
   cover_url: string | null;
   cover_pos: string | null;
+  /** base code of the title; the format suffix is added where it is shown */
+  sku?: string | null;
+  old_price_cents?: number | null;
 };
 
 const KEY = "vidmar_cart_v1";
@@ -62,6 +65,15 @@ export function setQuantity(slug: string, format: Format, quantity: number) {
       .map((l) => (l.slug === slug && l.format === format ? { ...l, quantity: Math.min(20, quantity) } : l))
       .filter((l) => l.quantity > 0),
   );
+}
+
+/** the lines as stored now; a hook's first (hydration) render still sees none */
+export function readCart(): CartLine[] {
+  return read();
+}
+
+export function patchLine(slug: string, format: Format, patch: Partial<CartLine>) {
+  write(read().map((l) => (l.slug === slug && l.format === format ? { ...l, ...patch } : l)));
 }
 
 export function removeLine(slug: string, format: Format) {

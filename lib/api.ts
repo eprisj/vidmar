@@ -57,11 +57,39 @@ export type Book = {
   binding?: string | null;
   isbn?: string | null;
   is_demo?: boolean;
+  sku?: string | null;
+  print_old_price_cents?: number | null;
+  ebook_old_price_cents?: number | null;
+  series?: string | null;
+  language?: string | null;
+  translator?: string | null;
+  illustrator?: string | null;
+  dimensions?: string | null;
+  weight_g?: number | null;
+  age_rating?: string | null;
+  /** only told when few are left (5 or fewer) */
+  stock_left?: number | null;
 };
 
 export type Format = "print" | "ebook";
 
 export const FORMAT_LABEL: Record<Format, string> = { print: "Паперова", ebook: "Електронна" };
+
+/** VDM-0007 + format: -P for paper, -E for the e-book */
+export function formatSku(sku: string | null | undefined, format: Format) {
+  return sku ? `${sku}-${format === "ebook" ? "E" : "P"}` : null;
+}
+
+/** the struck-through price, only when it is really above the price */
+export function oldPrice(b: Book, format: Format) {
+  const now = format === "print" ? b.print_price_cents : b.ebook_price_cents;
+  const was = format === "print" ? b.print_old_price_cents : b.ebook_old_price_cents;
+  return now != null && was != null && was > now ? was : null;
+}
+
+export function discountPct(now: number, was: number) {
+  return Math.round((1 - now / was) * 100);
+}
 
 export async function getBook(slug: string): Promise<Book | null> {
   const res = await fetch(`${API_BASE}/books/${encodeURIComponent(slug)}`, { cache: "no-store" });
@@ -91,9 +119,46 @@ export type OrderInput = {
   customer: { name: string; phone: string; email: string };
   delivery?: { cityRef: string; cityName: string; warehouseRef: string; warehouseName: string };
   comment?: string;
+  payment_method: PayMethod;
 };
 
-export type PlacedOrder = { id: number; total_cents: number; currency: string; access_token: string };
+export type PlacedOrder = {
+  id: number;
+  total_cents: number;
+  currency: string;
+  access_token: string;
+  payment_method: PayMethod;
+  /** the provider's page, for card/Privat24 payments */
+  payment_url: string | null;
+};
+
+// --- payments -------------------------------------------------------------
+
+export type PayMethod = "mono" | "liqpay" | "iban" | "cod";
+
+export async function getPayMethods(): Promise<{ id: PayMethod; enabled: boolean }[]> {
+  try {
+    const res = await fetch(`${API_BASE}/pay/methods`, { cache: "no-store" });
+    if (res.ok) return res.json();
+  } catch {
+    /* offline API: fall back to what always works */
+  }
+  return [
+    { id: "iban", enabled: true },
+    { id: "cod", enabled: true },
+  ];
+}
+
+export async function payOrder(id: number, token: string, method?: PayMethod): Promise<string> {
+  const res = await fetch(`${API_BASE}/orders/lookup/${id}/pay?t=${encodeURIComponent(token)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ method }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data?.url) throw new ApiError(data?.error || "не вдалося відкрити оплату");
+  return data.url;
+}
 
 export async function placeOrder(input: OrderInput): Promise<PlacedOrder> {
   const res = await fetch(`${API_BASE}/orders`, {
@@ -114,7 +179,19 @@ export type PublicOrder = OrderSummary & {
   np_warehouse: string | null;
   ttn: string | null;
   is_demo: boolean;
-  items: (OrderItem & { format: Format; slug: string | null; has_pdf: boolean; has_epub: boolean })[];
+  payment_method: PayMethod;
+  paid_at: string | null;
+  can_pay_online: boolean;
+  requisites: { iban: string; recipient: string | null; edrpou: string | null; bank: string | null } | null;
+  items: (OrderItem & {
+    format: Format;
+    sku: string | null;
+    slug: string | null;
+    cover_url: string | null;
+    cover_pos: string | null;
+    has_pdf: boolean;
+    has_epub: boolean;
+  })[];
 };
 
 export function ebookUrl(orderId: number, token: string, slug: string, kind: "pdf" | "epub") {
@@ -194,6 +271,16 @@ export type BookInput = {
   excerpt?: string | null;
   cover_pos?: string | null;
   is_demo?: boolean;
+  sku?: string | null;
+  print_old_price_cents?: number | null;
+  ebook_old_price_cents?: number | null;
+  series?: string | null;
+  language?: string | null;
+  translator?: string | null;
+  illustrator?: string | null;
+  dimensions?: string | null;
+  weight_g?: number | null;
+  age_rating?: string | null;
 };
 
 export function createBook(token: string, input: BookInput) {
@@ -329,8 +416,13 @@ export type AdminOrder = OrderSummary & {
   ttn?: string | null;
   comment?: string | null;
   is_demo?: boolean;
+  payment_method?: PayMethod;
+  paid_at?: string | null;
 };
-export type AdminOrderDetail = AdminOrder & { items: (OrderItem & { format?: Format })[] };
+export type AdminOrderDetail = AdminOrder & {
+  items: (OrderItem & { format?: Format; sku?: string | null })[];
+  payments: { provider: string; provider_ref: string; amount_cents: number; status: string; created_at: string }[];
+};
 
 export function listAdminOrders(token: string): Promise<AdminOrder[]> {
   return adminRequest("/admin/orders", token);
