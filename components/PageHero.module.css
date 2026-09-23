@@ -47,17 +47,15 @@
   color: var(--gold);
 }
 
-/* Literata, not the page's default grotesque: on a display line the
-   grotesque reads as generic SaaS rather than a house that sets books.
-   Cormorant stays reserved for the wordmark alone, so this doesn't compete
-   with the brand mark. */
+/* two faces on the whole site: Golos for reading, the hand for the few
+   short display lines like this one */
 .title {
   text-shadow: 0 2px 30px rgba(8, 17, 34, 0.55);
   font-size: clamp(2.8rem, 10vw, 9rem);
-  font-family: var(--font-cormorant), "Georgia", serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 0.98;
+  font-family: var(--font-hand), var(--font-golos), sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.02;
   color: var(--on-dark);
   max-width: 13ch;
   text-wrap: balance;

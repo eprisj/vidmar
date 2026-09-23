@@ -77,6 +77,8 @@ body {
   font-size: 1rem;
   line-height: 1.55;
   font-weight: 400;
+  /* the hand has one weight; a faux-bold smears its hairlines */
+  font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* No overflow-x here. It makes the body a scroll container, and iOS Safari
@@ -233,7 +235,7 @@ ul {
 
 /* the tiny tracked caption that carries all the labelling */
 .micro {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -309,7 +311,7 @@ ul {
   padding: 13px 26px;
   min-height: 46px;
   cursor: pointer;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -388,7 +390,7 @@ ul {
 }
 
 .link {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;

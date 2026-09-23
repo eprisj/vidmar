@@ -115,7 +115,7 @@
 }
 
 .person b {
-  font-family: var(--font-cormorant), "Georgia", serif;
+  font-family: var(--font-hand), var(--font-golos), sans-serif;
   color: var(--on-dark);
   font-size: clamp(1.4rem, 2.6vw, 2.2rem);
   font-weight: 500;

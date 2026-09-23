@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Golos_Text } from "next/font/google";
+import { Golos_Text } from "next/font/google";
 import localFont from "next/font/local";
 import Header from "@/components/Header";
 import CandleLight from "@/components/CandleLight";
@@ -7,14 +7,6 @@ import Footer from "@/components/Footer";
 import ToastProvider from "@/components/ToastProvider";
 import { SITE_URL, pageMeta } from "@/lib/seo";
 import "./globals.css";
-
-/** engraved display — title pages, statements, the wordmark */
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["cyrillic", "latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
 
 /** the hand — slogans and signatures only, never a paragraph.
  *
@@ -54,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="uk"
-      className={`${cormorant.variable} ${denistina.variable} ${golos.variable}`}
+      className={`${denistina.variable} ${golos.variable}`}
     >
       <body>
         <ToastProvider>

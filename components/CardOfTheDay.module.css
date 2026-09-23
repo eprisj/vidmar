@@ -116,7 +116,7 @@
 }
 
 .name {
-  font-family: var(--font-cormorant), "Georgia", serif;
+  font-family: var(--font-hand), var(--font-golos), sans-serif;
   font-size: clamp(1.3rem, 2.2vw, 1.7rem);
   font-weight: 500;
   color: var(--on-dark);

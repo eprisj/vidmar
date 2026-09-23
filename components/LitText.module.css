@@ -3,7 +3,9 @@
 }
 
 .word {
-  color: rgba(245, 222, 179, 0.2);
+  /* dim enough that the light still reads as travelling, never so dim the
+     sentence can't be read before it arrives: 0.2 was 1.6:1 */
+  color: rgba(245, 222, 179, 0.5);
   transition: color 0.5s var(--ease);
 }
 

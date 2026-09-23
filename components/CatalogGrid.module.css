@@ -7,7 +7,7 @@
 
 .chip {
   font-family: var(--font-golos), sans-serif;
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -145,10 +145,9 @@ a.card:focus-visible .frame {
 
 .cardTitle {
   position: relative;
-  font-family: var(--font-cormorant), "Georgia", serif;
-  font-size: clamp(1.2rem, 1.6vw, 1.45rem);
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
   font-weight: 500;
-  line-height: 1.12;
+  line-height: 1.25;
   letter-spacing: 0;
   color: var(--on-dark);
   text-wrap: balance;
@@ -230,7 +229,7 @@ a.card:hover .arrow {
   }
 
   .cardTitle {
-    font-size: 1.12rem;
+    font-size: 0.98rem;
   }
 
   .foot {

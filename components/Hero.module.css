@@ -120,12 +120,11 @@
   pointer-events: none;
 }
 
-/* Cormorant — the engraved face the layout already loads for exactly this
-   and nothing used */
+/* the name in the reading face, set wide: the hand stays for the slogan */
 .word {
-  font-family: var(--font-cormorant), "Times New Roman", serif;
-  font-size: clamp(3.6rem, 13.5vw, 12.5rem);
-  font-weight: 500;
+  font-family: var(--font-golos), sans-serif;
+  font-size: clamp(3rem, 12vw, 11rem);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   /* the tracking hangs off the last letter; pull it back so it centres */
@@ -140,16 +139,16 @@
 }
 
 /* The one place the hand is allowed to speak: the slogan under the mark,
-   never a paragraph. Cormorant stays next in the stack as a plain safety
+   never a paragraph. Golos stays next in the stack as a plain safety
    net, not as a per-glyph patch — the Ukrainian letters are drawn into the
    face itself (see layout.tsx), because relying on fallback here is what
    put upright serif letters inside a cursive word. The hand runs wider and
    lighter than a text face, so it is set larger and tracked out rather than
-   dropped into Cormorant's own size. */
+   dropped into Golos's own size. */
 .lede {
   margin-top: clamp(18px, 2.4vw, 30px);
   max-width: 26ch;
-  font-family: var(--font-hand), var(--font-cormorant), "Times New Roman", serif;
+  font-family: var(--font-hand), var(--font-golos), sans-serif;
   font-size: clamp(1.7rem, 3vw, 2.6rem);
   line-height: 1.15;
   letter-spacing: 0.015em;
