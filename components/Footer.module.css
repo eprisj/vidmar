@@ -138,3 +138,20 @@
     font-size: 0.7rem;
   }
 }
+
+.legalLinks {
+  display: flex;
+  gap: 20px;
+}
+
+.legalLinks a {
+  color: inherit;
+  /* a 44px target inside a thin line of small caps */
+  padding-block: 14px;
+  margin-block: -14px;
+  transition: color 0.2s;
+}
+
+.legalLinks a:hover {
+  color: var(--on-dark);
+}

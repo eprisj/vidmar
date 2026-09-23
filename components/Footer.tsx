@@ -60,6 +60,14 @@ export default function Footer() {
           line carries only what it doesn't: where the publisher stands */}
       <div className={`wrapMax ${styles.legal}`}>
         <span>© 2026 ВІДЬМАР</span>
+        <span className={styles.legalLinks}>
+          <Link href="/privacy" prefetch={false}>
+            Конфіденційність
+          </Link>
+          <Link href="/terms" prefetch={false}>
+            Умови
+          </Link>
+        </span>
         <span>Перше видання – у підготовці</span>
       </div>
     </footer>

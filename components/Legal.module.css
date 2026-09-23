@@ -1,0 +1,49 @@
+/* the two legal pages: one readable column, headings you can scan */
+.root {
+  padding-block: clamp(32px, 5vw, 64px) clamp(60px, 8vw, 110px);
+}
+
+.doc {
+  max-width: 720px;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--on-dark);
+}
+
+.updated {
+  margin: 0 0 28px;
+  font-size: 0.88rem;
+  color: var(--on-dark-mute);
+}
+
+.doc h2 {
+  margin: 36px 0 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--on-dark);
+}
+
+.doc p,
+.doc ul {
+  margin: 0 0 12px;
+  color: rgba(245, 222, 179, 0.86);
+}
+
+.doc ul {
+  padding-left: 1.2em;
+}
+
+.doc li {
+  margin-bottom: 6px;
+}
+
+.doc a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.doc b {
+  color: var(--on-dark);
+  font-weight: 600;
+}
