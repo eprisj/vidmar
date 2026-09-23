@@ -71,7 +71,11 @@ export default function Header() {
       <header
         className={`${styles.root} ${solid || open ? styles.solid : ""} ${
           onPage && !open ? styles.onPage : ""
-        } ${open ? styles.isOpen : ""}`}
+        } ${open ? styles.isOpen : ""} ${
+          // the home hero sets the wordmark large right below; two copies of
+          // the logo on one screen read as clutter, so this one waits
+          pathname === "/" && !solid && !open ? styles.heroTop : ""
+        }`}
       >
         <div className={`wrapMax ${styles.bar}`}>
           <Link href="/" className={styles.brand} aria-label="ВІДЬМАР – на головну">

@@ -4,6 +4,8 @@ import mid from "@/assets/forest/mid.svg";
 import front from "@/assets/forest/front.svg";
 import styles from "./Hero.module.css";
 
+const SLOGAN = "книги про містику й відьомство";
+
 /** Seeded so the server and every visit draw the same swarm. */
 function fireflies(count: number) {
   let s = 1117;
@@ -45,17 +47,16 @@ export default function Hero() {
       </div>
 
       <div className={`wrapMax ${styles.title}`}>
-        {/* The name is already the wordmark in the header, a few centimetres
-            above; set again here in Golos it read as a second, different
-            logo. It stays in the markup as the page's h1 for search and
-            screen readers, and the hand carries the screen instead. The line
-            break is set by hand: left to wrap, "й" was stranded alone. */}
-        <h1 className={styles.word}>Відьмар</h1>
-        <p className={styles.lede}>
-          видаємо книги про езотерику,
-          <br />
-          містику й відьомство.
-        </p>
+        {/* The real wordmark, drawn from the same vector as the header's, so
+            the name reads as the brand rather than as a heading set in Golos.
+            The header's own copy stays hidden until the page scrolls past
+            this one (see Header). The text inside keeps it the page's h1. */}
+        <h1 className={styles.word}>
+          <span className={styles.srOnly}>Відьмар</span>
+        </h1>
+        {/* the hand only holds a few words: set as a whole sentence it ran
+            together and stopped reading */}
+        <p className={styles.lede}>{SLOGAN}</p>
       </div>
 
       {/* the fireflies drift in front of everything */}

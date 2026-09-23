@@ -120,8 +120,21 @@
   pointer-events: none;
 }
 
-/* visually hidden, still the h1: see Hero.tsx */
+/* the wordmark itself, as a mask so it takes the ivory of the field; the
+   vector keeps its edges clean at this size where the old PNG went soft */
 .word {
+  display: block;
+  width: min(62vw, 780px);
+  aspect-ratio: 3.983;
+  margin: 0;
+  background-color: var(--ash);
+  -webkit-mask: url("/logo-mark.svg") center / contain no-repeat;
+  mask: url("/logo-mark.svg") center / contain no-repeat;
+  filter: drop-shadow(0 0 34px rgba(240, 220, 166, 0.12));
+  animation: emerge 2.2s var(--ease) 0.4s both;
+}
+
+.srOnly {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -142,15 +155,15 @@
    dropped into Golos's own size. */
 .lede {
   font-family: var(--font-hand), var(--font-golos), sans-serif;
-  /* the hand is the headline now, so it is set as one */
-  font-size: clamp(2.3rem, 4.6vw, 4.6rem);
-  line-height: 1.12;
+  margin-top: clamp(14px, 2vw, 26px);
+  font-size: clamp(2rem, 3.4vw, 3.4rem);
+  line-height: 1.1;
   letter-spacing: 0.015em;
   color: var(--ash);
   /* the hand is far thinner than the italic that stood here, and it lands on
      a sky ruled in light lines; without this it frays into the branches */
   text-shadow: 0 2px 28px rgba(8, 17, 34, 0.95), 0 0 2px rgba(8, 17, 34, 0.9);
-  animation: emerge 2.2s var(--ease) 0.5s both;
+  animation: emerge 2.2s var(--ease) 0.8s both;
 }
 
 @keyframes emerge {
@@ -286,11 +299,15 @@
     margin-bottom: clamp(40px, 8vh, 80px);
   }
 
+  .word {
+    width: min(84vw, 420px);
+  }
+
   /* the sky is ruled in ivory lines that brighten toward the moon, and the
      italic line was set at 74% over exactly that; it disappeared wherever a
      lit band ran behind it */
   .lede {
-    font-size: clamp(1.75rem, 7.6vw, 2.4rem);
+    font-size: clamp(1.6rem, 7vw, 2.1rem);
     text-shadow: 0 1px 16px rgba(8, 17, 34, 0.95), 0 0 2px rgba(8, 17, 34, 0.9);
   }
 
@@ -307,6 +324,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .firefly,
+  .word,
   .lede,
   .cueLine::after,
   .back,
