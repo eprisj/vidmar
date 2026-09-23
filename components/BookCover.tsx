@@ -41,6 +41,7 @@ export default function BookCover({ title, author, src, pos, size = "card" }: Pr
           sizes={SIZES[size]}
           alt=""
           loading={size === "big" ? "eager" : "lazy"}
+          fetchPriority={size === "big" ? "high" : undefined}
           decoding="async"
           style={{ objectPosition: pos || "50% 50%" }}
         />

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import CatalogGrid from "@/components/CatalogGrid";
 import { genres } from "@/lib/content";
-import { getBooks } from "@/lib/api";
+import { getBooksAtBuild } from "@/lib/api";
 import { pageMeta } from "@/lib/seo";
 import styles from "./catalog.module.css";
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = pageMeta(
 
 export default async function CatalogPage() {
   // baked in at build; an unreachable API just means the client fetches it
-  const initial = await getBooks().catch(() => []);
+  const initial = await getBooksAtBuild();
   return (
     <>
       <PageHero

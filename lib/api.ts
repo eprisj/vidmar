@@ -205,6 +205,19 @@ export async function lookupOrder(id: string, token: string): Promise<PublicOrde
   return res.ok ? res.json() : null;
 }
 
+/** For pages baked at build: `no-store` makes a static export bail out of
+ * prerendering the fetch, which the callers' catch then turned into an
+ * empty shelf without a word. */
+export async function getBooksAtBuild(): Promise<Book[]> {
+  try {
+    const res = await fetch(`${API_BASE}/books`, { cache: "force-cache", signal: AbortSignal.timeout(8000) });
+    return res.ok ? await res.json() : [];
+  } catch (err) {
+    console.warn("books not baked in:", err instanceof Error ? err.message : err);
+    return [];
+  }
+}
+
 export async function getBooks(): Promise<Book[]> {
   const res = await fetch(`${API_BASE}/books`, { cache: "no-store" });
   if (!res.ok) return [];

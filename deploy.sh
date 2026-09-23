@@ -7,6 +7,9 @@ HOST="root@173.242.49.73"
 
 echo "Building static export..."
 cd "$SCRIPT_DIR"
+# the catalogue is baked into /catalog and /book with a cached fetch; a
+# fresh build must ask the API again, not reuse the last build's answer
+rm -rf .next/cache/fetch-cache
 npm run build
 
 echo "Syncing out/ to VPS (/var/www/vidmar)..."
