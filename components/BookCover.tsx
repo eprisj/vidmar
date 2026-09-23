@@ -26,7 +26,7 @@ const SIZES = {
 function plateSet(src: string) {
   const m = src.match(/^(\/gravure\/[a-z-]+?)(?:-md|-sm|-xs)?\.webp$/);
   if (!m) return undefined;
-  return `${m[1]}-xs.webp 480w, ${m[1]}-sm.webp 780w, ${m[1]}-md.webp 1200w`;
+  return `${m[1]}-xs.webp 560w, ${m[1]}-sm.webp 780w, ${m[1]}-md.webp 1200w`;
 }
 
 export default function BookCover({ title, author, src, pos, size = "card" }: Props) {
