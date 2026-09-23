@@ -332,7 +332,54 @@ export function deleteBook(token: string, id: number) {
 
 // --- auth / account (cookie session, sent to the API's own domain) --------
 
-export type User = { id: number; email: string; name: string | null };
+export type Delivery = { cityRef: string; cityName: string; area?: string | null; warehouseRef: string; warehouseName: string };
+
+export type User = {
+  id: number;
+  email: string;
+  name: string | null;
+  phone?: string | null;
+  /** permanent reader card code, shown as a QR in the account */
+  reader_code?: string | null;
+  created_at?: string;
+  delivery?: Delivery | null;
+  newsletter?: boolean;
+};
+
+export type ProfilePatch = Partial<{ name: string; phone: string; delivery: Delivery | null; newsletter: boolean }>;
+
+export async function updateMe(patch: ProfilePatch): Promise<User> {
+  const res = await fetch(`${API_BASE}/auth/me`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  const data = await res.json().catch(() => null);
+  // this endpoint answers in Ukrainian already
+  if (!res.ok) throw new ApiError(data?.error || "не вдалося зберегти");
+  return data;
+}
+
+export async function changePassword(current: string, next: string) {
+  const res = await fetch(`${API_BASE}/auth/password`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ current, next }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new ApiError(data?.error === "too many requests" ? "забагато спроб – спробуйте за хвилину" : data?.error || "не вдалося змінити пароль");
+}
+
+export async function checkReader(code: string): Promise<{ valid: boolean; since?: string } | null> {
+  try {
+    const res = await fetch(`${API_BASE}/readers/${encodeURIComponent(code)}`, { cache: "no-store" });
+    return res.json();
+  } catch {
+    return null;
+  }
+}
 
 async function userRequest(path: string, init?: RequestInit) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -404,7 +451,14 @@ export function checkout(): Promise<OrderDetail> {
   return userRequest("/orders/checkout", { method: "POST" });
 }
 
-export function listMyOrders(): Promise<OrderSummary[]> {
+export type MyOrder = OrderSummary & {
+  payment_method: PayMethod;
+  access_token: string | null;
+  ttn: string | null;
+  items: { title: string; format: Format; quantity: number; cover_url: string | null; cover_pos: string | null }[];
+};
+
+export function listMyOrders(): Promise<MyOrder[]> {
   return userRequest("/orders");
 }
 

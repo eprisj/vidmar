@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { apiMessage, getMe, login, logout, register, type User } from "@/lib/api";
 import { useToast } from "./ToastProvider";
-import Reveal from "./Reveal";
 import styles from "./Shop.module.css";
 
 type Props = {
@@ -21,6 +20,7 @@ export default function AuthGate({ aside, children }: Props) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [showPw, setShowPw] = useState(false);
 
   useEffect(() => {
     getMe()
@@ -62,45 +62,68 @@ export default function AuthGate({ aside, children }: Props) {
 
   return (
     <div className={styles.split}>
-      <div className={styles.stack}>
-        <Reveal>
-          <span className="micro micro--bright">
-            {mode === "login" ? "вхід" : "реєстрація"}
-          </span>
-        </Reveal>
+      <div className={styles.authCard}>
+        <div className={styles.authTabs} role="tablist" aria-label="Вхід або реєстрація">
+          {(["login", "register"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              role="tab"
+              aria-selected={mode === m}
+              className={mode === m ? styles.authTabOn : ""}
+              onClick={() => {
+                setMode(m);
+                setError("");
+              }}
+            >
+              {m === "login" ? "Вхід" : "Реєстрація"}
+            </button>
+          ))}
+        </div>
 
         <form className={styles.form} onSubmit={submit}>
-          {mode === "register" && <input name="name" type="text" placeholder="ваше ім'я" aria-label="Ваше ім'я" />}
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="ваша пошта"
-            aria-label="Ваша пошта"
-          />
-          <input
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            autoComplete={mode === "login" ? "current-password" : "new-password"}
-            placeholder={mode === "login" ? "пароль" : "пароль, від 8 символів"}
-            aria-label="Пароль"
-          />
-          {error && <p className={styles.error}>{error}</p>}
-          <button type="submit" className="pill pill--solid" disabled={busy}>
-            {busy ? "зачекайте…" : mode === "login" ? "Увійти" : "Створити акаунт"}
-          </button>
-          <button
-            type="button"
-            className={styles.switch}
-            onClick={() => {
-              setMode(mode === "login" ? "register" : "login");
-              setError("");
-            }}
-          >
-            {mode === "login" ? "Немає акаунту? Зареєструватись" : "Вже є акаунт? Увійти"}
+          {mode === "register" && (
+            <label className={styles.lf}>
+              <span>Імʼя</span>
+              <input name="name" type="text" autoComplete="name" />
+            </label>
+          )}
+          <label className={styles.lf}>
+            <span>Пошта</span>
+            <input name="email" type="email" required autoComplete="email" inputMode="email" />
+          </label>
+          <label className={styles.lf}>
+            <span>{mode === "login" ? "Пароль" : "Пароль, від 8 символів"}</span>
+            <span className={styles.pw}>
+              <input
+                name="password"
+                type={showPw ? "text" : "password"}
+                required
+                minLength={8}
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+              />
+              <button
+                type="button"
+                className={styles.eye}
+                aria-label={showPw ? "Сховати пароль" : "Показати пароль"}
+                aria-pressed={showPw}
+                onClick={() => setShowPw(!showPw)}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" />
+                  <circle cx="12" cy="12" r="3" />
+                  {showPw && <path d="M4 20L20 4" />}
+                </svg>
+              </button>
+            </span>
+          </label>
+          {error && (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
+          <button type="submit" className={`pill pill--solid ${styles.authSubmit}`} disabled={busy}>
+            {busy ? "Зачекайте…" : mode === "login" ? "Увійти" : "Створити акаунт"}
           </button>
         </form>
       </div>

@@ -9,9 +9,9 @@
 }
 
 .form input {
-  background: rgba(245, 222, 179, 0.04);
+  background: rgba(8, 17, 34, 0.4);
   border: 1px solid var(--hair-d);
-  border-radius: 6px;
+  border-radius: 10px;
   color: inherit;
   font: inherit;
   /* 16px is the line iOS Safari uses to decide whether to zoom the page on
@@ -199,4 +199,103 @@
 .sceneIn {
   position: relative;
   z-index: 1;
+}
+
+/* ---------- sign-in card ---------- */
+
+.authCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: clamp(20px, 2.6vw, 28px);
+  border: 1px solid var(--hair-d);
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(29, 58, 109, 0.42), rgba(11, 22, 43, 0.5));
+}
+
+.authCard .form {
+  width: 100%;
+}
+
+.authTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--hair-d);
+}
+
+.authTabs button {
+  min-height: 40px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--on-dark-mute);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.authTabs .authTabOn {
+  background: var(--on-dark);
+  color: var(--ink);
+}
+
+.lf {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.lf > span:first-child {
+  font-size: 0.85rem;
+  color: var(--on-dark-mute);
+}
+
+.lf input {
+  width: 100%;
+}
+
+.pw {
+  position: relative;
+  display: block;
+}
+
+.pw input {
+  padding-right: 50px;
+}
+
+.eye {
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--on-dark-mute);
+  cursor: pointer;
+}
+
+.eye:hover {
+  color: var(--on-dark);
+}
+
+.eye svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.authSubmit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.aside b {
+  color: var(--on-dark);
+  font-weight: 600;
 }

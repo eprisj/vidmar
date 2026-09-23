@@ -165,18 +165,36 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
   // no books at all yet: the six directions as closed volumes, as before
   if (books.length === 0) return <GenreShelf genres={genres} />;
 
-  const demo = books.some((b) => b.is_demo);
 
   return (
     <>
-      {demo && (
-        <p className={styles.demo}>
-          <b>Демо-каталог.</b> Книги й автори вигадані, платити за замовлення не потрібно.
-        </p>
-      )}
-
       <div className={styles.tools}>
-        <div className={styles.filters} role="group" aria-label="Напрям">
+        <label className={styles.searchBox}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="M16 16l4.5 4.5" />
+          </svg>
+          <input
+            className={styles.search}
+            type="search"
+            placeholder="Назва, автор чи ISBN"
+            aria-label="Пошук"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            enterKeyHint="search"
+          />
+          {q && (
+            <button type="button" className={styles.clear} aria-label="Очистити пошук" onClick={() => setQ("")}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 7l10 10M17 7L7 17" />
+              </svg>
+            </button>
+          )}
+        </label>
+
+        {/* the fade on the right edge tells a phone the row goes on */}
+        <div className={styles.chipsWrap}>
+          <div className={styles.filters} role="group" aria-label="Напрям">
           <button
             type="button"
             className={`${styles.chip} ${genre === null ? styles.chipOn : ""}`}
@@ -198,15 +216,17 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
                 {g.title}
               </button>
             ))}
+          </div>
+
         </div>
 
         <div className={styles.row2}>
           <div className={styles.seg} role="group" aria-label="Формат">
             {(
               [
-                ["all", "Усі формати"],
-                ["print", "Паперові"],
-                ["ebook", "Електронні"],
+                ["all", "Усі"],
+                ["print", "Папір"],
+                ["ebook", "E-book"],
               ] as const
             ).map(([v, label]) => (
               <button
@@ -220,25 +240,21 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
               </button>
             ))}
           </div>
-          <input
-            className={styles.search}
-            type="search"
-            placeholder="Назва, автор, артикул чи ISBN"
-            aria-label="Пошук"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-          <select
-            className={styles.sort}
-            aria-label="Сортування"
-            value={sort}
-            onChange={(e) => setSort(e.target.value as Sort)}
-          >
-            <option value="order">Спершу нові</option>
-            <option value="cheap">Спершу дешевші</option>
-            <option value="dear">Спершу дорожчі</option>
-            <option value="sale">Спершу зі знижкою</option>
-          </select>
+          <span className={styles.count} aria-live="polite">
+            {shown.length} {shown.length % 10 === 1 && shown.length % 100 !== 11 ? "книга" : [2, 3, 4].includes(shown.length % 10) && ![12, 13, 14].includes(shown.length % 100) ? "книги" : "книг"}
+          </span>
+          <label className={styles.sortBox}>
+            <span className={styles.srOnly}>Сортування</span>
+            <select className={styles.sort} value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+              <option value="order">Нові</option>
+              <option value="cheap">Дешевші</option>
+              <option value="dear">Дорожчі</option>
+              <option value="sale">Зі знижкою</option>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 10l5 5 5-5" />
+            </svg>
+          </label>
         </div>
       </div>
 

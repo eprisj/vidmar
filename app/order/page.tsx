@@ -115,8 +115,6 @@ function Payment({ o, token, back }: { o: PublicOrder; token: string; back: bool
     <div className={styles.panel}>
       <span className={styles.panelTitle}>Оплата</span>
 
-      {o.is_demo && <p className={styles.demo}>Це демонстраційне замовлення, гроші надсилати не потрібно.</p>}
-
       {o.payment_method === "cod" && (
         <p className={styles.muted}>
           Накладений платіж: {amount} сплачуєте у відділенні Нової пошти, коли забираєте посилку. Пошта додає
