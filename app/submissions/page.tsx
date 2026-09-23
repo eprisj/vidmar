@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { EMAIL, submissionNote, submissionRules } from "@/lib/content";
 import Reveal from "@/components/Reveal";
-import Seal from "@/components/Seal";
-import Smoke from "@/components/Smoke";
 import Atmosphere from "@/components/Atmosphere";
 import PageHero from "@/components/PageHero";
-import ScrollProgress from "@/components/ScrollProgress";
 import SubmissionForm from "@/components/SubmissionForm";
 import { pageMeta } from "@/lib/seo";
 import styles from "./submissions.module.css";
@@ -16,72 +13,54 @@ export const metadata: Metadata = pageMeta(
   "/submissions",
 );
 
+/**
+ * One screen of substance: what we ask for, and the form beside it.
+ *
+ * This used to run close to four screens – a full hero, the three conditions
+ * set as display type on their own light scene, then a full-height smoke
+ * scene around the form – for three short lines and five fields. It also said
+ * "надіслати рукопис" three times, and asked for the manuscript in the
+ * conditions while the form asked for only a description.
+ */
 export default function SubmissionsPage() {
   return (
     <>
-      {/* The lede used to restate both the conditions listed directly below it
-          and the caveat that follows them. It now only opens the page. */}
       <PageHero
         label="Авторам"
         title="Надіслати рукопис"
-        lede="Ми відкриті до співпраці й читаємо кожен рукопис, що надходить."
+        lede="Ми читаємо кожен рукопис, що надходить."
         variant={3}
+        compact
       />
 
-      {/* the three conditions, set as large as the page allows */}
-      <section className={`ash pad ${styles.rulesScene}`} data-field="light">
-        <span className={styles.stamp} aria-hidden="true">
-          <Seal />
-        </span>
-        <div className="wrapMax" style={{ position: "relative" }}>
-          <Reveal>
-            <span className="micro micro--bright">що ми просимо на першому етапі</span>
+      <section className={`ink padS ${styles.scene}`} data-field="dark" data-candle="">
+        <Atmosphere variant={4} watermark={false} />
+        <div className={`wrapMax ${styles.grid}`}>
+          <Reveal className={styles.terms}>
+            <span className="micro micro--bright">що потрібно</span>
+            <ol className={styles.rules}>
+              {submissionRules.map((rule) => (
+                <li key={rule}>{rule}</li>
+              ))}
+            </ol>
+            <p className={styles.note}>{submissionNote}</p>
           </Reveal>
 
-          <div className={styles.rules}>
-            {submissionRules.map((rule, i) => (
-              <Reveal key={rule} delay={i * 90}>
-                <div className={styles.rule}>
-                  <span className={styles.ruleText}>{rule}</span>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal>
-            <p className={`body ${styles.note}`}>{submissionNote}</p>
+          <Reveal className={styles.send} delay={90}>
+            <p className={styles.sendNote}>
+              Опис і посилання на текст – повний рукопис попросимо, якщо
+              зацікавимось.
+            </p>
+            <SubmissionForm />
+            <p className={styles.sendNote}>
+              Або на пошту:{" "}
+              <a className={styles.email} href={`mailto:${EMAIL}`}>
+                {EMAIL}
+              </a>
+            </p>
           </Reveal>
         </div>
       </section>
-
-      {/* the address itself, at the centre of the ring on the stone */}
-      <ScrollProgress className={styles.send} data-field="dark" data-candle="">
-        <Atmosphere variant={4} watermark={false} />
-        <Smoke intensity={0.85} source={[0.5, 0.02]} />
-        <div className={styles.sendIn}>
-          <div className={styles.sendRing} aria-hidden="true">
-            <Seal star={false} />
-          </div>
-          <div className={styles.sendCopy}>
-            <span className={styles.sendStar} aria-hidden="true">
-              <Seal ticks={0} emblem />
-            </span>
-            <span className="micro">надішліть рукопис прямо тут</span>
-            <p className={styles.sendNote}>
-              Короткий опис і кілька слів про себе – повний текст попросимо
-              окремо, якщо зацікавимось.
-            </p>
-            <SubmissionForm />
-            <p className={styles.sendNote} style={{ marginTop: 8 }}>
-              Або одразу на пошту:{" "}
-              <a className={styles.email} href={`mailto:${EMAIL}`}>
-                {EMAIL.split("@")[0]}@<wbr />
-                {EMAIL.split("@")[1]}
-              </a>
-            </p>
-          </div>
-        </div>
-      </ScrollProgress>
     </>
   );
 }

@@ -101,16 +101,16 @@ export const status = [
 ];
 
 export const submissionRules = [
-  "Рукопис завершений – не уривок і не начерк.",
-  "Текст вичитаний, бажано вже відредагований.",
-  "Разом із рукописом – трохи інформації про себе.",
+  "Завершений рукопис – не уривок і не начерк.",
+  "Вичитаний текст, бажано вже відредагований.",
+  "Кілька слів про себе.",
 ];
 
 /** Sits under the three conditions on /submissions and explains why they are
  * what they are. The trailing clause used to repeat the conditions it had just
  * followed, so it now carries only the reason. */
 export const submissionNote =
-  "Поки ми лише формуємо команду, тому глибоку редакторську правку сирих текстів узяти в роботу ще не маємо змоги.";
+  "Ми лише формуємо команду, тож сирі тексти з глибокою правкою поки не беремо.";
 
 /** The three sections the journal will open with. Nothing is published yet,
  * so the page shows them as what they are — planned, not written. Titles are
