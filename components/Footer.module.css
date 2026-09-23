@@ -97,11 +97,14 @@
     grid-column: 1 / -1;
   }
 
-  /* the footer was set at the same scale as a desktop sidebar shrunk to
-     fit a phone, so next to the hero above it it read as an afterthought;
-     everything below steps up one size for a phone reading it up close */
+  /* Stepping the type up one size (below) fixed the footer reading as an
+     afterthought on a phone — but bumping the wordmark past the header's own
+     118px meant a short page (the sign-in screens especially) showed two
+     "ВІДЬМАР" logos, the footer's bigger than the header's, one scroll apart.
+     It now sits under the header's size instead of over it: still its own
+     signature at the foot of the page, not a second brand mark. */
   .mark {
-    width: 148px;
+    width: 104px;
   }
 
   .tagline,
