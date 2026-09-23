@@ -1,0 +1,103 @@
+.cover {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 2px 6px 6px 2px;
+  background: linear-gradient(160deg, var(--ink-2), var(--ink-deep));
+  box-shadow:
+    0 1px 0 rgba(245, 222, 179, 0.1) inset,
+    0 22px 44px -24px rgba(4, 9, 20, 0.95);
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.spine {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 7%;
+  background: linear-gradient(to right, rgba(4, 9, 20, 0.6), rgba(4, 9, 20, 0.1));
+  box-shadow: 1px 0 0 rgba(245, 222, 179, 0.14);
+}
+
+/* the plate is dimmed toward the foot, where the title panel sits */
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(8, 17, 34, 0.1) 30%, rgba(8, 17, 34, 0.86) 78%);
+}
+
+.frame {
+  position: absolute;
+  inset: 5% 5% 5% 11%;
+  border: 1px solid rgba(201, 169, 97, 0.5);
+  border-radius: 1px;
+}
+
+.panel {
+  position: absolute;
+  left: 11%;
+  right: 5%;
+  bottom: 9%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45em;
+  padding-inline: 8%;
+  text-align: center;
+}
+
+.star {
+  position: relative;
+  width: 1.3em;
+  height: 1.3em;
+  color: var(--gold);
+}
+
+.title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--on-dark);
+  text-wrap: balance;
+  text-shadow: 0 1px 10px rgba(8, 17, 34, 0.8);
+}
+
+.author {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.big .title {
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+}
+
+.big .author {
+  font-size: 0.78rem;
+}
+
+.small {
+  width: 56px;
+  flex: none;
+}
+
+@media (max-width: 760px) {
+  .card .title {
+    font-size: 0.92rem;
+  }
+
+  .card .author {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+  }
+}

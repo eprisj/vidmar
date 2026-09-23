@@ -1,10 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ApiError, formatPrice, listAdminOrders, setOrderStatus, type AdminOrder } from "@/lib/api";
+import { ApiError, formatPrice, listAdminOrders, setOrderStatus, setOrderTtn, type AdminOrder } from "@/lib/api";
 
 const TOKEN_KEY = "vidmar-admin-token";
-const STATUSES = ["awaiting_payment", "paid", "cancelled", "fulfilled"];
+const STATUSES = ["awaiting_payment", "paid", "shipped", "fulfilled", "cancelled"];
+const STATUS_UA: Record<string, string> = {
+  awaiting_payment: "очікує оплати",
+  paid: "оплачено",
+  shipped: "відправлено",
+  fulfilled: "виконано",
+  cancelled: "скасовано",
+};
 
 export default function AdminOrdersPage() {
   const [token, setToken] = useState("");
@@ -73,7 +80,7 @@ export default function AdminOrdersPage() {
   }
 
   return (
-    <main style={{ padding: 40, maxWidth: 900, margin: "0 auto", fontFamily: "sans-serif" }}>
+    <main style={{ padding: 40, maxWidth: 1100, margin: "0 auto", fontFamily: "sans-serif" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1 style={{ fontSize: 22 }}>Замовлення ({orders.length})</h1>
         <button
@@ -101,6 +108,7 @@ export default function AdminOrdersPage() {
           <tr style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
             <th>#</th>
             <th>покупець</th>
+            <th>доставка</th>
             <th>сума</th>
             <th>дата</th>
             <th>статус</th>
@@ -110,14 +118,40 @@ export default function AdminOrdersPage() {
           {orders.map((o) => (
             <tr key={o.id} style={{ borderBottom: "1px solid #eee" }}>
               <td>{o.id}</td>
-              <td>{o.user_email}</td>
+              <td>
+                {o.is_demo && <span style={{ color: "#a67c00" }}>демо · </span>}
+                <b>{o.customer_name}</b>
+                <br />
+                {o.customer_phone} · {o.user_email}
+                {o.comment && <div style={{ color: "#666" }}>«{o.comment}»</div>}
+              </td>
+              <td style={{ maxWidth: 220 }}>
+                {o.np_warehouse ? (
+                  <>
+                    {o.np_city}, {o.np_warehouse}
+                    <br />
+                    <input
+                      defaultValue={o.ttn ?? ""}
+                      placeholder="ТТН"
+                      inputMode="numeric"
+                      style={{ padding: 4, width: 150, marginTop: 4 }}
+                      onBlur={(e) => {
+                        const v = e.target.value.trim();
+                        if (v && v !== (o.ttn ?? "")) setOrderTtn(token, o.id, v).then(refresh);
+                      }}
+                    />
+                  </>
+                ) : (
+                  "лише e-book"
+                )}
+              </td>
               <td>{formatPrice(o.total_cents, o.currency)}</td>
               <td>{new Date(o.created_at).toLocaleString("uk-UA")}</td>
               <td>
                 <select value={o.status} onChange={(e) => changeStatus(o.id, e.target.value)} style={{ padding: 4 }}>
                   {STATUSES.map((s) => (
                     <option key={s} value={s}>
-                      {s}
+                      {STATUS_UA[s]}
                     </option>
                   ))}
                 </select>

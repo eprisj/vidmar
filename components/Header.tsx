@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import forest from "@/assets/forest/mid.svg";
+import { cartCount, useCart } from "@/lib/cart";
 import styles from "./Header.module.css";
 
 const nav = [
@@ -20,6 +21,7 @@ export default function Header() {
   const [solid, setSolid] = useState(false);
   const [onPage, setOnPage] = useState(false);
   const [open, setOpen] = useState(false);
+  const count = cartCount(useCart());
 
   const sync = useCallback(() => {
     setSolid(window.scrollY > 40);
@@ -89,6 +91,18 @@ export default function Header() {
           </nav>
 
           <div className={styles.tools}>
+            <Link href="/cart" prefetch={false} className={styles.cart} aria-label={`Кошик, ${count}`}>
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path
+                  d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Zm4 0V6a3 3 0 0 1 6 0v2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {count > 0 && <span className={styles.badge}>{count}</span>}
+            </Link>
             <button
               type="button"
               className={`${styles.burger} ${open ? styles.burgerOpen : ""}`}

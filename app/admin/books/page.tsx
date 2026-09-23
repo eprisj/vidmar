@@ -26,7 +26,21 @@ const EMPTY: BookInput = {
   sort_order: 0,
   price_cents: null,
   currency: "UAH",
+  print_price_cents: null,
+  ebook_price_cents: null,
+  stock: null,
+  pages: null,
+  year: null,
+  binding: "",
+  isbn: "",
+  excerpt: "",
+  cover_pos: "",
+  is_demo: false,
 };
+
+const uah = (c: number | null | undefined) => (c == null ? "" : c / 100);
+const cents = (v: string) => (v === "" ? null : Math.round(Number(v) * 100));
+const int = (v: string) => (v === "" ? null : Math.round(Number(v)));
 
 export default function AdminBooksPage() {
   const [token, setToken] = useState("");
@@ -77,6 +91,16 @@ export default function AdminBooksPage() {
       sort_order: book.sort_order,
       price_cents: book.price_cents,
       currency: book.currency || "UAH",
+      print_price_cents: book.print_price_cents ?? null,
+      ebook_price_cents: book.ebook_price_cents ?? null,
+      stock: (book as AdminBook & { stock?: number | null }).stock ?? null,
+      pages: book.pages ?? null,
+      year: book.year ?? null,
+      binding: book.binding || "",
+      isbn: book.isbn || "",
+      excerpt: book.excerpt || "",
+      cover_pos: book.cover_pos || "",
+      is_demo: !!book.is_demo,
     });
   }
 
@@ -200,24 +224,86 @@ export default function AdminBooksPage() {
           <option value="published">published (видима в каталозі)</option>
         </select>
         <div style={{ display: "flex", gap: 8 }}>
+          <label style={{ flex: 1 }}>
+            паперова, грн
+            <input
+              type="number"
+              placeholder="порожньо = не продається"
+              value={uah(form.print_price_cents)}
+              onChange={(e) => setForm({ ...form, print_price_cents: cents(e.target.value) })}
+              style={{ padding: 8, width: "100%" }}
+            />
+          </label>
+          <label style={{ flex: 1 }}>
+            електронна, грн
+            <input
+              type="number"
+              placeholder="порожньо = не продається"
+              value={uah(form.ebook_price_cents)}
+              onChange={(e) => setForm({ ...form, ebook_price_cents: cents(e.target.value) })}
+              style={{ padding: 8, width: "100%" }}
+            />
+          </label>
+          <label style={{ width: 110 }}>
+            залишок
+            <input
+              type="number"
+              placeholder="∞"
+              value={form.stock ?? ""}
+              onChange={(e) => setForm({ ...form, stock: int(e.target.value) })}
+              style={{ padding: 8, width: "100%" }}
+            />
+          </label>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
           <input
             type="number"
-            placeholder="ціна, грн (порожньо = ще не в продажу)"
-            value={form.price_cents == null ? "" : form.price_cents / 100}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                price_cents: e.target.value === "" ? null : Math.round(Number(e.target.value) * 100),
-              })
-            }
+            placeholder="сторінок"
+            value={form.pages ?? ""}
+            onChange={(e) => setForm({ ...form, pages: int(e.target.value) })}
             style={{ padding: 8, flex: 1 }}
           />
           <input
-            value={form.currency}
-            onChange={(e) => setForm({ ...form, currency: e.target.value })}
-            style={{ padding: 8, width: 70 }}
+            type="number"
+            placeholder="рік"
+            value={form.year ?? ""}
+            onChange={(e) => setForm({ ...form, year: int(e.target.value) })}
+            style={{ padding: 8, flex: 1 }}
+          />
+          <input
+            placeholder="ISBN"
+            value={form.isbn ?? ""}
+            onChange={(e) => setForm({ ...form, isbn: e.target.value })}
+            style={{ padding: 8, flex: 2 }}
           />
         </div>
+        <input
+          placeholder="палітурка, напр. Тверда палітурка, тканина"
+          value={form.binding ?? ""}
+          onChange={(e) => setForm({ ...form, binding: e.target.value })}
+          style={{ padding: 8 }}
+        />
+        <textarea
+          placeholder="уривок (одне-два речення)"
+          value={form.excerpt ?? ""}
+          onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+          rows={2}
+          style={{ padding: 8 }}
+        />
+        <input
+          placeholder="кадрування обкладинки, напр. 50% 40%"
+          value={form.cover_pos ?? ""}
+          onChange={(e) => setForm({ ...form, cover_pos: e.target.value })}
+          style={{ padding: 8 }}
+        />
+        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <input
+            type="checkbox"
+            checked={!!form.is_demo}
+            onChange={(e) => setForm({ ...form, is_demo: e.target.checked })}
+          />
+          демонстраційна книга
+        </label>
         <input
           type="number"
           placeholder="порядок сортування"
@@ -247,7 +333,7 @@ export default function AdminBooksPage() {
             <th>назва</th>
             <th>напрям</th>
             <th>статус</th>
-            <th>ціна</th>
+            <th>папір / e-book</th>
             <th></th>
           </tr>
         </thead>
@@ -258,7 +344,11 @@ export default function AdminBooksPage() {
               <td>{b.title}</td>
               <td>{b.genre_slug}</td>
               <td>{b.status}</td>
-              <td>{b.price_cents == null ? "—" : formatPrice(b.price_cents, b.currency)}</td>
+              <td>
+                {b.print_price_cents == null ? "–" : formatPrice(b.print_price_cents, b.currency)} /{" "}
+                {b.ebook_price_cents == null ? "–" : formatPrice(b.ebook_price_cents, b.currency)}
+                {b.is_demo && <span style={{ color: "#a67c00" }}> · демо</span>}
+              </td>
               <td style={{ display: "flex", gap: 6 }}>
                 <button onClick={() => startEdit(b)}>ред.</button>
                 <button

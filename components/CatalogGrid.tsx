@@ -1,139 +1,199 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { Genre } from "@/lib/content";
-import { addToCart, apiMessage, formatPrice, getBooks, type Book } from "@/lib/api";
-import { useToast } from "./ToastProvider";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import type { Genre } from "@/lib/content";
+import { formatPrice, getBooks, type Book } from "@/lib/api";
+import BookCover from "./BookCover";
 import Reveal from "./Reveal";
 import Seal from "./Seal";
 import styles from "./CatalogGrid.module.css";
 
-/**
- * The catalogue as it actually is right now: real, working filters over a
- * shelf that starts empty and fills in as books get published through the
- * admin API. Genres with no book yet keep the honest "Готується"
- * placeholder; genres with one get a real card instead.
- */
+type FormatFilter = "all" | "print" | "ebook";
+type Sort = "order" | "cheap" | "dear";
+
+/** lowest price across the formats a book is actually sold in */
+function fromPrice(b: Book) {
+  const p = [b.print_price_cents, b.ebook_price_cents].filter((v): v is number => v != null);
+  return p.length ? Math.min(...p) : null;
+}
+
 export default function CatalogGrid({ genres }: { genres: Genre[] }) {
-  const toast = useToast();
-  const [active, setActive] = useState<string | null>(null);
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<Book[] | null>(null);
+  const [genre, setGenre] = useState<string | null>(null);
+  const [format, setFormat] = useState<FormatFilter>("all");
+  const [sort, setSort] = useState<Sort>("order");
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     getBooks().then(setBooks);
   }, []);
 
-  async function buy(slug: string) {
-    try {
-      await addToCart(slug);
-      // the cart has no nav entry of its own; without this the reader is
-      // told the book landed somewhere and not where that somewhere is
-      toast("додано в кошик – він у вашому кабінеті");
-    } catch (err) {
-      toast(apiMessage(err, "не вдалося додати в кошик"));
-    }
-  }
+  const shown = useMemo(() => {
+    if (!books) return [];
+    const needle = q.trim().toLowerCase();
+    const list = books.filter(
+      (b) =>
+        (!genre || b.genre_slug === genre) &&
+        (format === "all" || (format === "print" ? b.print_price_cents != null : b.ebook_price_cents != null)) &&
+        (!needle || `${b.title} ${b.author ?? ""}`.toLowerCase().includes(needle)),
+    );
+    if (sort === "order") return list;
+    return [...list].sort((a, b) => {
+      const d = (fromPrice(a) ?? 1e9) - (fromPrice(b) ?? 1e9);
+      return sort === "cheap" ? d : -d;
+    });
+  }, [books, genre, format, sort, q]);
 
-  const shown = active ? genres.filter((g) => g.slug === active) : genres;
+  if (books === null) return <div className={styles.loading} aria-busy="true" />;
+
+  // no books at all yet: the six directions as closed volumes, as before
+  if (books.length === 0) return <GenreShelf genres={genres} />;
+
+  const demo = books.some((b) => b.is_demo);
 
   return (
     <>
-      {/* While the shelf is empty the filters have nothing to sort: they
-          printed the six directions as chips and the placeholders printed the
-          same six directly underneath, so the page said every genre twice to
-          filter nothing. They come back on their own with the first book. */}
-      {books.length > 0 && (
-        <div className={styles.filters} role="group" aria-label="Фільтр за напрямом">
+      {demo && (
+        <p className={styles.demo}>
+          <b>Демонстраційний каталог.</b> Книги й автори вигадані, щоб показати, як працюватиме
+          магазин. Оформити замовлення можна, але надсилати гроші не потрібно.
+        </p>
+      )}
+
+      <div className={styles.tools}>
+        <div className={styles.filters} role="group" aria-label="Напрям">
           <button
             type="button"
-            className={`${styles.chip} ${active === null ? styles.chipOn : ""}`}
-            onClick={() => setActive(null)}
+            className={`${styles.chip} ${genre === null ? styles.chipOn : ""}`}
+            aria-pressed={genre === null}
+            onClick={() => setGenre(null)}
           >
             Усі напрями
           </button>
-          {genres.map((g) => (
-            <button
-              key={g.slug}
-              type="button"
-              className={`${styles.chip} ${active === g.slug ? styles.chipOn : ""}`}
-              style={{ "--tint": g.tint } as React.CSSProperties}
-              onClick={() => setActive(g.slug)}
-              aria-pressed={active === g.slug}
-            >
-              {g.title}
-            </button>
-          ))}
+          {genres
+            .filter((g) => books.some((b) => b.genre_slug === g.slug))
+            .map((g) => (
+              <button
+                key={g.slug}
+                type="button"
+                className={`${styles.chip} ${genre === g.slug ? styles.chipOn : ""}`}
+                aria-pressed={genre === g.slug}
+                onClick={() => setGenre(genre === g.slug ? null : g.slug)}
+              >
+                {g.title}
+              </button>
+            ))}
         </div>
-      )}
 
-      {books.length === 0 && (
-        <div className={styles.head}>
-          <span className="micro micro--bright">напрями видавництва</span>
-          <span className={`micro ${styles.hint}`}>оберіть напрям, щоб дізнатися більше</span>
+        <div className={styles.row2}>
+          <div className={styles.seg} role="group" aria-label="Формат">
+            {(
+              [
+                ["all", "Усі формати"],
+                ["print", "Паперові"],
+                ["ebook", "Електронні"],
+              ] as const
+            ).map(([v, label]) => (
+              <button
+                key={v}
+                type="button"
+                className={format === v ? styles.segOn : ""}
+                aria-pressed={format === v}
+                onClick={() => setFormat(v)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <input
+            className={styles.search}
+            type="search"
+            placeholder="Пошук за назвою чи автором"
+            aria-label="Пошук"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+          <select
+            className={styles.sort}
+            aria-label="Сортування"
+            value={sort}
+            onChange={(e) => setSort(e.target.value as Sort)}
+          >
+            <option value="order">Спершу нові</option>
+            <option value="cheap">Спершу дешевші</option>
+            <option value="dear">Спершу дорожчі</option>
+          </select>
         </div>
-      )}
+      </div>
 
       {shown.length === 0 ? (
-        <p className={`body ${styles.none}`}>У цьому напрямі поки нічого не заплановано.</p>
+        <p className={`body ${styles.none}`}>Нічого не знайшлось. Спробуйте інший напрям чи формат.</p>
       ) : (
-        <div className={styles.grid}>
-          {shown.map((g, i) => {
-            const genreBooks = books.filter((b) => b.genre_slug === g.slug);
-            if (genreBooks.length === 0) {
-              // a clothbound volume with its title stamped on and nothing
-              // inside yet: tall empty dashed slots read as a page that had
-              // failed to load, and on a phone six of them ran to four screens
-              return (
-                <Reveal key={g.slug} delay={i * 50} className={styles.slot}>
-                  <Link
-                    href={`/genres#${g.slug}`}
-                    prefetch={false}
-                    className={styles.card}
-                    style={{ "--tint": g.tint } as React.CSSProperties}
-                  >
-                    <span className={styles.spine} aria-hidden="true" />
-                    <span className={styles.frame} aria-hidden="true" />
-                    <span className={styles.emblem} aria-hidden="true">
-                      <Seal ticks={0} emblem />
+        <div className={styles.books}>
+          {shown.map((b, i) => {
+            const from = fromPrice(b);
+            return (
+              <Reveal key={b.slug} delay={Math.min(i, 6) * 40} className={styles.slot}>
+                <Link href={`/book?s=${b.slug}`} prefetch={false} className={styles.book}>
+                  <BookCover title={b.title} author={b.author} src={b.cover_url} pos={b.cover_pos} />
+                  <span className={styles.bookTitle}>{b.title}</span>
+                  {b.author && <span className={styles.bookAuthor}>{b.author}</span>}
+                  <span className={styles.bookFoot}>
+                    {from != null && (
+                      <span className={styles.price}>від {formatPrice(from, b.currency)}</span>
+                    )}
+                    <span className={styles.formats}>
+                      {b.print_price_cents != null && (
+                        <span className={b.in_stock ? "" : styles.out} title={b.in_stock ? "" : "Немає в наявності"}>
+                          папір
+                        </span>
+                      )}
+                      {b.ebook_price_cents != null && <span>e-book</span>}
                     </span>
-                    <span className={styles.cardTitle}>{g.title}</span>
-                    <span className={styles.foot}>
-                      <span className={`micro ${styles.cardState}`}>Готується</span>
-                      <span className={styles.arrow} aria-hidden="true">
-                        →
-                      </span>
-                    </span>
-                  </Link>
-                </Reveal>
-              );
-            }
-            return genreBooks.map((book, bi) => (
-              <Reveal key={book.slug} delay={(i + bi) * 50} className={styles.slot}>
-                <article
-                  className={`${styles.card} ${styles.cardReal}`}
-                  style={{ "--tint": g.tint } as React.CSSProperties}
-                >
-                  {book.cover_url && (
-                    <img className={styles.cover} src={book.cover_url} alt="" loading="lazy" decoding="async" />
-                  )}
-                  <span className={styles.spine} aria-hidden="true" />
-                  <span className={styles.cardTitle}>{book.title}</span>
-                  {book.author && <span className={`micro ${styles.cardState}`}>{book.author}</span>}
-                  {book.price_cents != null && (
-                    <span className={styles.buy}>
-                      <span className="micro micro--bright">{formatPrice(book.price_cents, book.currency)}</span>
-                      <button type="button" className="pill" onClick={() => buy(book.slug)}>
-                        У кошик
-                      </button>
-                    </span>
-                  )}
-                </article>
+                  </span>
+                </Link>
               </Reveal>
-            ));
+            );
           })}
         </div>
       )}
+    </>
+  );
+}
+
+function GenreShelf({ genres }: { genres: Genre[] }) {
+  return (
+    <>
+      <div className={styles.head}>
+        <span className="micro micro--bright">напрями видавництва</span>
+        <span className={`micro ${styles.hint}`}>оберіть напрям, щоб дізнатися більше</span>
+      </div>
+      <div className={styles.grid}>
+        {genres.map((g, i) => (
+          <Reveal key={g.slug} delay={i * 50} className={styles.slot}>
+            <Link
+              href={`/genres#${g.slug}`}
+              prefetch={false}
+              className={styles.card}
+              style={{ "--tint": g.tint } as React.CSSProperties}
+            >
+              <span className={styles.spine} aria-hidden="true" />
+              <span className={styles.frame} aria-hidden="true" />
+              <span className={styles.emblem} aria-hidden="true">
+                <Seal ticks={0} emblem />
+              </span>
+              <span className={styles.cardTitle}>{g.title}</span>
+              <span className={styles.foot}>
+                <span className={`micro ${styles.cardState}`}>Готується</span>
+                <span className={styles.arrow} aria-hidden="true">
+                  →
+                </span>
+              </span>
+            </Link>
+          </Reveal>
+        ))}
+      </div>
     </>
   );
 }

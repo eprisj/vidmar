@@ -179,37 +179,178 @@ a.card:hover .arrow {
   transform: translateX(4px);
 }
 
-/* a real book: the cover image is the board, text sits on a scrim at the foot */
-.cardReal {
-  justify-content: flex-end;
-  align-items: flex-start;
-  text-align: left;
-  gap: 6px;
-  padding: 18px 16px 16px 26px;
+
+/* ---------- the shop ---------- */
+
+.loading {
+  min-height: 60vh;
 }
 
-.cardReal::before {
-  content: "";
-  position: absolute;
-  inset: 40% 0 0;
-  z-index: -1;
-  background: linear-gradient(to bottom, transparent, rgba(8, 17, 34, 0.88));
+.demo {
+  margin: 0 0 clamp(20px, 3vw, 32px);
+  padding: 14px 18px;
+  border: 1px solid rgba(201, 169, 97, 0.4);
+  border-radius: 8px;
+  background: rgba(201, 169, 97, 0.08);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--on-dark);
 }
 
-.cover {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -2;
+.demo b {
+  color: var(--gold);
+  font-weight: 600;
 }
 
-.buy {
+.tools {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: clamp(26px, 3.4vw, 44px);
+}
+
+.row2 {
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-top: 8px;
+  align-items: center;
+}
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--hair-d);
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.seg button {
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 8px 14px;
+  min-height: 38px;
+  border-radius: 999px;
+  color: var(--on-dark-mute);
+  cursor: pointer;
+}
+
+.seg .segOn {
+  background: var(--on-dark);
+  color: var(--ink);
+}
+
+.search,
+.sort {
+  font: inherit;
+  font-size: 1rem;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--hair-d);
+  background: rgba(8, 17, 34, 0.35);
+  color: var(--on-dark);
+}
+
+.search {
+  flex: 1 1 220px;
+}
+
+.search::placeholder {
+  color: var(--on-dark-mute);
+}
+
+.sort {
+  cursor: pointer;
+}
+
+.books {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: clamp(28px, 3vw, 40px) clamp(18px, 2.4vw, 30px);
+}
+
+.book {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.book > :first-child {
+  margin-bottom: 10px;
+  transition: transform 0.5s var(--ease);
+}
+
+.book:hover > :first-child,
+.book:focus-visible > :first-child {
+  transform: translateY(-6px);
+}
+
+.bookTitle {
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--on-dark);
+}
+
+.bookAuthor {
+  font-size: 0.88rem;
+  color: var(--on-dark-mute);
+}
+
+.bookFoot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.formats {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.formats span {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border: 1px solid var(--hair-d);
+  border-radius: 999px;
+  color: var(--on-dark-mute);
+}
+
+.formats .out {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+@media (max-width: 760px) {
+  .books {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 14px;
+  }
+
+  .row2 > * {
+    flex: 1 1 100%;
+  }
+
+  .seg {
+    justify-content: space-between;
+  }
+
+  .seg button {
+    flex: 1;
+    padding-inline: 8px;
+  }
+
+  .bookTitle {
+    font-size: 0.95rem;
+  }
 }
 
 @media (max-width: 760px) {
@@ -236,5 +377,26 @@ a.card:hover .arrow {
     left: 30px;
     right: 16px;
     bottom: 20px;
+  }
+}
+
+/* seven chips wrapped into three ragged rows on a phone; one swipeable row */
+@media (max-width: 760px) {
+  .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--gut) * -1);
+    padding-inline: var(--gut);
+    margin-bottom: 0;
+    scrollbar-width: none;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip {
+    flex: none;
+    min-height: 40px;
   }
 }

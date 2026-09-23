@@ -47,7 +47,82 @@ export type Book = {
   status: string;
   price_cents: number | null;
   currency: string;
+  excerpt?: string | null;
+  cover_pos?: string | null;
+  print_price_cents?: number | null;
+  ebook_price_cents?: number | null;
+  in_stock?: boolean;
+  pages?: number | null;
+  year?: number | null;
+  binding?: string | null;
+  isbn?: string | null;
+  is_demo?: boolean;
 };
+
+export type Format = "print" | "ebook";
+
+export const FORMAT_LABEL: Record<Format, string> = { print: "Паперова", ebook: "Електронна" };
+
+export async function getBook(slug: string): Promise<Book | null> {
+  const res = await fetch(`${API_BASE}/books/${encodeURIComponent(slug)}`, { cache: "no-store" });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+// --- Nova Poshta, through our API so the key stays on the server ----------
+
+export type NpCity = { ref: string; name: string; area: string };
+export type NpWarehouse = { ref: string; name: string; number: string };
+
+export async function npCities(q: string): Promise<NpCity[]> {
+  const res = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(q)}`);
+  return res.ok ? res.json() : [];
+}
+
+export async function npWarehouses(city: string, q = ""): Promise<NpWarehouse[]> {
+  const res = await fetch(`${API_BASE}/np/warehouses?city=${city}&q=${encodeURIComponent(q)}`);
+  return res.ok ? res.json() : [];
+}
+
+// --- guest checkout -----------------------------------------------------------
+
+export type OrderInput = {
+  items: { slug: string; format: Format; quantity: number }[];
+  customer: { name: string; phone: string; email: string };
+  delivery?: { cityRef: string; cityName: string; warehouseRef: string; warehouseName: string };
+  comment?: string;
+};
+
+export type PlacedOrder = { id: number; total_cents: number; currency: string; access_token: string };
+
+export async function placeOrder(input: OrderInput): Promise<PlacedOrder> {
+  const res = await fetch(`${API_BASE}/orders`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  const data = await res.json().catch(() => null);
+  // the checkout endpoint already answers in Ukrainian
+  if (!res.ok) throw new ApiError(data?.error || "не вдалося оформити замовлення");
+  return data;
+}
+
+export type PublicOrder = OrderSummary & {
+  customer_name: string;
+  np_city: string | null;
+  np_warehouse: string | null;
+  ttn: string | null;
+  is_demo: boolean;
+  items: (OrderItem & { format: Format })[];
+};
+
+export async function lookupOrder(id: string, token: string): Promise<PublicOrder | null> {
+  const res = await fetch(`${API_BASE}/orders/lookup/${encodeURIComponent(id)}?t=${encodeURIComponent(token)}`, {
+    cache: "no-store",
+  });
+  return res.ok ? res.json() : null;
+}
 
 export async function getBooks(): Promise<Book[]> {
   const res = await fetch(`${API_BASE}/books`, { cache: "no-store" });
@@ -102,6 +177,16 @@ export type BookInput = {
   sort_order?: number;
   price_cents?: number | null;
   currency?: string;
+  print_price_cents?: number | null;
+  ebook_price_cents?: number | null;
+  stock?: number | null;
+  pages?: number | null;
+  year?: number | null;
+  binding?: string | null;
+  isbn?: string | null;
+  excerpt?: string | null;
+  cover_pos?: string | null;
+  is_demo?: boolean;
 };
 
 export function createBook(token: string, input: BookInput) {
@@ -206,8 +291,17 @@ export function listAdminUsers(token: string): Promise<AdminUser[]> {
   return adminRequest("/admin/users", token);
 }
 
-export type AdminOrder = OrderSummary & { user_email: string };
-export type AdminOrderDetail = AdminOrder & { items: OrderItem[] };
+export type AdminOrder = OrderSummary & {
+  user_email: string;
+  customer_name?: string | null;
+  customer_phone?: string | null;
+  np_city?: string | null;
+  np_warehouse?: string | null;
+  ttn?: string | null;
+  comment?: string | null;
+  is_demo?: boolean;
+};
+export type AdminOrderDetail = AdminOrder & { items: (OrderItem & { format?: Format })[] };
 
 export function listAdminOrders(token: string): Promise<AdminOrder[]> {
   return adminRequest("/admin/orders", token);
@@ -219,6 +313,10 @@ export function getAdminOrder(token: string, id: number): Promise<AdminOrderDeta
 
 export function setOrderStatus(token: string, id: number, status: string) {
   return adminRequest(`/admin/orders/${id}`, token, { method: "PUT", body: JSON.stringify({ status }) });
+}
+
+export function setOrderTtn(token: string, id: number, ttn: string) {
+  return adminRequest(`/admin/orders/${id}`, token, { method: "PUT", body: JSON.stringify({ ttn }) });
 }
 
 export function formatPrice(cents: number, currency: string) {
