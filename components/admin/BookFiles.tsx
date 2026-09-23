@@ -61,7 +61,7 @@ export default function BookFiles({ bookId }: { bookId: number }) {
         setPending((p) => p.filter((x) => x.key !== key));
         load();
       } catch (e) {
-        const msg = fail(e);
+        const msg = uploadError(fail(e));
         setPending((p) => p.map((x) => (x.key === key ? { ...x, error: msg } : x)));
       }
     }
@@ -99,7 +99,17 @@ export default function BookFiles({ bookId }: { bookId: number }) {
     }
   }
 
-  const ext = (n: string) => (n.split(".").pop() || "file").slice(0, 5);
+  /** the API answers in English; the admin reads Ukrainian */
+function uploadError(msg: string) {
+  if (/audio and video/.test(msg)) return "аудіо й відео не приймаються – лише електронні версії книги";
+  const max = /file too large \(max (\d+) MB\)/.exec(msg);
+  if (max) return `файл більший за ${max[1]} МБ`;
+  if (/disk is full/.test(msg)) return "на сервері закінчилося місце";
+  if (/expired/.test(msg)) return "завантаження перервалося, спробуйте ще раз";
+  return msg;
+}
+
+const ext = (n: string) => (n.split(".").pop() || "file").slice(0, 5);
 
   return (
     <div className={s.fieldset}>
@@ -135,7 +145,7 @@ export default function BookFiles({ bookId }: { bookId: number }) {
           <b>Перетягніть файли сюди</b> або натисніть, щоб вибрати
         </span>
         <span>
-          Будь-які формати: PDF, EPUB, MOBI, FB2, аудіо, архіви, макети. Нові файли {ACCESS.find((a) => a.id === access)!.hint}.
+          Електронні версії: PDF, EPUB, MOBI, AZW3, FB2, DJVU, DOCX. Нові файли {ACCESS.find((a) => a.id === access)!.hint}.
           {room && ` До ${fileSize(room.max_file)} на файл · вільно ${fileSize(room.free)}.`}
         </span>
         <input
@@ -143,6 +153,7 @@ export default function BookFiles({ bookId }: { bookId: number }) {
           type="file"
           multiple
           hidden
+          accept=".pdf,.epub,.mobi,.azw3,.fb2,.djvu,.txt,.rtf,.doc,.docx,.odt,.zip"
           onChange={(e) => {
             if (e.target.files?.length) upload(e.target.files);
             e.target.value = "";
