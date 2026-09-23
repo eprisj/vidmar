@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { EMAIL } from "@/lib/content";
 import styles from "./Footer.module.css";
+import { MailLink, Txt } from "./SiteText";
 
 export default function Footer() {
   return (
@@ -16,7 +16,7 @@ export default function Footer() {
               under the wordmark and again as the whole point of the shelf
               section. Here the line carries only what it publishes. */}
           <p className={styles.tagline}>
-            Книги про езотерику, містику й відьомство.
+            <Txt k="footer.tagline" />
           </p>
         </div>
 
@@ -49,9 +49,7 @@ export default function Footer() {
         <div className={styles.col}>
           <h4>Контакти</h4>
           <div className={styles.stack}>
-            <a className={styles.big} href={`mailto:${EMAIL}`}>
-              {EMAIL}
-            </a>
+            <MailLink className={styles.big} />
           </div>
         </div>
       </div>
@@ -68,7 +66,9 @@ export default function Footer() {
             Умови
           </Link>
         </span>
-        <span>Перше видання – у підготовці</span>
+        <span>
+          <Txt k="site.status_line" />
+        </span>
       </div>
     </footer>
   );

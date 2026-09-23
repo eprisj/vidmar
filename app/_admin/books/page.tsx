@@ -12,10 +12,13 @@ import {
   listAdminBooks,
   updateBook,
   uploadEbook,
+  uploadImage,
   type AdminBook,
   type BookInput,
 } from "@/lib/api";
 import { genres } from "@/lib/content";
+import BookFiles from "@/components/admin/BookFiles";
+import c from "@/components/admin/content.module.css";
 
 const SEARCH = "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4";
 const PLUS = "M12 5v14M5 12h14";
@@ -112,6 +115,7 @@ function BookDrawer({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [upload, setUpload] = useState<Record<string, string>>({});
+  const [cover, setCover] = useState("");
   const set = <K extends keyof BookInput>(k: K, v: BookInput[K]) => setF((x) => ({ ...x, [k]: v }));
   const text = (k: keyof BookInput) => ({
     value: String(f[k] ?? ""),
@@ -249,8 +253,32 @@ function BookDrawer({
             <BookCover title={f.title || "Назва"} author={f.author} src={f.cover_url || null} pos={f.cover_pos || null} />
           </span>
           <div className={s.formGrid} style={{ flex: 1, gridTemplateColumns: "1fr" }}>
-            <Field label="Адреса зображення">
-              <input {...text("cover_url")} placeholder="/gravure/… або https://…" />
+            <Field label="Зображення">
+              <div className={c.coverRow}>
+                <input {...text("cover_url")} placeholder="/gravure/… або https://…" />
+                <label className={s.btn} style={{ cursor: "pointer", flex: "none" }}>
+                  {cover || "Завантажити"}
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!file) return;
+                      try {
+                        setCover("0%");
+                        const url = await uploadImage(file, (p) => setCover(`${Math.round(p * 100)}%`));
+                        set("cover_url", url);
+                        setCover("");
+                      } catch (err) {
+                        setCover("");
+                        setError(fail(err));
+                      }
+                    }}
+                  />
+                </label>
+              </div>
             </Field>
             <Field label="Кадрування">
               <input {...text("cover_pos")} placeholder="50% 40%" />
@@ -310,7 +338,7 @@ function BookDrawer({
 
       {book && (
         <div className={s.fieldset}>
-          <span className={s.legend}>Файли електронної книги</span>
+          <span className={s.legend}>Електронна книга · основні файли для покупців</span>
           <div className={s.row}>
             {(["pdf", "epub"] as const).map((kind) => {
               const key = `${book.id}-${kind}`;
@@ -341,6 +369,12 @@ function BookDrawer({
             })}
           </div>
         </div>
+      )}
+
+      {book ? (
+        <BookFiles bookId={book.id} />
+      ) : (
+        <p className={s.dim}>Файли можна додати одразу після того, як книгу збережено.</p>
       )}
     </Drawer>
   );

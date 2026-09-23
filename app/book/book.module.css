@@ -559,3 +559,50 @@
     color: var(--gold);
   }
 }
+
+/* files the admin shares with everyone: a fragment, a press kit */
+.materials ul + * {
+  margin-top: 0;
+}
+
+.materials ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.materials a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--hair-d);
+  border-radius: 8px;
+  color: var(--on-dark);
+  text-decoration: none;
+  transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
+}
+
+.materials a:hover {
+  border-color: var(--gold);
+  background: rgba(201, 169, 97, 0.06);
+}
+
+.materialName {
+  font-weight: 500;
+}
+
+.materialName::before {
+  content: "↓ ";
+  color: var(--gold);
+}
+
+.materialMeta {
+  flex: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--on-dark-mute);
+}

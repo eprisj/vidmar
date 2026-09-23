@@ -5,6 +5,7 @@ import { genres } from "@/lib/content";
 import { getBooksAtBuild } from "@/lib/api";
 import { pageMeta } from "@/lib/seo";
 import styles from "./catalog.module.css";
+import { Txt } from "@/components/SiteText";
 
 export const metadata: Metadata = pageMeta(
   "Каталог – ВІДЬМАР",
@@ -19,7 +20,7 @@ export default async function CatalogPage() {
     <>
       <PageHero
         label="Каталог"
-        title="Книги ВІДЬМАР"
+        title={<Txt k="page.catalog.title" />}
         variant={4}
         compact
       />

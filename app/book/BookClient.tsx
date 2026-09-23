@@ -20,6 +20,7 @@ import { addLine, useCart } from "@/lib/cart";
 import { genres } from "@/lib/content";
 import { SITE_URL } from "@/lib/seo";
 import styles from "./book.module.css";
+import BookMaterials from "./BookMaterials";
 
 /** schema.org Book with one Offer per format, so a search result can show
  * the price and whether the book is in stock */
@@ -315,6 +316,8 @@ function BookView({ initial }: { initial: Book[] }) {
               <figcaption className="micro">з книги</figcaption>
             </figure>
           )}
+
+          <BookMaterials slug={book.slug} />
 
           <div className={styles.section}>
             <h2 className={styles.h2}>Характеристики</h2>

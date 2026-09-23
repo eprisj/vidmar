@@ -4,11 +4,10 @@ import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
-import LitText from "@/components/LitText";
 import Atmosphere from "@/components/Atmosphere";
-import { founderLetter } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./about.module.css";
+import { LitTxt, Txt } from "@/components/SiteText";
 
 export const metadata: Metadata = pageMeta(
   "Про нас – ВІДЬМАР",
@@ -25,14 +24,12 @@ const doors = [
 ];
 
 export default function AboutPage() {
-  const [thanks, family, dream, together] = founderLetter;
-
   return (
     <>
       <PageHero
         label="Про нас"
-        title="Простір для особливих книг"
-        lede="Починаємо з нуля – вдвох, із любові до читання."
+        title={<Txt k="page.about.title" />}
+        lede={<Txt k="page.about.lede" />}
         variant={1}
       />
 
@@ -47,22 +44,22 @@ export default function AboutPage() {
 
           <div className={styles.letter}>
             <div className={styles.p0}>
-              <LitText text={thanks} className={styles.lit0} />
+              <LitTxt k="letter.thanks" className={styles.lit0} />
             </div>
 
             <div className={styles.p1}>
-              <LitText text={family} className={styles.lit1} />
+              <LitTxt k="letter.family" className={styles.lit1} />
             </div>
 
             <div className={styles.p2}>
               <span className={styles.dreamStar} aria-hidden="true">
                 <Seal ticks={0} emblem />
               </span>
-              <LitText text={dream} className={styles.lit2} />
+              <LitTxt k="letter.dream" className={styles.lit2} />
             </div>
 
             <div className={styles.p3}>
-              <LitText text={together} className={styles.lit3} />
+              <LitTxt k="letter.together" className={styles.lit3} />
             </div>
           </div>
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
-import { EMAIL } from "@/lib/content";
+import { MailLink } from "@/components/SiteText";
 import { pageMeta } from "@/lib/seo";
 import styles from "@/components/Legal.module.css";
 
@@ -63,7 +63,7 @@ export default function TermsPage() {
             <h2>Брак і повернення</h2>
             <p>
               Якщо книга прийшла з поліграфічним браком чи пошкодженою, напишіть на{" "}
-              <a href={`mailto:${EMAIL}?subject=Брак у замовленні`}>{EMAIL}</a> з номером замовлення і фото. Ми
+              <MailLink subject="Брак у замовленні" /> з номером замовлення і фото. Ми
               замінимо книгу або повернемо гроші. В інших випадках повернення відбувається відповідно до законодавства
               України про захист прав споживачів.
             </p>
@@ -76,7 +76,7 @@ export default function TermsPage() {
 
             <h2>Звʼязок</h2>
             <p>
-              З усіх питань пишіть на <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+              З усіх питань пишіть на <MailLink />.
             </p>
           </article>
         </div>

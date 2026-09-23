@@ -3,7 +3,7 @@
    domain depending on the old one; that host still answers, so it stays a
    way back if this one ever fails. Auth travels as a Bearer header, not a
    cookie, so moving the hostname does not touch anyone's session. */
-const API_BASE =
+export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ?? "https://api.vidmar.com.ua";
 
 export class ApiError extends Error {}
@@ -191,6 +191,8 @@ export type PublicOrder = OrderSummary & {
     cover_pos: string | null;
     has_pdf: boolean;
     has_epub: boolean;
+    /** extra files the admin attached for e-book buyers */
+    files?: { id: number; name: string; label: string | null; size: number | string }[];
   })[];
 };
 
@@ -616,10 +618,12 @@ export function setOrderTtn(token: string, id: number, ttn: string) {
   return adminRequest(`/admin/orders/${id}`, token, { method: "PUT", body: JSON.stringify({ ttn }) });
 }
 
+/** Node's ICU writes the hryvnia as "₴" and browsers as "грн", so a price set
+ * with Intl's currency style differed between the built page and the
+ * hydrated one and React rebuilt the tree. The symbol is written by hand. */
 export function formatPrice(cents: number, currency: string) {
-  return new Intl.NumberFormat("uk-UA", { style: "currency", currency, maximumFractionDigits: 0 }).format(
-    cents / 100,
-  );
+  const n = new Intl.NumberFormat("uk-UA", { maximumFractionDigits: 0 }).format(cents / 100);
+  return currency === "UAH" ? `${n} грн` : `${n} ${currency}`;
 }
 
 // --- error messages ------------------------------------------------------
@@ -646,3 +650,119 @@ export function apiMessage(err: unknown, fallback = "щось пішло не т
   if (!(err instanceof ApiError)) return fallback;
   return MESSAGES[err.message] ?? fallback;
 }
+
+// --- admin: files on book cards, images, site texts, reports ---------------
+
+export type FileAccess = "buyers" | "public" | "private";
+export type BookFile = {
+  id: number;
+  book_id: number;
+  name: string;
+  label: string | null;
+  mime: string;
+  size: number | string;
+  access: FileAccess;
+  sort_order: number;
+  created_at: string;
+};
+
+const CHUNK = 900 * 1024;
+
+/** nginx caps a request at 1MB, so everything goes up in ~900KB parts */
+async function chunkedUpload(path: string, file: File, query: Record<string, string>, onProgress?: (share: number) => void) {
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join("");
+  const parts = Math.max(1, Math.ceil(file.size / CHUNK));
+  let last: unknown = null;
+  for (let i = 0; i < parts; i++) {
+    const q = new URLSearchParams({ ...query, upload: id, part: String(i), name: file.name });
+    if (i === parts - 1) q.set("last", "1");
+    const res = await fetch(`${API_BASE}${path}?${q}`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/octet-stream" },
+      body: file.slice(i * CHUNK, (i + 1) * CHUNK),
+    });
+    last = await res.json().catch(() => null);
+    if (!res.ok) throw new ApiError((last as { error?: string } | null)?.error || `upload failed (${res.status})`);
+    onProgress?.((i + 1) / parts);
+  }
+  return last;
+}
+
+export function listBookFiles(_token: string, bookId: number): Promise<BookFile[]> {
+  return adminRequest(`/admin/books/${bookId}/files`, _token);
+}
+
+export function uploadBookFile(
+  bookId: number,
+  file: File,
+  opts: { access: FileAccess; label?: string },
+  onProgress?: (share: number) => void,
+) {
+  return chunkedUpload(`/admin/books/${bookId}/files`, file, { access: opts.access, label: opts.label ?? "" }, onProgress) as Promise<BookFile>;
+}
+
+export function updateBookFile(_token: string, fid: number, patch: Partial<Pick<BookFile, "label" | "access" | "sort_order">>) {
+  return adminRequest(`/admin/files/${fid}`, _token, { method: "PUT", body: JSON.stringify(patch) }) as Promise<BookFile>;
+}
+
+export function deleteBookFile(_token: string, fid: number) {
+  return adminRequest(`/admin/files/${fid}`, _token, { method: "DELETE" });
+}
+
+export const adminFileUrl = (fid: number) => `${API_BASE}/admin/files/${fid}`;
+export const publicFileUrl = (fid: number) => `${API_BASE}/files/${fid}`;
+export const buyerFileUrl = (orderId: number, token: string, fid: number) =>
+  `${API_BASE}/orders/lookup/${orderId}/files/${fid}?t=${encodeURIComponent(token)}`;
+
+export type PublicFile = { id: number; name: string; label: string | null; mime: string; size: number | string };
+export async function getPublicBookFiles(slug: string): Promise<PublicFile[]> {
+  const res = await fetch(`${API_BASE}/books/${encodeURIComponent(slug)}/files`, { cache: "no-store" });
+  return res.ok ? res.json() : [];
+}
+
+/** an image for a cover or a page; returns its public address */
+export async function uploadImage(file: File, onProgress?: (share: number) => void): Promise<string> {
+  const out = (await chunkedUpload("/admin/media", file, {}, onProgress)) as { url: string };
+  return out.url;
+}
+
+export function getStorage(_token: string): Promise<{ used: number; files: number; free: number; max_file: number }> {
+  return adminRequest("/admin/storage", _token);
+}
+
+export type SavedText = { key: string; value: unknown; updated_at: string; updated_by: string | null; versions: number };
+export function getAdminContent(_token: string): Promise<SavedText[]> {
+  return adminRequest("/admin/content", _token);
+}
+export function saveContent(_token: string, values: Record<string, unknown>) {
+  return adminRequest("/admin/content", _token, { method: "PUT", body: JSON.stringify({ values }) });
+}
+export function contentHistory(_token: string, key: string): Promise<{ id: number; value: unknown; changed_by: string | null; changed_at: string }[]> {
+  return adminRequest(`/admin/content/history/${encodeURIComponent(key)}`, _token);
+}
+
+export type ReportKind = "sales" | "orders" | "catalog" | "readers" | "manuscripts";
+/** fetched with the session cookie and handed to the browser as a download */
+export async function downloadReport(kind: ReportKind, p: { from: string; to: string; demo: boolean }) {
+  const q = new URLSearchParams({ from: p.from, to: p.to, demo: p.demo ? "1" : "0" });
+  const res = await fetch(`${API_BASE}/admin/reports/${kind}?${q}`, { credentials: "include", cache: "no-store" });
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new ApiError(data?.error || `report failed (${res.status})`);
+  }
+  const name = /filename="([^"]+)"/.exec(res.headers.get("Content-Disposition") || "")?.[1] || `vidmar-${kind}.pdf`;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(await res.blob());
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+export const fileSize = (n: number | string) => {
+  const b = Number(n) || 0;
+  if (b < 1024) return `${b} Б`;
+  if (b < 1024 * 1024) return `${Math.round(b / 1024)} КБ`;
+  if (b < 1024 ** 3) return `${(b / 1024 / 1024).toFixed(b < 10 * 1024 * 1024 ? 1 : 0)} МБ`;
+  return `${(b / 1024 ** 3).toFixed(1)} ГБ`;
+};

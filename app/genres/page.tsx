@@ -4,6 +4,7 @@ import PageHero from "@/components/PageHero";
 import { genres, showsNote } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./genres.module.css";
+import { Txt } from "@/components/SiteText";
 
 /** One real 19th-century plate per direction instead of the same
  * generated stone-and-tint texture recoloured six times — each picked for
@@ -44,7 +45,7 @@ export default function GenresPage() {
       <PageHero
         compact
         label="Напрями"
-        title="Що ми видаємо"
+        title={<Txt k="page.genres.title" />}
         variant={2}
       />
 

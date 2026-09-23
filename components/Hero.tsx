@@ -3,8 +3,7 @@ import back from "@/assets/forest/back.svg";
 import mid from "@/assets/forest/mid.svg";
 import front from "@/assets/forest/front.svg";
 import styles from "./Hero.module.css";
-
-const SLOGAN = "книги про містику й відьомство";
+import { Txt } from "./SiteText";
 
 /** Seeded so the server and every visit draw the same swarm. */
 function fireflies(count: number) {
@@ -56,7 +55,9 @@ export default function Hero() {
         </h1>
         {/* the hand only holds a few words: set as a whole sentence it ran
             together and stopped reading */}
-        <p className={styles.lede}>{SLOGAN}</p>
+        <p className={styles.lede}>
+          <Txt k="home.slogan" />
+        </p>
       </div>
 
       {/* the fireflies drift in front of everything */}
@@ -67,7 +68,9 @@ export default function Hero() {
       </div>
 
       <div className={`wrapMax ${styles.foot}`}>
-        <p className="micro">Перше видання – у підготовці</p>
+        <p className="micro">
+          <Txt k="site.status_line" />
+        </p>
         <span className={styles.cue}>
           <span className="micro">прогорнути вниз</span>
           <span className={styles.cueLine} />

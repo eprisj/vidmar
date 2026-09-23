@@ -6,8 +6,8 @@ import styles from "./PageHero.module.css";
 
 type Props = {
   label: string;
-  title: string;
-  lede?: string;
+  title: React.ReactNode;
+  lede?: React.ReactNode;
   /** picks one of Atmosphere's hand-cut seams, so each page opens on its own rock */
   variant?: number;
   /** a shorter hero for pages whose content is the point */

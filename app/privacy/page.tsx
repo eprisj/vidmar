@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
-import { EMAIL } from "@/lib/content";
+import { MailLink } from "@/components/SiteText";
 import { pageMeta } from "@/lib/seo";
 import styles from "@/components/Legal.module.css";
 
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
 
             <p>
               Сайт vidmar.com.ua належить видавництву ВІДЬМАР. Тут описано, які дані про вас ми отримуємо, навіщо
-              і що з ними відбувається. Питання щодо даних надсилайте на <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+              і що з ними відбувається. Питання щодо даних надсилайте на <MailLink />.
             </p>
 
             <h2>Які дані ми отримуємо</h2>
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
             <p>
               Ви можете попросити показати, виправити чи видалити дані про вас, а також відписатися від розсилки (це
               можна зробити і самостійно в <Link href="/account">кабінеті</Link>). Щоб видалити акаунт, напишіть на{" "}
-              <a href={`mailto:${EMAIL}?subject=Видалення акаунта`}>{EMAIL}</a> з тієї пошти, на яку він
+              <MailLink subject="Видалення акаунта" /> з тієї пошти, на яку він
               зареєстрований. Відповімо протягом 30 днів.
             </p>
 

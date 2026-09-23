@@ -46,6 +46,8 @@ const I = {
   out: "M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11",
   site: "M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5",
   key: "M15 7a4 4 0 1 1-3.9 4.9L4 19v2h3v-2h2v-2h2l1.1-1.1A4 4 0 0 1 15 7zM16 9h.01",
+  content: "M4 5h16M4 10h16M4 15h10M4 20h7M17 14l3 3-5 5h-3v-3z",
+  reports: "M6 3h9l4 4v14H6zM14 3v5h5M9 17v-3M12 17v-6M15 17v-4",
 };
 
 export function Icon({ d, size = 18 }: { d: string; size?: number }) {
@@ -234,6 +236,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     { href: `${base}/users`, label: "Читачі", icon: I.users },
     { href: `${base}/manuscripts`, label: "Рукописи", icon: I.scripts, badge: counts.fresh },
     { href: `${base}/subscribers`, label: "Розсилка", icon: I.subs },
+    { href: `${base}/content`, label: "Контент", icon: I.content },
+    { href: `${base}/reports`, label: "Звіти", icon: I.reports },
   ];
   const active = (href: string) => (href === base ? path === base : path.startsWith(href));
 

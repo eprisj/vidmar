@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { EMAIL, submissionNote, submissionRules } from "@/lib/content";
 import Reveal from "@/components/Reveal";
 import Atmosphere from "@/components/Atmosphere";
 import PageHero from "@/components/PageHero";
 import SubmissionForm from "@/components/SubmissionForm";
 import { pageMeta } from "@/lib/seo";
 import styles from "./submissions.module.css";
+import { MailLink, Txt, TxtItems } from "@/components/SiteText";
 
 export const metadata: Metadata = pageMeta(
   "Авторам – ВІДЬМАР",
@@ -27,8 +27,8 @@ export default function SubmissionsPage() {
     <>
       <PageHero
         label="Авторам"
-        title="Надіслати рукопис"
-        lede="Ми читаємо кожен рукопис, що надходить."
+        title={<Txt k="page.submissions.title" />}
+        lede={<Txt k="page.submissions.lede" />}
         variant={3}
         compact
       />
@@ -39,24 +39,21 @@ export default function SubmissionsPage() {
           <Reveal className={styles.terms}>
             <span className="micro micro--bright">що потрібно</span>
             <ol className={styles.rules}>
-              {submissionRules.map((rule) => (
-                <li key={rule}>{rule}</li>
-              ))}
+              <TxtItems k="submissions.rules" />
             </ol>
-            <p className={styles.note}>{submissionNote}</p>
+            <p className={styles.note}>
+              <Txt k="submissions.note" />
+            </p>
           </Reveal>
 
           <Reveal className={styles.send} delay={90}>
             <p className={styles.sendNote}>
-              Опис і посилання на текст – повний рукопис попросимо, якщо
-              зацікавимось.
+              <Txt k="submissions.form_lead" />
             </p>
             <SubmissionForm />
             <p className={styles.sendNote}>
               Або на пошту:{" "}
-              <a className={styles.email} href={`mailto:${EMAIL}`}>
-                {EMAIL}
-              </a>
+              <MailLink className={styles.email} />
             </p>
           </Reveal>
         </div>

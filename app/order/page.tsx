@@ -7,6 +7,7 @@ import BookCover from "@/components/BookCover";
 import {
   FORMAT_LABEL,
   ebookUrl,
+  buyerFileUrl,
   formatPrice,
   getPayMethods,
   lookupOrder,
@@ -279,7 +280,12 @@ function OrderView() {
                                 EPUB
                               </a>
                             )}
-                            {!i.has_pdf && !i.has_epub && (
+                            {i.files?.map((f) => (
+                              <a key={f.id} className="pill" href={buyerFileUrl(order.id, token, f.id)}>
+                                {f.label || f.name}
+                              </a>
+                            ))}
+                            {!i.has_pdf && !i.has_epub && !i.files?.length && (
                               <span className={styles.muted}>Файл готуємо, він зʼявиться тут</span>
                             )}
                           </>

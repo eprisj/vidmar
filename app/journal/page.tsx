@@ -4,6 +4,7 @@ import PageHero from "@/components/PageHero";
 import { journalRubrics } from "@/lib/content";
 import { pageMeta } from "@/lib/seo";
 import styles from "./journal.module.css";
+import { Txt } from "@/components/SiteText";
 
 export const metadata: Metadata = pageMeta(
   "Журнал – ВІДЬМАР",
@@ -17,7 +18,7 @@ export default function JournalPage() {
       <PageHero
         compact
         label="Журнал"
-        title="Скоро тут будуть записи"
+        title={<Txt k="page.journal.title" />}
         variant={5}
       />
 

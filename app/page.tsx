@@ -6,13 +6,14 @@ import Seal from "@/components/Seal";
 import Reveal from "@/components/Reveal";
 import SubmitBlock from "@/components/SubmitBlock";
 import ScrollProgress from "@/components/ScrollProgress";
-import LitText from "@/components/LitText";
 import GenreRows from "@/components/GenreRows";
 import Shelf from "@/components/Shelf";
 import Altar from "@/components/Altar";
 import CardOfTheDay from "@/components/CardOfTheDay";
-import { founderLetter, genres, positioning, status } from "@/lib/content";
+import { genres } from "@/lib/content";
 import styles from "./page.module.css";
+import { LitTxt, Txt } from "@/components/SiteText";
+import StatusRows from "@/components/StatusRows";
 
 export default function Home() {
   return (
@@ -31,7 +32,9 @@ export default function Home() {
             <span className={styles.sceneStar}>
               <Seal ticks={0} emblem />
             </span>
-            <p className={styles.sceneText}>{positioning}</p>
+            <p className={styles.sceneText}>
+              <Txt k="home.positioning" />
+            </p>
           </div>
         </div>
       </ScrollProgress>
@@ -65,10 +68,12 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <LitText text={founderLetter[2]} className={styles.letterLit} />
+          <LitTxt k="letter.dream" className={styles.letterLit} />
 
           <div className={styles.letterFoot}>
-            <p className="body">{founderLetter[3]}</p>
+            <p className="body">
+              <Txt k="letter.together" />
+            </p>
             <Link className="pill pill--bare" href="/about">
               Читати лист повністю
             </Link>
@@ -99,14 +104,7 @@ export default function Home() {
           </Reveal>
 
           <div className={styles.status}>
-            {status.map((s, i) => (
-              <Reveal key={s.title} delay={i * 90}>
-                <div className={styles.statusRow}>
-                  <span className={styles.statusTitle}>{s.title}</span>
-                  <p className="body">{s.body}</p>
-                </div>
-              </Reveal>
-            ))}
+            <StatusRows row={styles.statusRow} title={styles.statusTitle} />
           </div>
         </div>
       </section>
