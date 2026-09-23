@@ -1,105 +1,113 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ApiError, listAdminUsers, type AdminUser } from "@/lib/api";
+import { useEffect, useMemo, useState } from "react";
+import { Icon, useAdmin } from "@/components/admin/AdminShell";
+import s from "@/components/admin/admin.module.css";
+import { uah, when } from "@/components/admin/labels";
+import { listAdminUsers, type AdminUser } from "@/lib/api";
 
-const TOKEN_KEY = "vidmar-admin-token";
+const SEARCH = "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4";
 
-export default function AdminUsersPage() {
-  const [token, setToken] = useState("");
-  const [tokenInput, setTokenInput] = useState("");
-  const [users, setUsers] = useState<AdminUser[]>([]);
+export default function UsersPage() {
+  const { token, fail } = useAdmin();
+  const [users, setUsers] = useState<AdminUser[] | null>(null);
+  const [q, setQ] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem(TOKEN_KEY);
-    if (saved) setToken(saved);
-  }, []);
-
-  useEffect(() => {
-    if (!token) return;
-    setLoading(true);
     listAdminUsers(token)
-      .then((rows) => {
-        setUsers(rows);
-        setError("");
-      })
-      .catch((err) => {
-        setError(err instanceof ApiError ? err.message : "не вдалося завантажити");
-        if (err instanceof ApiError) {
-          localStorage.removeItem(TOKEN_KEY);
-          setToken("");
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [token]);
+      .then(setUsers)
+      .catch((e) => setError(fail(e)));
+  }, [token, fail]);
 
-  if (!token) {
-    return (
-      <main style={{ padding: 40, maxWidth: 420, margin: "0 auto", fontFamily: "sans-serif" }}>
-        <h1 style={{ fontSize: 20, marginBottom: 16 }}>Адмін – вхід</h1>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            localStorage.setItem(TOKEN_KEY, tokenInput);
-            setToken(tokenInput);
-          }}
-          style={{ display: "flex", gap: 8 }}
-        >
-          <input
-            type="password"
-            value={tokenInput}
-            onChange={(e) => setTokenInput(e.target.value)}
-            placeholder="admin token"
-            style={{ flex: 1, padding: 10 }}
-          />
-          <button type="submit" style={{ padding: "10px 16px" }}>
-            Увійти
-          </button>
-        </form>
-      </main>
+  const shown = useMemo(() => {
+    const n = q.trim().toLowerCase();
+    // a reader card is typed with or without its dashes
+    const bare = n.replace(/[^a-z0-9]/g, "");
+    return (users ?? []).filter(
+      (u) =>
+        !n ||
+        [u.email, u.name, u.phone, u.np_city].join(" ").toLowerCase().includes(n) ||
+        (bare.length >= 3 && (u.reader_code ?? "").toLowerCase().replace(/-/g, "").includes(bare)),
     );
-  }
+  }, [users, q]);
 
   return (
-    <main style={{ padding: 40, maxWidth: 900, margin: "0 auto", fontFamily: "sans-serif" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1 style={{ fontSize: 22 }}>Користувачі ({users.length})</h1>
-        <button
-          onClick={() => {
-            localStorage.removeItem(TOKEN_KEY);
-            setToken("");
-          }}
-          style={{ padding: "6px 12px" }}
-        >
-          Вийти
-        </button>
+    <>
+      <div className={s.head}>
+        <div>
+          <h1 className={s.h1}>Читачі</h1>
+          <p className={s.sub}>
+            {users?.length ?? 0} з акаунтом · {users?.filter((u) => u.orders > 0).length ?? 0} купували
+          </p>
+        </div>
       </div>
 
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-      {loading && <p>завантаження…</p>}
+      {error && <p className={s.error}>{error}</p>}
 
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, marginTop: 24 }}>
-        <thead>
-          <tr style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
-            <th>id</th>
-            <th>email</th>
-            <th>ім'я</th>
-            <th>реєстрація</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id} style={{ borderBottom: "1px solid #eee" }}>
-              <td>{u.id}</td>
-              <td>{u.email}</td>
-              <td>{u.name || "—"}</td>
-              <td>{new Date(u.created_at).toLocaleString("uk-UA")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </main>
+      <div className={s.toolbar}>
+        <label className={s.search}>
+          <Icon d={SEARCH} size={16} />
+          <input type="search" placeholder="Пошта, імʼя, телефон або код картки VR-…" value={q} onChange={(e) => setQ(e.target.value)} />
+        </label>
+      </div>
+
+      <div className={s.tableWrap}>
+        {users === null ? (
+          <div className={s.empty}>Завантаження…</div>
+        ) : shown.length === 0 ? (
+          <div className={s.empty}>Нікого не знайшлось.</div>
+        ) : (
+          <table className={s.table}>
+            <thead>
+              <tr>
+                <th>Читач</th>
+                <th>Картка</th>
+                <th className={s.hideSm}>Телефон</th>
+                <th className={s.hideSm}>Відділення</th>
+                <th className={s.right}>Замовлень</th>
+                <th className={s.right}>Сплачено</th>
+                <th className={s.hideSm}>З нами з</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shown.map((u) => (
+                <tr key={u.id}>
+                  <td>
+                    <span className={s.strong}>{u.name || "–"}</span>
+                    <br />
+                    <a className={s.dim} href={`mailto:${u.email}`}>
+                      {u.email}
+                    </a>
+                    {u.newsletter && (
+                      <>
+                        {" "}
+                        <span className={s.tagDemo}>розсилка</span>
+                      </>
+                    )}
+                  </td>
+                  <td>{u.reader_code && <span className={s.sku}>{u.reader_code}</span>}</td>
+                  <td className={s.hideSm}>{u.phone || <span className={s.dim}>–</span>}</td>
+                  <td className={s.hideSm}>
+                    {u.np_city ? (
+                      <>
+                        {u.np_city}
+                        <br />
+                        <span className={s.dim}>{u.np_warehouse}</span>
+                      </>
+                    ) : (
+                      <span className={s.dim}>–</span>
+                    )}
+                  </td>
+                  <td className={`${s.num} ${s.right}`}>{u.orders}</td>
+                  <td className={`${s.num} ${s.right}`}>{u.spent_cents ? uah(u.spent_cents) : "–"}</td>
+                  <td className={`${s.hideSm} ${s.dim}`}>{when(u.created_at, false)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
   );
 }

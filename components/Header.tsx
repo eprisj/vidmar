@@ -66,6 +66,9 @@ export default function Header() {
     return () => document.body.classList.remove("is-loading");
   }, [open]);
 
+  // the admin is its own application with its own navigation
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <>
       <header

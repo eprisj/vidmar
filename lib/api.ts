@@ -255,11 +255,11 @@ export function listAdminBooks(token: string): Promise<AdminBook[]> {
   return adminRequest("/admin/books", token);
 }
 
-export function listSubscribers(token: string) {
+export function listSubscribers(token: string): Promise<{ id: number; email: string; created_at: string }[]> {
   return adminRequest("/subscribers", token);
 }
 
-export function listSubmissions(token: string) {
+export function listSubmissions(token: string): Promise<Submission[]> {
   return adminRequest("/submissions", token);
 }
 
@@ -468,7 +468,52 @@ export function getMyOrder(id: number): Promise<OrderDetail> {
 
 // --- admin: users, orders --------------------------------------------
 
-export type AdminUser = User & { created_at: string };
+export type AdminUser = User & {
+  created_at: string;
+  np_city: string | null;
+  np_warehouse: string | null;
+  orders: number;
+  spent_cents: number;
+  last_order_at: string | null;
+};
+
+export type AdminStats = {
+  revenue: string;
+  revenue_30: string;
+  paid_orders: number;
+  orders_30: number;
+  orders_today: number;
+  awaiting_sum: string;
+  by_status: Record<string, number>;
+  days: { day: string; revenue: string; orders: number }[];
+  low_stock: { id: number; title: string; sku: string | null; stock: number; cover_url: string | null; cover_pos: string | null }[];
+  top: { id: number; title: string; sku: string | null; cover_url: string | null; cover_pos: string | null; sold: number; revenue: string }[];
+  users: number;
+  subscribers: number;
+  submissions: number;
+  submissions_7: number;
+  books_live: number;
+  books: number;
+};
+
+export function getAdminStats(token: string, demo = false): Promise<AdminStats> {
+  return adminRequest(`/admin/stats${demo ? "?demo=1" : ""}`, token);
+}
+
+export type Submission = {
+  id: number;
+  name: string;
+  email: string;
+  title: string | null;
+  genre: string | null;
+  note: string | null;
+  status: "new" | "reading" | "accepted" | "declined";
+  created_at: string;
+};
+
+export function setSubmissionStatus(token: string, id: number, status: Submission["status"]) {
+  return adminRequest(`/admin/submissions/${id}`, token, { method: "PUT", body: JSON.stringify({ status }) });
+}
 
 export function listAdminUsers(token: string): Promise<AdminUser[]> {
   return adminRequest("/admin/users", token);
@@ -485,8 +530,12 @@ export type AdminOrder = OrderSummary & {
   is_demo?: boolean;
   payment_method?: PayMethod;
   paid_at?: string | null;
+  reader_code?: string | null;
+  access_token?: string | null;
+  np_city_ref?: string | null;
+  items?: { title: string; sku: string | null; format: Format; quantity: number; cover_url: string | null; cover_pos: string | null }[];
 };
-export type AdminOrderDetail = AdminOrder & {
+export type AdminOrderDetail = Omit<AdminOrder, "items"> & {
   items: (OrderItem & { format?: Format; sku?: string | null })[];
   payments: { provider: string; provider_ref: string; amount_cents: number; status: string; created_at: string }[];
 };

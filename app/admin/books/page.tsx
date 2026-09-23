@@ -1,20 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import BookCover from "@/components/BookCover";
+import { Icon, useAdmin } from "@/components/admin/AdminShell";
+import Drawer from "@/components/admin/Drawer";
+import s from "@/components/admin/admin.module.css";
+import { uah } from "@/components/admin/labels";
 import {
-  ApiError,
   createBook,
   deleteBook,
-  uploadEbook,
-  formatPrice,
   listAdminBooks,
   updateBook,
+  uploadEbook,
   type AdminBook,
   type BookInput,
 } from "@/lib/api";
 import { genres } from "@/lib/content";
 
-const TOKEN_KEY = "vidmar-admin-token";
+const SEARCH = "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4";
+const PLUS = "M12 5v14M5 12h14";
 
 const EMPTY: BookInput = {
   slug: "",
@@ -25,21 +29,18 @@ const EMPTY: BookInput = {
   cover_url: "",
   status: "coming_soon",
   sort_order: 0,
-  price_cents: null,
-  currency: "UAH",
   print_price_cents: null,
   ebook_price_cents: null,
+  print_old_price_cents: null,
+  ebook_old_price_cents: null,
   stock: null,
+  sku: "",
   pages: null,
   year: null,
   binding: "",
   isbn: "",
   excerpt: "",
   cover_pos: "",
-  is_demo: false,
-  sku: "",
-  print_old_price_cents: null,
-  ebook_old_price_cents: null,
   series: "",
   language: "Українська",
   translator: "",
@@ -47,461 +48,531 @@ const EMPTY: BookInput = {
   dimensions: "",
   weight_g: null,
   age_rating: "",
+  is_demo: false,
 };
 
-const uah = (c: number | null | undefined) => (c == null ? "" : c / 100);
-const cents = (v: string) => (v === "" ? null : Math.round(Number(v) * 100));
-const int = (v: string) => (v === "" ? null : Math.round(Number(v)));
+const toUah = (c: number | null | undefined) => (c == null ? "" : String(c / 100));
+const toCents = (v: string) => (v.trim() === "" ? null : Math.round(Number(v.replace(",", ".")) * 100));
+const toInt = (v: string) => (v.trim() === "" ? null : Math.round(Number(v)));
 
-export default function AdminBooksPage() {
-  const [token, setToken] = useState("");
-  const [tokenInput, setTokenInput] = useState("");
-  const [books, setBooks] = useState<AdminBook[]>([]);
-  const [form, setForm] = useState<BookInput>(EMPTY);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [upload, setUpload] = useState<Record<string, string>>({});
+// slug from a Ukrainian title, the way the passport transliteration does it
+const TR: Record<string, string> = {
+  а: "a", б: "b", в: "v", г: "h", ґ: "g", д: "d", е: "e", є: "ie", ж: "zh", з: "z", и: "y", і: "i", ї: "i",
+  й: "i", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "kh",
+  ц: "ts", ч: "ch", ш: "sh", щ: "shch", ь: "", ю: "iu", я: "ia", "ʼ": "", "'": "", "’": "",
+};
+const slugify = (t: string) =>
+  t
+    .toLowerCase()
+    .split("")
+    .map((ch) => TR[ch] ?? ch)
+    .join("")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 60);
+
+function fromBook(b: AdminBook): BookInput {
+  const out: BookInput = { ...EMPTY };
+  for (const k of Object.keys(EMPTY) as (keyof BookInput)[]) {
+    const v = (b as unknown as Record<string, unknown>)[k];
+    (out as unknown as Record<string, unknown>)[k] = v ?? (typeof EMPTY[k] === "string" ? "" : EMPTY[k]);
+  }
+  return out;
+}
+
+function Field({
+  label,
+  children,
+  span,
+}: {
+  label: string;
+  children: React.ReactNode;
+  span?: boolean;
+}) {
+  return (
+    <label className={`${s.field} ${span ? s.span2 : ""}`}>
+      <span>{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function BookDrawer({
+  book,
+  onClose,
+  onSaved,
+}: {
+  book: AdminBook | null;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const { token, fail } = useAdmin();
+  const [f, setF] = useState<BookInput>(book ? fromBook(book) : EMPTY);
+  const [slugTouched, setSlugTouched] = useState(!!book);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [upload, setUpload] = useState<Record<string, string>>({});
+  const set = <K extends keyof BookInput>(k: K, v: BookInput[K]) => setF((x) => ({ ...x, [k]: v }));
+  const text = (k: keyof BookInput) => ({
+    value: String(f[k] ?? ""),
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => set(k, e.target.value as never),
+  });
 
-  useEffect(() => {
-    const saved = localStorage.getItem(TOKEN_KEY);
-    if (saved) setToken(saved);
-  }, []);
-
-  useEffect(() => {
-    if (!token) return;
-    refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-
-  async function refresh() {
-    setLoading(true);
-    try {
-      setBooks(await listAdminBooks(token));
-      setError("");
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : "не вдалося завантажити");
-      if (err instanceof ApiError) {
-        localStorage.removeItem(TOKEN_KEY);
-        setToken("");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function startEdit(book: AdminBook) {
-    setEditingId(book.id);
-    setForm({
-      slug: book.slug,
-      title: book.title,
-      author: book.author || "",
-      genre_slug: book.genre_slug || "",
-      description: book.description || "",
-      cover_url: book.cover_url || "",
-      status: book.status,
-      sort_order: book.sort_order,
-      price_cents: book.price_cents,
-      currency: book.currency || "UAH",
-      print_price_cents: book.print_price_cents ?? null,
-      ebook_price_cents: book.ebook_price_cents ?? null,
-      stock: (book as AdminBook & { stock?: number | null }).stock ?? null,
-      pages: book.pages ?? null,
-      year: book.year ?? null,
-      binding: book.binding || "",
-      isbn: book.isbn || "",
-      excerpt: book.excerpt || "",
-      cover_pos: book.cover_pos || "",
-      is_demo: !!book.is_demo,
-      sku: book.sku || "",
-      print_old_price_cents: book.print_old_price_cents ?? null,
-      ebook_old_price_cents: book.ebook_old_price_cents ?? null,
-      series: book.series || "",
-      language: book.language || "",
-      translator: book.translator || "",
-      illustrator: book.illustrator || "",
-      dimensions: book.dimensions || "",
-      weight_g: book.weight_g ?? null,
-      age_rating: book.age_rating || "",
-    });
-  }
-
-  function resetForm() {
-    setEditingId(null);
-    setForm(EMPTY);
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function save() {
+    setBusy(true);
     setError("");
     try {
-      if (editingId) {
-        await updateBook(token, editingId, form);
-      } else {
-        await createBook(token, form);
-      }
-      resetForm();
-      await refresh();
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : "не вдалося зберегти");
+      if (book) await updateBook(token, book.id, f);
+      else await createBook(token, f);
+      onSaved();
+      onClose();
+    } catch (e) {
+      setError(fail(e));
+    } finally {
+      setBusy(false);
     }
   }
 
-  if (!token) {
-    return (
-      <main style={{ padding: 40, maxWidth: 420, margin: "0 auto", fontFamily: "sans-serif" }}>
-        <h1 style={{ fontSize: 20, marginBottom: 16 }}>Адмін – вхід</h1>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            localStorage.setItem(TOKEN_KEY, tokenInput);
-            setToken(tokenInput);
-          }}
-          style={{ display: "flex", gap: 8 }}
-        >
-          <input
-            type="password"
-            value={tokenInput}
-            onChange={(e) => setTokenInput(e.target.value)}
-            placeholder="admin token"
-            style={{ flex: 1, padding: 10 }}
-          />
-          <button type="submit" style={{ padding: "10px 16px" }}>
-            Увійти
-          </button>
-        </form>
-      </main>
-    );
+  async function remove() {
+    if (!book || !confirm(`Видалити «${book.title}» назавжди? Замовлення з нею лишаться, книга зникне з каталогу.`)) return;
+    try {
+      await deleteBook(token, book.id);
+      onSaved();
+      onClose();
+    } catch (e) {
+      setError(fail(e));
+    }
   }
 
   return (
-    <main style={{ padding: 40, maxWidth: 900, margin: "0 auto", fontFamily: "sans-serif" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1 style={{ fontSize: 22 }}>Книги ({books.length})</h1>
-        <button
-          onClick={() => {
-            localStorage.removeItem(TOKEN_KEY);
-            setToken("");
-          }}
-          style={{ padding: "6px 12px" }}
-        >
-          Вийти
-        </button>
-      </div>
-
-      <form onSubmit={submit} style={{ display: "grid", gap: 10, margin: "24px 0", maxWidth: 520 }}>
-        <h2 style={{ fontSize: 16 }}>{editingId ? `Редагувати #${editingId}` : "Нова книга"}</h2>
-        <input
-          placeholder="slug (унікальний, напр. persha-kniga)"
-          value={form.slug}
-          disabled={!!editingId}
-          onChange={(e) => setForm({ ...form, slug: e.target.value })}
-          required
-          style={{ padding: 8 }}
-        />
-        <input
-          placeholder="назва"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          required
-          style={{ padding: 8 }}
-        />
-        <input
-          placeholder="автор"
-          value={form.author}
-          onChange={(e) => setForm({ ...form, author: e.target.value })}
-          style={{ padding: 8 }}
-        />
-        <select
-          value={form.genre_slug}
-          onChange={(e) => setForm({ ...form, genre_slug: e.target.value })}
-          style={{ padding: 8 }}
-        >
-          <option value="">без напряму</option>
-          {genres.map((g) => (
-            <option key={g.slug} value={g.slug}>
-              {g.title}
-            </option>
-          ))}
-        </select>
-        <textarea
-          placeholder="опис"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          rows={3}
-          style={{ padding: 8 }}
-        />
-        <input
-          placeholder="URL обкладинки"
-          value={form.cover_url}
-          onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
-          style={{ padding: 8 }}
-        />
-        <select
-          value={form.status}
-          onChange={(e) => setForm({ ...form, status: e.target.value })}
-          style={{ padding: 8 }}
-        >
-          <option value="coming_soon">coming_soon (прихована)</option>
-          <option value="published">published (видима в каталозі)</option>
-        </select>
-        <div style={{ display: "flex", gap: 8 }}>
-          <label style={{ flex: 1 }}>
-            паперова, грн
-            <input
-              type="number"
-              placeholder="порожньо = не продається"
-              value={uah(form.print_price_cents)}
-              onChange={(e) => setForm({ ...form, print_price_cents: cents(e.target.value) })}
-              style={{ padding: 8, width: "100%" }}
-            />
-          </label>
-          <label style={{ flex: 1 }}>
-            електронна, грн
-            <input
-              type="number"
-              placeholder="порожньо = не продається"
-              value={uah(form.ebook_price_cents)}
-              onChange={(e) => setForm({ ...form, ebook_price_cents: cents(e.target.value) })}
-              style={{ padding: 8, width: "100%" }}
-            />
-          </label>
-          <label style={{ width: 110 }}>
-            залишок
-            <input
-              type="number"
-              placeholder="∞"
-              value={form.stock ?? ""}
-              onChange={(e) => setForm({ ...form, stock: int(e.target.value) })}
-              style={{ padding: 8, width: "100%" }}
-            />
-          </label>
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <label style={{ flex: 1 }}>
-            стара ціна папір, грн
-            <input
-              type="number"
-              placeholder="для знижки"
-              value={uah(form.print_old_price_cents)}
-              onChange={(e) => setForm({ ...form, print_old_price_cents: cents(e.target.value) })}
-              style={{ padding: 8, width: "100%" }}
-            />
-          </label>
-          <label style={{ flex: 1 }}>
-            стара ціна e-book, грн
-            <input
-              type="number"
-              placeholder="для знижки"
-              value={uah(form.ebook_old_price_cents)}
-              onChange={(e) => setForm({ ...form, ebook_old_price_cents: cents(e.target.value) })}
-              style={{ padding: 8, width: "100%" }}
-            />
-          </label>
-          <label style={{ width: 150 }}>
-            SKU (артикул)
-            <input
-              placeholder="авто: VDM-0001"
-              value={form.sku ?? ""}
-              onChange={(e) => setForm({ ...form, sku: e.target.value.toUpperCase() })}
-              style={{ padding: 8, width: "100%" }}
-            />
-          </label>
-        </div>
-        <p style={{ fontSize: 12, color: "#666", margin: 0 }}>
-          Стара ціна показується закресленою лише якщо вона більша за поточну. До SKU формат додає -P (папір) чи -E (e-book).
-        </p>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            placeholder="серія"
-            value={form.series ?? ""}
-            onChange={(e) => setForm({ ...form, series: e.target.value })}
-            style={{ padding: 8, flex: 1 }}
-          />
-          <input
-            placeholder="мова"
-            value={form.language ?? ""}
-            onChange={(e) => setForm({ ...form, language: e.target.value })}
-            style={{ padding: 8, flex: 1 }}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            placeholder="перекладач"
-            value={form.translator ?? ""}
-            onChange={(e) => setForm({ ...form, translator: e.target.value })}
-            style={{ padding: 8, flex: 1 }}
-          />
-          <input
-            placeholder="ілюстратор"
-            value={form.illustrator ?? ""}
-            onChange={(e) => setForm({ ...form, illustrator: e.target.value })}
-            style={{ padding: 8, flex: 1 }}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            placeholder="формат, напр. 145×215 мм"
-            value={form.dimensions ?? ""}
-            onChange={(e) => setForm({ ...form, dimensions: e.target.value })}
-            style={{ padding: 8, flex: 2 }}
-          />
-          <input
-            type="number"
-            placeholder="вага, г"
-            value={form.weight_g ?? ""}
-            onChange={(e) => setForm({ ...form, weight_g: int(e.target.value) })}
-            style={{ padding: 8, flex: 1 }}
-          />
-          <input
-            placeholder="вік, напр. 16+"
-            value={form.age_rating ?? ""}
-            onChange={(e) => setForm({ ...form, age_rating: e.target.value })}
-            style={{ padding: 8, flex: 1 }}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            type="number"
-            placeholder="сторінок"
-            value={form.pages ?? ""}
-            onChange={(e) => setForm({ ...form, pages: int(e.target.value) })}
-            style={{ padding: 8, flex: 1 }}
-          />
-          <input
-            type="number"
-            placeholder="рік"
-            value={form.year ?? ""}
-            onChange={(e) => setForm({ ...form, year: int(e.target.value) })}
-            style={{ padding: 8, flex: 1 }}
-          />
-          <input
-            placeholder="ISBN"
-            value={form.isbn ?? ""}
-            onChange={(e) => setForm({ ...form, isbn: e.target.value })}
-            style={{ padding: 8, flex: 2 }}
-          />
-        </div>
-        <input
-          placeholder="палітурка, напр. Тверда палітурка, тканина"
-          value={form.binding ?? ""}
-          onChange={(e) => setForm({ ...form, binding: e.target.value })}
-          style={{ padding: 8 }}
-        />
-        <textarea
-          placeholder="уривок (одне-два речення)"
-          value={form.excerpt ?? ""}
-          onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-          rows={2}
-          style={{ padding: 8 }}
-        />
-        <input
-          placeholder="кадрування обкладинки, напр. 50% 40%"
-          value={form.cover_pos ?? ""}
-          onChange={(e) => setForm({ ...form, cover_pos: e.target.value })}
-          style={{ padding: 8 }}
-        />
-        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <input
-            type="checkbox"
-            checked={!!form.is_demo}
-            onChange={(e) => setForm({ ...form, is_demo: e.target.checked })}
-          />
-          демонстраційна книга
-        </label>
-        <input
-          type="number"
-          placeholder="порядок сортування"
-          value={form.sort_order}
-          onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })}
-          style={{ padding: 8 }}
-        />
-        <div style={{ display: "flex", gap: 8 }}>
-          <button type="submit" style={{ padding: "8px 16px" }}>
-            {editingId ? "Зберегти" : "Додати"}
-          </button>
-          {editingId && (
-            <button type="button" onClick={resetForm} style={{ padding: "8px 16px" }}>
-              Скасувати
+    <Drawer
+      title={book ? book.title : "Нова книга"}
+      sub={book ? `${book.sku ?? ""} · ${book.slug}` : "Заповніть і збережіть: книга зʼявиться на сайті одразу, якщо статус «у каталозі»"}
+      onClose={onClose}
+      foot={
+        <>
+          {book && (
+            <button type="button" className={s.btnDanger} onClick={remove} style={{ marginRight: "auto" }}>
+              Видалити
             </button>
           )}
+          <button type="button" className={s.btnGhost} onClick={onClose}>
+            Скасувати
+          </button>
+          <button type="button" className={s.btnPrimary} disabled={busy || !f.title || !f.slug} onClick={save}>
+            {busy ? "Зберігаємо…" : "Зберегти"}
+          </button>
+        </>
+      }
+    >
+      {error && <p className={s.error}>{error}</p>}
+
+      <div className={s.fieldset}>
+        <span className={s.legend}>Основне</span>
+        <div className={s.formGrid}>
+          <Field label="Назва" span>
+            <input
+              value={f.title}
+              onChange={(e) => {
+                const title = e.target.value;
+                setF((x) => ({ ...x, title, ...(slugTouched ? {} : { slug: slugify(title) }) }));
+              }}
+            />
+          </Field>
+          <Field label="Автор">
+            <input {...text("author")} />
+          </Field>
+          <Field label="Адреса сторінки (slug)">
+            <input
+              value={f.slug}
+              disabled={!!book}
+              onChange={(e) => {
+                setSlugTouched(true);
+                set("slug", e.target.value);
+              }}
+            />
+          </Field>
+          <Field label="Напрям">
+            <select value={f.genre_slug ?? ""} onChange={(e) => set("genre_slug", e.target.value)}>
+              <option value="">без напряму</option>
+              {genres.map((g) => (
+                <option key={g.slug} value={g.slug}>
+                  {g.title}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Статус">
+            <select value={f.status} onChange={(e) => set("status", e.target.value)}>
+              <option value="published">У каталозі</option>
+              <option value="coming_soon">Прихована</option>
+            </select>
+          </Field>
+          <Field label="Порядок у каталозі">
+            <input type="number" value={f.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} />
+          </Field>
+          <label className={s.check}>
+            <input type="checkbox" checked={!!f.is_demo} onChange={(e) => set("is_demo", e.target.checked)} />
+            Тестова книга (не рахується у виручці)
+          </label>
         </div>
-      </form>
+      </div>
 
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-      {loading && <p>завантаження…</p>}
+      <div className={s.fieldset}>
+        <span className={s.legend}>Ціни й склад</span>
+        <div className={s.formGrid}>
+          <Field label="Паперова, грн">
+            <input inputMode="decimal" value={toUah(f.print_price_cents)} onChange={(e) => set("print_price_cents", toCents(e.target.value))} placeholder="не продається" />
+          </Field>
+          <Field label="Стара ціна паперової">
+            <input inputMode="decimal" value={toUah(f.print_old_price_cents)} onChange={(e) => set("print_old_price_cents", toCents(e.target.value))} placeholder="без знижки" />
+          </Field>
+          <Field label="Електронна, грн">
+            <input inputMode="decimal" value={toUah(f.ebook_price_cents)} onChange={(e) => set("ebook_price_cents", toCents(e.target.value))} placeholder="не продається" />
+          </Field>
+          <Field label="Стара ціна електронної">
+            <input inputMode="decimal" value={toUah(f.ebook_old_price_cents)} onChange={(e) => set("ebook_old_price_cents", toCents(e.target.value))} placeholder="без знижки" />
+          </Field>
+          <Field label="Залишок, шт.">
+            <input inputMode="numeric" value={f.stock ?? ""} onChange={(e) => set("stock", toInt(e.target.value))} placeholder="без обліку" />
+          </Field>
+          <Field label="Артикул (SKU)">
+            <input value={f.sku ?? ""} onChange={(e) => set("sku", e.target.value.toUpperCase())} placeholder="автоматично VDM-0000" />
+          </Field>
+        </div>
+      </div>
 
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
-        <thead>
-          <tr style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
-            <th>SKU</th>
-            <th>slug</th>
-            <th>назва</th>
-            <th>напрям</th>
-            <th>статус</th>
-            <th>папір / e-book</th>
-            <th>файли e-book</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {books.map((b) => (
-            <tr key={b.id} style={{ borderBottom: "1px solid #eee" }}>
-              <td style={{ whiteSpace: "nowrap", fontFamily: "monospace" }}>{b.sku}</td>
-              <td>{b.slug}</td>
-              <td>{b.title}</td>
-              <td>{b.genre_slug}</td>
-              <td>{b.status}</td>
-              <td>
-                {b.print_price_cents == null ? "–" : formatPrice(b.print_price_cents, b.currency)} /{" "}
-                {b.ebook_price_cents == null ? "–" : formatPrice(b.ebook_price_cents, b.currency)}
-                <br />
-                <small style={{ color: "#666" }}>залишок: {b.stock ?? "∞"}</small>
-                {b.is_demo && <span style={{ color: "#a67c00" }}> · демо</span>}
-              </td>
-              <td style={{ fontSize: 12 }}>
-                {(["pdf", "epub"] as const).map((kind) => (
-                  <label key={kind} style={{ display: "block", cursor: "pointer" }}>
-                    {kind.toUpperCase()}: {b[`ebook_${kind}`] ? "✓" : "немає"}{" "}
-                    <u>{upload[`${b.id}-${kind}`] ?? "завантажити"}</u>
-                    <input
-                      type="file"
-                      accept={kind === "pdf" ? "application/pdf" : ".epub,application/epub+zip"}
-                      hidden
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        const key = `${b.id}-${kind}`;
-                        try {
-                          await uploadEbook(token, b.id, kind, file, (p) =>
-                            setUpload((u) => ({ ...u, [key]: `${Math.round(p * 100)}%` })),
-                          );
-                          setUpload((u) => ({ ...u, [key]: "готово" }));
-                          refresh();
-                        } catch {
-                          setUpload((u) => ({ ...u, [key]: "помилка" }));
-                        }
-                      }}
-                    />
-                  </label>
-                ))}
-              </td>
-              <td style={{ display: "flex", gap: 6 }}>
-                <button onClick={() => startEdit(b)}>ред.</button>
-                <button
-                  onClick={async () => {
-                    if (!confirm(`Видалити "${b.title}"?`)) return;
-                    await deleteBook(token, b.id);
-                    refresh();
-                  }}
-                >
-                  вид.
-                </button>
-              </td>
-            </tr>
+      <div className={s.fieldset}>
+        <span className={s.legend}>Обкладинка</span>
+        <div className={s.row} style={{ alignItems: "flex-start", flexWrap: "nowrap" }}>
+          <span style={{ width: 96, flex: "none" }}>
+            <BookCover title={f.title || "Назва"} author={f.author} src={f.cover_url || null} pos={f.cover_pos || null} />
+          </span>
+          <div className={s.formGrid} style={{ flex: 1, gridTemplateColumns: "1fr" }}>
+            <Field label="Адреса зображення">
+              <input {...text("cover_url")} placeholder="/gravure/… або https://…" />
+            </Field>
+            <Field label="Кадрування">
+              <input {...text("cover_pos")} placeholder="50% 40%" />
+            </Field>
+          </div>
+        </div>
+      </div>
+
+      <div className={s.fieldset}>
+        <span className={s.legend}>Видання</span>
+        <div className={s.formGrid3}>
+          <Field label="Серія">
+            <input {...text("series")} />
+          </Field>
+          <Field label="Мова">
+            <input {...text("language")} />
+          </Field>
+          <Field label="Вік">
+            <input {...text("age_rating")} placeholder="16+" />
+          </Field>
+          <Field label="Перекладач">
+            <input {...text("translator")} />
+          </Field>
+          <Field label="Ілюстратор">
+            <input {...text("illustrator")} />
+          </Field>
+          <Field label="Палітурка">
+            <input {...text("binding")} placeholder="Тверда палітурка" />
+          </Field>
+          <Field label="Сторінок">
+            <input inputMode="numeric" value={f.pages ?? ""} onChange={(e) => set("pages", toInt(e.target.value))} />
+          </Field>
+          <Field label="Рік">
+            <input inputMode="numeric" value={f.year ?? ""} onChange={(e) => set("year", toInt(e.target.value))} />
+          </Field>
+          <Field label="ISBN">
+            <input {...text("isbn")} />
+          </Field>
+          <Field label="Формат">
+            <input {...text("dimensions")} placeholder="145×215 мм" />
+          </Field>
+          <Field label="Вага, г">
+            <input inputMode="numeric" value={f.weight_g ?? ""} onChange={(e) => set("weight_g", toInt(e.target.value))} />
+          </Field>
+        </div>
+      </div>
+
+      <div className={s.fieldset}>
+        <span className={s.legend}>Текст</span>
+        <Field label="Опис">
+          <textarea rows={4} {...text("description")} />
+        </Field>
+        <Field label="Уривок">
+          <textarea rows={2} {...text("excerpt")} />
+        </Field>
+      </div>
+
+      {book && (
+        <div className={s.fieldset}>
+          <span className={s.legend}>Файли електронної книги</span>
+          <div className={s.row}>
+            {(["pdf", "epub"] as const).map((kind) => {
+              const key = `${book.id}-${kind}`;
+              const has = !!book[`ebook_${kind}`];
+              return (
+                <label key={kind} className={s.btn} style={{ cursor: "pointer" }}>
+                  {kind.toUpperCase()}: {upload[key] ?? (has ? "завантажено, замінити" : "завантажити")}
+                  <input
+                    type="file"
+                    hidden
+                    accept={kind === "pdf" ? "application/pdf" : ".epub,application/epub+zip"}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        await uploadEbook(token, book.id, kind, file, (p) =>
+                          setUpload((u) => ({ ...u, [key]: `${Math.round(p * 100)}%` })),
+                        );
+                        setUpload((u) => ({ ...u, [key]: "готово" }));
+                        onSaved();
+                      } catch {
+                        setUpload((u) => ({ ...u, [key]: "помилка" }));
+                      }
+                    }}
+                  />
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </Drawer>
+  );
+}
+
+function StockCell({ b, onSaved }: { b: AdminBook; onSaved: () => void }) {
+  const { token, fail } = useAdmin();
+  const [v, setV] = useState(b.stock == null ? "" : String(b.stock));
+  const [state, setState] = useState<"" | "saving" | "ok" | "err">("");
+  useEffect(() => setV(b.stock == null ? "" : String(b.stock)), [b.stock]);
+
+  async function commit() {
+    const next = v.trim() === "" ? null : Math.max(0, Math.round(Number(v)));
+    if (next === (b.stock ?? null) || Number.isNaN(next)) return;
+    setState("saving");
+    try {
+      await updateBook(token, b.id, { stock: next });
+      setState("ok");
+      onSaved();
+      setTimeout(() => setState(""), 1200);
+    } catch (e) {
+      fail(e);
+      setState("err");
+    }
+  }
+
+  return (
+    <input
+      className={s.inline}
+      value={v}
+      inputMode="numeric"
+      placeholder="∞"
+      aria-label={`Залишок: ${b.title}`}
+      title={b.print_price_cents == null ? "Паперова не продається" : "Enter щоб зберегти, порожньо = без обліку"}
+      style={{
+        borderColor: state === "ok" ? "var(--a-ok)" : state === "err" ? "var(--a-bad)" : undefined,
+        color: b.stock === 0 ? "var(--a-bad)" : b.stock != null && b.stock <= 5 ? "var(--a-warn)" : undefined,
+      }}
+      onClick={(e) => e.stopPropagation()}
+      onChange={(e) => setV(e.target.value.replace(/[^\d]/g, ""))}
+      onBlur={commit}
+      onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+    />
+  );
+}
+
+export default function BooksPage() {
+  const { token, fail } = useAdmin();
+  const [books, setBooks] = useState<AdminBook[] | null>(null);
+  const [tab, setTab] = useState<"all" | "live" | "hidden" | "low">("all");
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState<AdminBook | "new" | null>(null);
+  const [error, setError] = useState("");
+
+  const load = useCallback(
+    () =>
+      listAdminBooks(token)
+        .then((x) => {
+          setBooks(x);
+          setError("");
+        })
+        .catch((e) => setError(fail(e))),
+    [token, fail],
+  );
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const all = books ?? [];
+  const tabs = {
+    all: all,
+    live: all.filter((b) => b.status === "published"),
+    hidden: all.filter((b) => b.status !== "published"),
+    low: all.filter((b) => b.stock != null && b.stock <= 5),
+  };
+  const shown = useMemo(() => {
+    const n = q.trim().toLowerCase();
+    return tabs[tab].filter(
+      (b) => !n || [b.title, b.author, b.sku, b.isbn, b.slug, b.series].join(" ").toLowerCase().includes(n),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [books, tab, q]);
+
+  async function toggleLive(b: AdminBook) {
+    try {
+      await updateBook(token, b.id, { status: b.status === "published" ? "coming_soon" : "published" });
+      load();
+    } catch (e) {
+      setError(fail(e));
+    }
+  }
+
+  return (
+    <>
+      <div className={s.head}>
+        <div>
+          <h1 className={s.h1}>Книги</h1>
+          <p className={s.sub}>
+            {tabs.live.length} у каталозі · {tabs.hidden.length} прихованих · {tabs.low.length} закінчуються
+          </p>
+        </div>
+        <div className={s.headActions}>
+          <button type="button" className={s.btnPrimary} onClick={() => setOpen("new")}>
+            <Icon d={PLUS} size={16} /> Нова книга
+          </button>
+        </div>
+      </div>
+
+      {error && <p className={s.error}>{error}</p>}
+
+      <div className={s.toolbar}>
+        <div className={s.tabs} role="tablist">
+          {(
+            [
+              ["all", "Усі"],
+              ["live", "У каталозі"],
+              ["hidden", "Приховані"],
+              ["low", "Закінчуються"],
+            ] as const
+          ).map(([k, label]) => (
+            <button
+              key={k}
+              type="button"
+              role="tab"
+              aria-selected={tab === k}
+              className={`${s.tab} ${tab === k ? s.tabOn : ""}`}
+              onClick={() => setTab(k)}
+            >
+              {label}
+              <i>{tabs[k].length}</i>
+            </button>
           ))}
-        </tbody>
-      </table>
-    </main>
+        </div>
+        <label className={s.search}>
+          <Icon d={SEARCH} size={16} />
+          <input type="search" placeholder="Назва, автор, артикул, ISBN" value={q} onChange={(e) => setQ(e.target.value)} />
+        </label>
+      </div>
+
+      <div className={s.tableWrap}>
+        {books === null ? (
+          <div className={s.empty}>Завантаження…</div>
+        ) : shown.length === 0 ? (
+          <div className={s.empty}>Нічого не знайшлось.</div>
+        ) : (
+          <table className={s.table}>
+            <thead>
+              <tr>
+                <th>Книга</th>
+                <th>Артикул</th>
+                <th className={s.right}>Паперова</th>
+                <th className={s.right}>E-book</th>
+                <th className={s.right}>Залишок</th>
+                <th className={s.hideSm}>Файли</th>
+                <th>На сайті</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shown.map((b) => (
+                <tr key={b.id} className={s.rowLink} onClick={() => setOpen(b)}>
+                  <td>
+                    <span className={s.cellBook}>
+                      <span className={s.thumb}>
+                        <BookCover title={b.title} src={b.cover_url} pos={b.cover_pos ?? null} size="small" />
+                      </span>
+                      <span>
+                        <span className={s.strong}>{b.title}</span> {b.is_demo && <span className={s.tagDemo}>тест</span>}
+                        <br />
+                        <span className={s.dim}>
+                          {b.author || "–"}
+                          {b.genre_slug && ` · ${genres.find((g) => g.slug === b.genre_slug)?.title ?? b.genre_slug}`}
+                        </span>
+                      </span>
+                    </span>
+                  </td>
+                  <td>{b.sku && <span className={s.sku}>{b.sku}</span>}</td>
+                  <td className={`${s.num} ${s.right}`}>
+                    {uah(b.print_price_cents)}
+                    {b.print_old_price_cents != null && b.print_price_cents != null && b.print_old_price_cents > b.print_price_cents && (
+                      <>
+                        <br />
+                        <s className={s.dim}>{uah(b.print_old_price_cents)}</s>
+                      </>
+                    )}
+                  </td>
+                  <td className={`${s.num} ${s.right}`}>
+                    {uah(b.ebook_price_cents)}
+                    {b.ebook_old_price_cents != null && b.ebook_price_cents != null && b.ebook_old_price_cents > b.ebook_price_cents && (
+                      <>
+                        <br />
+                        <s className={s.dim}>{uah(b.ebook_old_price_cents)}</s>
+                      </>
+                    )}
+                  </td>
+                  <td className={s.right}>
+                    <StockCell b={b} onSaved={load} />
+                  </td>
+                  <td className={s.hideSm}>
+                    <span className={s.dim}>
+                      {b.ebook_price_cents == null ? "–" : [b.ebook_pdf && "PDF", b.ebook_epub && "EPUB"].filter(Boolean).join(" · ") || "немає"}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className={`${s.pill} ${b.status === "published" ? s.s_paid : s.s_fulfilled}`}
+                      style={{ cursor: "pointer", background: "transparent" }}
+                      title="Натисніть, щоб перемкнути"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleLive(b);
+                      }}
+                    >
+                      {b.status === "published" ? "У каталозі" : "Прихована"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {open && (
+        <BookDrawer
+          key={open === "new" ? "new" : open.id}
+          book={open === "new" ? null : open}
+          onClose={() => setOpen(null)}
+          onSaved={load}
+        />
+      )}
+    </>
   );
 }
