@@ -45,10 +45,6 @@ export default function AboutPage() {
             <span className="micro micro--bright">лист засновника</span>
           </Reveal>
 
-          <Reveal delay={80}>
-            <h2 className={styles.greet}>Вітаю у ВІДЬМАР!</h2>
-          </Reveal>
-
           <div className={styles.letter}>
             <div className={styles.p0}>
               <LitText text={thanks} className={styles.lit0} />
