@@ -6,6 +6,7 @@ import s from "@/components/admin/admin.module.css";
 import p from "@/components/admin/plus.module.css";
 import { when } from "@/components/admin/labels";
 import {
+  checkPayKeys,
   getSettings,
   listEmails,
   npCities,
@@ -15,7 +16,9 @@ import {
   saveIntegrations,
   saveSetting,
   sendTestEmail,
+  verifyMail,
   type Integrations,
+  type PaymentSettings,
   type AdminSettings,
   type EmailRow,
   type MailKind,
@@ -227,6 +230,202 @@ function SenderPicker({ current, onSaved }: { current: NpSender | null; onSaved:
   );
 }
 
+/** A one-line verdict under a "Перевірити" button: green when the bank or the mail server said yes. */
+function Verdict({ r }: { r: { ok: boolean; error?: string; note?: string; name?: string | null } | null }) {
+  if (!r) return null;
+  return (
+    <span className={`${s.pill} ${r.ok ? s.s_paid : s.s_cancelled}`} style={{ whiteSpace: "normal", textAlign: "left" }}>
+      {r.ok ? `працює${r.name ? ` · ${r.name}` : ""}${r.note ? ` · ${r.note}` : ""}` : r.error}
+    </span>
+  );
+}
+
+const SOURCE = { admin: "з адмінки", env: "з файлу .env на сервері" } as const;
+
+/* How buyers pay: each method on or off, its keys, the transfer requisites. A
+   method appears at checkout only when it is on AND has what it needs, and the
+   pills at the top say exactly what a buyer sees right now. */
+function PaymentsPanel({ st, onSaved }: { st: AdminSettings; onSaved: () => void }) {
+  const { token, fail } = useAdmin();
+  const v = st.values.payments;
+  const blank = { ...v, mono_token: "", liqpay_private_key: "" };
+  const [f, setF] = useState<PaymentSettings>(blank);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
+  const [check, setCheck] = useState<Record<string, { ok: boolean; error?: string; name?: string | null } | null>>({});
+  const set = (k: keyof PaymentSettings) => (e: React.ChangeEvent<HTMLInputElement>) => setF({ ...f, [k]: e.target.value });
+  const on = st.pay.enabled;
+
+  async function save(extra: Record<string, unknown> = {}) {
+    setBusy(true);
+    setMsg("");
+    setError("");
+    try {
+      await saveSetting(token, "payments", { ...f, ...extra });
+      setF((x) => ({ ...x, mono_token: "", liqpay_private_key: "" }));
+      setMsg("Збережено. На сайті діє протягом хвилини, перезапуск не потрібен.");
+      onSaved();
+    } catch (e) {
+      setError(fail(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function probe(provider: "mono" | "liqpay") {
+    setCheck((c) => ({ ...c, [provider]: null }));
+    try {
+      const r = await checkPayKeys(token, {
+        provider,
+        mono_token: f.mono_token,
+        liqpay_public_key: f.liqpay_public_key !== v.liqpay_public_key ? f.liqpay_public_key : "",
+        liqpay_private_key: f.liqpay_private_key,
+      });
+      setCheck((c) => ({ ...c, [provider]: r }));
+    } catch (e) {
+      setCheck((c) => ({ ...c, [provider]: { ok: false, error: fail(e) } }));
+    }
+  }
+  // a switch saves itself alone, never the half-typed keys around it
+  const flag = (k: "mono_enabled" | "liqpay_enabled" | "iban_enabled" | "cod_enabled" | "liqpay_sandbox") => async (x: boolean) => {
+    setF((y) => ({ ...y, [k]: x }));
+    setError("");
+    try {
+      await saveSetting(token, "payments", { [k]: x });
+      onSaved();
+    } catch (e) {
+      setError(fail(e));
+    }
+  };
+  const status = (id: keyof typeof on, label: string) => (
+    <span className={`${s.pill} ${on[id] ? s.s_paid : s.s_fulfilled}`}>
+      {label}: {on[id] ? "на сайті" : "вимкнено"}
+    </span>
+  );
+
+  return (
+    <section className={s.panel} style={{ marginBottom: 18 }}>
+      <div className={s.panelHead}>
+        <h2 className={s.h2}>Оплата</h2>
+        <span className={s.dim}>ключі зберігаються на сервері й показуються лише останніми 4 символами</span>
+      </div>
+      <div className={s.panelBody} style={{ display: "grid", gap: 16 }}>
+        <div className={s.row}>
+          {status("mono", "monobank")}
+          {status("liqpay", "LiqPay")}
+          {status("iban", "Переказ на рахунок")}
+          {status("cod", "Накладений платіж")}
+        </div>
+        {error && <p className={s.error}>{error}</p>}
+        {msg && <p className={s.muted}>{msg}</p>}
+
+        <span className={s.sectionTitle}>Карткою через monobank</span>
+        <Toggle on={f.mono_enabled} label="Показувати на сайті" hint="зʼявиться, щойно збережено токен" onChange={flag("mono_enabled")} />
+        <div className={s.row} style={{ alignItems: "flex-end" }}>
+          <label className={s.field} style={{ flex: "1 1 320px" }}>
+            <span>
+              Токен інтернет-еквайрингу{" "}
+              {v.mono_token ? <span className={s.dim}>(збережено {v.mono_token}{st.pay.source.mono ? `, ${SOURCE[st.pay.source.mono]}` : ""})</span> : null}
+            </span>
+            <input
+              type="password"
+              value={f.mono_token}
+              onChange={set("mono_token")}
+              autoComplete="off"
+              placeholder={v.mono_token ? "залиште порожнім, щоб не змінювати" : "web.monobank.ua → Еквайринг → Налаштування → Токен"}
+            />
+          </label>
+          <button type="button" className={s.btnGhost} onClick={() => probe("mono")} disabled={!f.mono_token && !v.mono_token && st.pay.source.mono !== "env"}>
+            Перевірити
+          </button>
+        </div>
+        <Verdict r={check.mono ?? null} />
+
+        <span className={s.sectionTitle}>Карткою або Privat24 через LiqPay</span>
+        <Toggle on={f.liqpay_enabled} label="Показувати на сайті" hint="зʼявиться, щойно збережено обидва ключі" onChange={flag("liqpay_enabled")} />
+        <div className={s.formGrid}>
+          <label className={s.field}>
+            <span>Публічний ключ</span>
+            <input value={f.liqpay_public_key} onChange={set("liqpay_public_key")} autoComplete="off" placeholder="i00000000000" />
+          </label>
+          <label className={s.field}>
+            <span>
+              Приватний ключ {v.liqpay_private_key ? <span className={s.dim}>(збережено {v.liqpay_private_key})</span> : null}
+            </span>
+            <input
+              type="password"
+              value={f.liqpay_private_key}
+              onChange={set("liqpay_private_key")}
+              autoComplete="off"
+              placeholder={v.liqpay_private_key ? "залиште порожнім, щоб не змінювати" : "liqpay.ua → Налаштування → API"}
+            />
+          </label>
+        </div>
+        <div className={s.row} style={{ alignItems: "center" }}>
+          <button type="button" className={s.btnGhost} onClick={() => probe("liqpay")}>
+            Перевірити ключі
+          </button>
+          <Verdict r={check.liqpay ?? null} />
+        </div>
+        <Toggle
+          on={f.liqpay_sandbox}
+          label="Тестовий режим LiqPay"
+          hint="оплати не списуються, але замовлення позначаються оплаченими. Лише для перевірки, потім вимкніть"
+          onChange={flag("liqpay_sandbox")}
+        />
+
+        <span className={s.sectionTitle}>Переказ на рахунок</span>
+        <Toggle on={f.iban_enabled} label="Показувати на сайті" hint="зʼявиться, щойно вказано IBAN; реквізити підуть у лист покупцю" onChange={flag("iban_enabled")} />
+        <div className={s.formGrid}>
+          <label className={s.field}>
+            <span>IBAN</span>
+            <input value={f.iban} onChange={set("iban")} placeholder="UA00 0000 0000 0000 0000 0000 0000 0" autoComplete="off" />
+          </label>
+          <label className={s.field}>
+            <span>Отримувач</span>
+            <input value={f.recipient} onChange={set("recipient")} placeholder="ФОП Прізвище Імʼя По батькові" />
+          </label>
+          <label className={s.field}>
+            <span>ЄДРПОУ / ІПН</span>
+            <input value={f.edrpou} onChange={set("edrpou")} inputMode="numeric" />
+          </label>
+          <label className={s.field}>
+            <span>Банк</span>
+            <input value={f.bank} onChange={set("bank")} placeholder="АТ «Універсал Банк»" />
+          </label>
+        </div>
+        {f.iban && !/^UA\d{27}$/.test(f.iban.replace(/\s+/g, "").toUpperCase()) && (
+          <span className={p.failed}>Український IBAN – це UA і 27 цифр. Перевірте, чи нічого не пропущено.</span>
+        )}
+
+        <span className={s.sectionTitle}>Накладений платіж</span>
+        <Toggle
+          on={f.cod_enabled}
+          label="Показувати на сайті"
+          hint="оплата при отриманні на Новій пошті; лише для паперових книг"
+          onChange={flag("cod_enabled")}
+        />
+
+        <div className={s.row}>
+          <button type="button" className={s.btnPrimary} disabled={busy} onClick={() => save()}>
+            {busy ? "Зберігаємо…" : "Зберегти оплату"}
+          </button>
+          {v.mono_token && st.pay.source.mono === "admin" && (
+            <button type="button" className={s.btnGhost} disabled={busy} onClick={() => confirm("Видалити збережений токен monobank?") && save({ clear_mono_token: true })}>
+              Видалити токен monobank
+            </button>
+          )}
+          {v.liqpay_private_key && (
+            <button type="button" className={s.btnGhost} disabled={busy} onClick={() => confirm("Видалити збережений приватний ключ LiqPay?") && save({ clear_liqpay_private_key: true })}>
+              Видалити ключ LiqPay
+            </button>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** mail and Nova Poshta keys, typed in here instead of the server's .env */
 function IntegrationsPanel({ values, onSaved }: { values: Integrations; onSaved: () => void }) {
   const { token, fail } = useAdmin();
@@ -349,6 +548,7 @@ export default function SettingsPage() {
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [mailCheck, setMailCheck] = useState<{ ok: boolean; error?: string; note?: string } | null>(null);
 
   const load = useCallback(
     () =>
@@ -373,6 +573,16 @@ export default function SettingsPage() {
     }
   };
 
+  const saveMailText = async (k: string, v: string) => {
+    try {
+      await saveSetting(token, "mail", { [k]: v });
+      setMsg(v ? `Сповіщення про замовлення підуть на ${v}.` : "Сповіщення магазину вимкнено.");
+      load();
+    } catch (e) {
+      setError(fail(e));
+    }
+  };
+
   if (!st) return <div className={s.empty}>{error || "Завантаження…"}</div>;
   const m = st.mail;
   const np = st.values.np;
@@ -382,7 +592,7 @@ export default function SettingsPage() {
       <div className={s.head}>
         <div>
           <h1 className={s.h1}>Налаштування</h1>
-          <p className={s.sub}>Листи покупцям і Нова пошта</p>
+          <p className={s.sub}>Оплата, листи, Нова пошта й ключі – усе, що раніше жило лише у файлі на сервері</p>
         </div>
       </div>
       {error && <p className={s.error}>{error}</p>}
@@ -409,9 +619,44 @@ export default function SettingsPage() {
                 {m.host && m.mode === "smtp" ? ` · ${m.host}` : ""}
               </span>
             )}
+            {m.configured && m.mode === "smtp" && (
+              <div className={s.row} style={{ alignItems: "center" }}>
+                <button
+                  type="button"
+                  className={s.btnGhost}
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true);
+                    setMailCheck(null);
+                    try {
+                      setMailCheck(await verifyMail(token));
+                    } catch (e) {
+                      setMailCheck({ ok: false, error: fail(e) });
+                    } finally {
+                      setBusy(false);
+                    }
+                  }}
+                >
+                  Перевірити підключення
+                </button>
+                <Verdict r={mailCheck} />
+              </div>
+            )}
             {LETTERS.map((l) => (
               <Toggle key={l.k} on={st.values.mail[l.k]} label={l.label} hint={l.hint} onChange={flip("mail", l.k)} />
             ))}
+            <span className={s.sectionTitle}>Копія магазину</span>
+            <label className={s.field}>
+              <span>Надсилати сповіщення про замовлення на</span>
+              <input
+                type="email"
+                defaultValue={st.values.mail.shop_email}
+                placeholder="orders@vidmar.com.ua – порожньо, щоб не надсилати"
+                onBlur={(e) => e.target.value.trim() !== st.values.mail.shop_email && saveMailText("shop_email", e.target.value.trim())}
+              />
+            </label>
+            <Toggle on={st.values.mail.shop_created} label="Нове замовлення" hint="одразу після оформлення: книги, покупець, доставка, оплата" onChange={flip("mail", "shop_created")} />
+            <Toggle on={st.values.mail.shop_paid} label="Надійшла оплата" hint="після онлайн-оплати або коли ви ставите «Оплачено»" onChange={flip("mail", "shop_paid")} />
             <div className={p.gen}>
               <label className={s.field} style={{ flex: 1 }}>
                 <span>Надіслати тестовий лист на</span>
@@ -504,6 +749,8 @@ export default function SettingsPage() {
           </div>
         </section>
       </div>
+
+      <PaymentsPanel st={st} onSaved={load} />
 
       <IntegrationsPanel values={st.values.integrations} onSaved={load} />
 

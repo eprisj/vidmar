@@ -961,16 +961,36 @@ export type AdminSettings = {
   values: {
     seo: import("./seo").Seo;
     integrations: Integrations;
-    mail: Record<MailKind, boolean>;
+    mail: Record<MailKind, boolean> & { shop_email: string; shop_created: boolean; shop_paid: boolean };
+    payments: PaymentSettings;
     np: { autosync: boolean; ttn_ships: boolean; auto_fulfilled: boolean; default_weight_g: number; sender: NpSender | null };
   };
   mail: { configured: boolean; mode: "log" | "smtp"; host: string | null; from: string | null; missing: string[]; source?: "admin" | "env" | null };
   np_key: boolean;
+  /** what actually shows at checkout, and where each key came from */
+  pay: { enabled: Record<PayMethod, boolean>; source: { mono: KeySource; liqpay: KeySource; iban: KeySource } };
+};
+type KeySource = "admin" | "env" | null;
+export type PaymentSettings = {
+  mono_enabled: boolean;
+  liqpay_enabled: boolean;
+  iban_enabled: boolean;
+  cod_enabled: boolean;
+  /** masked "••••••1234" when set */
+  mono_token: string;
+  liqpay_public_key: string;
+  /** masked "••••••1234" when set */
+  liqpay_private_key: string;
+  liqpay_sandbox: boolean;
+  iban: string;
+  recipient: string;
+  edrpou: string;
+  bank: string;
 };
 export type EmailRow = {
   id: string;
   order_id: number | null;
-  kind: MailKind;
+  kind: MailKind | "shop_created" | "shop_paid";
   to_email: string;
   subject: string;
   status: "sent" | "failed" | "skipped";
@@ -981,7 +1001,7 @@ export type EmailRow = {
 export function getSettings(_token: string): Promise<AdminSettings> {
   return adminRequest("/admin/settings", _token);
 }
-export function saveSetting(_token: string, key: "mail" | "np", patch: Record<string, unknown>) {
+export function saveSetting(_token: string, key: "mail" | "np" | "payments", patch: Record<string, unknown>) {
   return adminRequest(`/admin/settings/${key}`, _token, { method: "PUT", body: JSON.stringify(patch) });
 }
 export function listEmails(_token: string): Promise<EmailRow[]> {
@@ -994,6 +1014,17 @@ export function sendOrderEmail(_token: string, id: number, kind: MailKind): Prom
   return adminRequest(`/admin/orders/${id}/emails`, _token, { method: "POST", body: JSON.stringify({ kind }) });
 }
 export const emailPreviewUrl = (id: number, kind: MailKind) => `${API_BASE}/admin/orders/${id}/emails/preview?kind=${kind}`;
+/** log in to the SMTP server with the saved settings, send nothing */
+export function verifyMail(_token: string): Promise<{ ok: boolean; error?: string; note?: string }> {
+  return adminRequest("/admin/mail/verify", _token, { method: "POST", body: "{}" });
+}
+/** ask monobank or LiqPay whether the keys work; empty fields mean the saved keys */
+export function checkPayKeys(
+  _token: string,
+  body: { provider: "mono" | "liqpay"; mono_token?: string; liqpay_public_key?: string; liqpay_private_key?: string },
+): Promise<{ ok: boolean; error?: string; name?: string | null }> {
+  return adminRequest("/admin/pay/check", _token, { method: "POST", body: JSON.stringify(body) });
+}
 export function sendTestEmail(_token: string, to: string) {
   return adminRequest("/admin/mail/test", _token, { method: "POST", body: JSON.stringify({ to }) });
 }
