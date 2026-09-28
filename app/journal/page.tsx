@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import { journalRubrics } from "@/lib/content";
-import { pageMeta } from "@/lib/seo";
+import { seoMeta } from "@/lib/seo";
 import styles from "./journal.module.css";
 import { Txt } from "@/components/SiteText";
 
-export const metadata: Metadata = pageMeta(
+export const generateMetadata = (): Promise<Metadata> =>
+  seoMeta(
   "Журнал – ВІДЬМАР",
   "Журнал видавництва ВІДЬМАР – записи про підготовку першої книги зʼявляться тут ближче до випуску.",
   "/journal",

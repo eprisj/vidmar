@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Icon, useAdmin } from "@/components/admin/AdminShell";
 import s from "@/components/admin/admin.module.css";
+import x from "@/components/admin/extra.module.css";
 import { when } from "@/components/admin/labels";
-import { listSubscribers } from "@/lib/api";
+import { addSubscriber, listSubscribers, removeSubscriber } from "@/lib/api";
 
 const SEARCH = "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4";
 const DOWNLOAD = "M12 4v11M7 10l5 5 5-5M5 20h14";
@@ -15,6 +16,41 @@ export default function SubscribersPage() {
   const [q, setQ] = useState("");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [added, setAdded] = useState("");
+
+  const month = useMemo(
+    () => (rows ?? []).filter((r) => Date.now() - new Date(r.created_at).getTime() < 30 * 86_400_000).length,
+    [rows],
+  );
+
+  async function add(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      const r = await addSubscriber(token, email);
+      setRows((all) => [r, ...(all ?? [])]);
+      setAdded(r.email);
+      setEmail("");
+      setTimeout(() => setAdded(""), 2500);
+    } catch (err) {
+      setError(fail(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(r: { id: number; email: string }) {
+    if (!confirm(`Відписати ${r.email}? Адреса зникне зі списку розсилки.`)) return;
+    try {
+      await removeSubscriber(token, r.id);
+      setRows((all) => (all ?? []).filter((y) => y.id !== r.id));
+    } catch (err) {
+      setError(fail(err));
+    }
+  }
 
   useEffect(() => {
     listSubscribers(token)
@@ -41,7 +77,9 @@ export default function SubscribersPage() {
       <div className={s.head}>
         <div>
           <h1 className={s.h1}>Розсилка</h1>
-          <p className={s.sub}>{rows?.length ?? 0} підписників</p>
+          <p className={s.sub}>
+            {rows?.length ?? 0} підписників{month > 0 && ` · +${month} за 30 днів`}
+          </p>
         </div>
         <div className={s.headActions}>
           <button
@@ -64,6 +102,19 @@ export default function SubscribersPage() {
 
       {error && <p className={s.error}>{error}</p>}
 
+      <form className={`${s.panel} ${s.panelBody}`} onSubmit={add} style={{ marginBottom: 16 }}>
+        <div className={x.addRow}>
+          <label className={s.field} style={{ flex: "1 1 260px" }}>
+            <span>Додати адресу вручну · наприклад, підписалися на ярмарку</span>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="reader@example.com" required />
+          </label>
+          <button type="submit" className={s.btnPrimary} disabled={busy || !email.trim()} style={{ alignSelf: "flex-end" }}>
+            {busy ? "Додаємо…" : "Додати"}
+          </button>
+          {added && <span className={s.dim} style={{ alignSelf: "flex-end" }}>{added} додано</span>}
+        </div>
+      </form>
+
       <div className={s.toolbar}>
         <label className={s.search}>
           <Icon d={SEARCH} size={16} />
@@ -82,6 +133,7 @@ export default function SubscribersPage() {
               <tr>
                 <th>Пошта</th>
                 <th className={s.right}>Підписався</th>
+                <th className={s.right} aria-label="Дії" />
               </tr>
             </thead>
             <tbody>
@@ -91,6 +143,11 @@ export default function SubscribersPage() {
                     <a href={`mailto:${r.email}`}>{r.email}</a>
                   </td>
                   <td className={`${s.right} ${s.dim}`}>{when(r.created_at)}</td>
+                  <td className={s.right}>
+                    <button type="button" className={x.rowAction} onClick={() => remove(r)}>
+                      Відписати
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

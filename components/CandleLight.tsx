@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { LITE_EVENT, isLite } from "@/lib/lite";
 
 /**
  * A faint warm glow that follows the pointer across any [data-candle]
@@ -11,7 +12,8 @@ export default function CandleLight() {
   useEffect(() => {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fine || reduced) return;
+    // every move repaints a blended layer the size of the section
+    if (!fine || reduced || isLite()) return;
 
     let raf = 0;
     let last: { el: HTMLElement; x: number; y: number } | null = null;
@@ -31,10 +33,15 @@ export default function CandleLight() {
       if (!raf) raf = requestAnimationFrame(paint);
     };
 
-    window.addEventListener("pointermove", move, { passive: true });
-    return () => {
+    const off = () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", move);
+    };
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener(LITE_EVENT, off);
+    return () => {
+      off();
+      window.removeEventListener(LITE_EVENT, off);
     };
   }, []);
 

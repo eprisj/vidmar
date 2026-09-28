@@ -1,0 +1,375 @@
+/* The admin's third floor (28.09.2026): today's to-do on the dashboard, the
+   new-order toast, period chips, repeat buyers, a book's sales, manuscript
+   notes. Same night-and-wheat tokens as admin.module.css (they live on .app). */
+
+/* ---------------- dashboard: needs attention ---------------- */
+
+.todo {
+  margin-bottom: 16px;
+}
+
+.todoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--a-line);
+}
+
+.todoCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+  background: var(--a-panel);
+  min-width: 0;
+}
+
+.todoHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.todoTitle {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.todoCount {
+  min-width: 1.6em;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--a-bg);
+  background: var(--a-warn);
+}
+
+.todoCountBad {
+  background: var(--a-bad);
+}
+
+.todoHint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--a-dim);
+}
+
+.todoList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todoRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--a-line);
+  font-size: 0.86rem;
+  color: var(--a-text);
+  text-decoration: none;
+  min-width: 0;
+}
+
+.todoRow:first-child {
+  border-top: 0;
+}
+
+.todoRow:hover .todoMain {
+  color: var(--a-gold);
+}
+
+.todoMain {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.todoAge {
+  flex: none;
+  font-size: 0.76rem;
+  color: var(--a-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.todoAgeLate {
+  color: var(--a-bad);
+}
+
+.todoMore {
+  font-size: 0.8rem;
+  color: var(--a-gold);
+  text-decoration: none;
+}
+
+.allClear {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  color: var(--a-ok);
+  font-size: 0.9rem;
+}
+
+/* ---------------- dashboard: change against the 30 days before ---------------- */
+
+.delta {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.deltaUp {
+  color: var(--a-ok);
+}
+
+.deltaDown {
+  color: var(--a-bad);
+}
+
+/* ---------------- new-order toast ---------------- */
+
+.toasts {
+  position: fixed;
+  z-index: 95;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(340px, calc(100vw - 36px));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--a-line-2);
+  border-left: 3px solid var(--a-gold);
+  border-radius: 12px;
+  background: var(--a-panel-2);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  color: var(--a-text);
+  text-decoration: none;
+  animation: toastIn 0.25s ease-out;
+}
+
+.toastBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.86rem;
+}
+
+.toastTitle {
+  font-weight: 600;
+}
+
+.toastClose {
+  flex: none;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--a-dim);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.toastClose:hover {
+  color: var(--a-text);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
+
+/* ---------------- orders: period chips, repeat buyers ---------------- */
+
+.chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 5px 11px;
+  border: 1px solid var(--a-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--a-mute);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--a-line-2);
+  color: var(--a-text);
+}
+
+.chipOn,
+.chipOn:hover {
+  border-color: var(--a-gold);
+  color: var(--a-gold);
+}
+
+.repeat {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 1px solid rgba(201, 169, 97, 0.45);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--a-gold);
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+.otherOrders {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.otherOrder {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 0;
+  border: 0;
+  border-top: 1px solid var(--a-line);
+  background: none;
+  color: var(--a-text);
+  font: inherit;
+  font-size: 0.86rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.otherOrders li:first-child .otherOrder {
+  border-top: 0;
+}
+
+.otherOrder:hover .todoMain {
+  color: var(--a-gold);
+}
+
+/* ---------------- book: sales ---------------- */
+
+.salesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.salesCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--a-line);
+  border-radius: 10px;
+}
+
+.salesValue {
+  font-size: 1.15rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.dirty {
+  margin-right: auto;
+  font-size: 0.8rem;
+  color: var(--a-warn);
+}
+
+/* ---------------- manuscripts: note, reply templates ---------------- */
+
+.noteArea {
+  width: 100%;
+  min-height: 96px;
+  padding: 10px 12px;
+  border: 1px solid var(--a-line);
+  border-radius: 10px;
+  background: rgba(8, 16, 33, 0.6);
+  color: var(--a-text);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.noteArea:focus {
+  outline: none;
+  border-color: var(--a-gold);
+  box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+}
+
+.noteArea::placeholder {
+  color: var(--a-dim);
+}
+
+.noteMeta {
+  font-size: 0.76rem;
+  color: var(--a-dim);
+}
+
+.templates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ---------------- newsletter: add by hand ---------------- */
+
+.addRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.addRow input {
+  flex: 1 1 240px;
+}
+
+.rowAction {
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--a-dim);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.rowAction:hover {
+  border-color: var(--a-line-2);
+  color: var(--a-bad);
+}

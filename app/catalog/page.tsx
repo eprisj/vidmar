@@ -3,11 +3,12 @@ import PageHero from "@/components/PageHero";
 import CatalogGrid from "@/components/CatalogGrid";
 import { genres } from "@/lib/content";
 import { getBooksAtBuild } from "@/lib/api";
-import { pageMeta } from "@/lib/seo";
+import { seoMeta } from "@/lib/seo";
 import styles from "./catalog.module.css";
 import { Txt } from "@/components/SiteText";
 
-export const metadata: Metadata = pageMeta(
+export const generateMetadata = (): Promise<Metadata> =>
+  seoMeta(
   "Каталог – ВІДЬМАР",
   "Книги видавництва ВІДЬМАР: паперові й електронні видання з доставкою Новою поштою.",
   "/catalog",

@@ -1,8 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
 import { genres, showsNote } from "@/lib/content";
-import { pageMeta } from "@/lib/seo";
+import { seoMeta } from "@/lib/seo";
 import styles from "./genres.module.css";
 import { Txt } from "@/components/SiteText";
 
@@ -33,7 +34,8 @@ const plateWidth: Record<string, number> = {
   "witches-storm": 1707,
 };
 
-export const metadata = pageMeta(
+export const generateMetadata = (): Promise<Metadata> =>
+  seoMeta(
   "Напрями – ВІДЬМАР",
   "Що видає ВІДЬМАР: езотерика, містика, відьомство й духовні практики, трилери, психологічні романи, фентезі та містична проза.",
   "/genres",

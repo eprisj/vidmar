@@ -5,11 +5,12 @@ import PageHero from "@/components/PageHero";
 import Smoke from "@/components/Smoke";
 import Seal from "@/components/Seal";
 import Atmosphere from "@/components/Atmosphere";
-import { pageMeta } from "@/lib/seo";
+import { seoMeta } from "@/lib/seo";
 import styles from "./about.module.css";
 import { LitTxt, Txt } from "@/components/SiteText";
 
-export const metadata: Metadata = pageMeta(
+export const generateMetadata = (): Promise<Metadata> =>
+  seoMeta(
   "Про нас – ВІДЬМАР",
   "ВІДЬМАР – бутикове видавництво книг про езотерику, містику й відьомство. Лист засновника: хто ми, чому починаємо і що робимо.",
   "/about",

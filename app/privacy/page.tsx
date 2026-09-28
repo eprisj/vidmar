@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import { MailLink } from "@/components/SiteText";
-import { pageMeta } from "@/lib/seo";
+import { seoMeta } from "@/lib/seo";
 import styles from "@/components/Legal.module.css";
 
-export const metadata: Metadata = pageMeta(
+export const generateMetadata = (): Promise<Metadata> =>
+  seoMeta(
   "Політика конфіденційності – ВІДЬМАР",
   "Які дані збирає сайт видавництва ВІДЬМАР, навіщо, кому передає і як їх видалити.",
   "/privacy",

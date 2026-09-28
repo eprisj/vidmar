@@ -798,3 +798,87 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---------------- promo code ---------------- */
+
+.promo {
+  margin: 14px 0 4px;
+}
+
+.promoToggle {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--gold);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.promoRow {
+  display: flex;
+  gap: 8px;
+}
+
+.promoRow input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--hair-d);
+  background: rgba(8, 17, 34, 0.4);
+  color: var(--on-dark);
+}
+
+.promoRow input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.promoRow button {
+  flex: none;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--gold);
+  background: none;
+  color: var(--gold);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.promoRow button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.promoMsg {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: #e6a4a4;
+}
+
+.promoOn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #9fd3a8;
+}
+
+.promoOn button {
+  border: 0;
+  background: none;
+  color: var(--on-dark-mute);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}

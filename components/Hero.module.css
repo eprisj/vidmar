@@ -338,3 +338,34 @@
     opacity: 0.6;
   }
 }
+
+/* ---------- weak machines (html.lite, lib/lite) ----------
+   Half the swarm with a single glow each, and the name arrives by opacity
+   alone: an animated blur over a 780px wordmark redraws it every frame. */
+:global(.lite) .firefly {
+  box-shadow: 0 0 8px 3px rgba(240, 212, 130, 0.4);
+}
+
+:global(.lite) .firefly:nth-child(2n) {
+  display: none;
+}
+
+:global(.lite) .word {
+  filter: none;
+}
+
+:global(.lite) .word,
+:global(.lite) .lede {
+  animation-name: emergeLite;
+}
+
+@keyframes emergeLite {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

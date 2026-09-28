@@ -336,3 +336,13 @@
     transform: translateY(-3.25px) rotate(-45deg);
   }
 }
+
+/* weak machines (html.lite, lib/lite) get the phone's opaque bar too */
+:global(.lite) .solid {
+  backdrop-filter: none;
+  background: rgba(22, 46, 89, 0.97);
+}
+
+:global(.lite) .solid.onPage {
+  background: rgba(245, 222, 179, 0.97);
+}

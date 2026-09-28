@@ -58,6 +58,10 @@ export type Book = {
   isbn?: string | null;
   is_demo?: boolean;
   sku?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  og_image_url?: string | null;
+  updated_at?: string;
   print_old_price_cents?: number | null;
   ebook_old_price_cents?: number | null;
   series?: string | null;
@@ -120,6 +124,7 @@ export type OrderInput = {
   delivery?: { cityRef: string; cityName: string; warehouseRef: string; warehouseName: string };
   comment?: string;
   payment_method: PayMethod;
+  promo_code?: string;
 };
 
 export type PlacedOrder = {
@@ -181,6 +186,8 @@ export type PublicOrder = OrderSummary & {
   is_demo: boolean;
   payment_method: PayMethod;
   paid_at: string | null;
+  promo_code?: string | null;
+  discount_cents?: number;
   can_pay_online: boolean;
   requisites: { iban: string; recipient: string | null; edrpou: string | null; bank: string | null } | null;
   items: (OrderItem & {
@@ -297,6 +304,9 @@ export type BookInput = {
   dimensions?: string | null;
   weight_g?: number | null;
   age_rating?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  og_image_url?: string | null;
 };
 
 export function createBook(token: string, input: BookInput) {
@@ -514,6 +524,8 @@ export type AdminStats = {
   orders_30: number;
   orders_today: number;
   awaiting_sum: string;
+  revenue_prev30: string;
+  orders_prev30: number;
   by_status: Record<string, number>;
   days: { day: string; revenue: string; orders: number }[];
   low_stock: { id: number; title: string; sku: string | null; stock: number; cover_url: string | null; cover_pos: string | null }[];
@@ -571,6 +583,9 @@ export type Submission = {
   note: string | null;
   status: "new" | "reading" | "accepted" | "declined";
   created_at: string;
+  admin_note?: string | null;
+  admin_note_by?: string | null;
+  admin_note_at?: string | null;
 };
 
 export function setSubmissionStatus(token: string, id: number, status: Submission["status"]) {
@@ -595,11 +610,29 @@ export type AdminOrder = OrderSummary & {
   reader_code?: string | null;
   access_token?: string | null;
   np_city_ref?: string | null;
+  promo_code?: string | null;
+  discount_cents?: number;
+  np_status?: string | null;
+  np_status_code?: number | null;
+  np_status_at?: string | null;
   items?: { title: string; sku: string | null; format: Format; quantity: number; cover_url: string | null; cover_pos: string | null }[];
+};
+export type OrderEvent = {
+  id: string;
+  order_id: number;
+  kind: "status" | "ttn" | "note";
+  from_value: string | null;
+  to_value: string | null;
+  body: string | null;
+  admin_login: string | null;
+  created_at: string;
 };
 export type AdminOrderDetail = Omit<AdminOrder, "items"> & {
   items: (OrderItem & { format?: Format; sku?: string | null })[];
   payments: { provider: string; provider_ref: string; amount_cents: number; status: string; created_at: string }[];
+  events: OrderEvent[];
+  promo_code?: string | null;
+  discount_cents?: number;
 };
 
 export function listAdminOrders(token: string): Promise<AdminOrder[]> {
@@ -766,3 +799,293 @@ export const fileSize = (n: number | string) => {
   if (b < 1024 ** 3) return `${(b / 1024 / 1024).toFixed(b < 10 * 1024 * 1024 ? 1 : 0)} МБ`;
   return `${(b / 1024 ** 3).toFixed(1)} ГБ`;
 };
+
+// --- admin upgrade: history, bulk, promo codes, journal, team, search --------
+
+export function addOrderNote(_token: string, id: number, body: string): Promise<OrderEvent> {
+  return adminRequest(`/admin/orders/${id}/notes`, _token, { method: "POST", body: JSON.stringify({ body }) });
+}
+export function deleteOrderNote(_token: string, id: number, nid: string) {
+  return adminRequest(`/admin/orders/${id}/notes/${nid}`, _token, { method: "DELETE" });
+}
+export function bulkOrderStatus(_token: string, ids: number[], status: string): Promise<{ changed: number }> {
+  return adminRequest("/admin/orders/bulk", _token, { method: "POST", body: JSON.stringify({ ids, status }) });
+}
+
+export type Promo = {
+  id: number;
+  code: string;
+  kind: "percent" | "fixed";
+  /** percent, or kopecks for a fixed amount */
+  value: number;
+  min_total_cents: number;
+  max_uses: number | null;
+  used: number;
+  starts_at: string | null;
+  ends_at: string | null;
+  active: boolean;
+  note: string | null;
+  created_at: string;
+  orders?: number;
+  given_cents?: string;
+  revenue_cents?: string;
+};
+/** what the form sends: money in hryvnias, the server turns it into kopecks */
+export type PromoInput = {
+  code?: string;
+  kind: "percent" | "fixed";
+  value: number;
+  min_total?: number;
+  max_uses?: number | "" | null;
+  starts_at?: string | null;
+  ends_at?: string | null;
+  active?: boolean;
+  note?: string;
+};
+export function listPromos(_token: string): Promise<Promo[]> {
+  return adminRequest("/admin/promos", _token);
+}
+export function createPromo(_token: string, input: PromoInput): Promise<Promo> {
+  return adminRequest("/admin/promos", _token, { method: "POST", body: JSON.stringify(input) });
+}
+export function updatePromo(_token: string, id: number, input: PromoInput): Promise<Promo> {
+  return adminRequest(`/admin/promos/${id}`, _token, { method: "PUT", body: JSON.stringify(input) });
+}
+export function deletePromo(_token: string, id: number): Promise<{ archived?: boolean; deleted?: boolean }> {
+  return adminRequest(`/admin/promos/${id}`, _token, { method: "DELETE" });
+}
+/** the cart asks before the order: is the code good for this sum, and for how much */
+export async function checkPromo(code: string, totalCents: number): Promise<{ code: string; discount_cents: number }> {
+  const res = await fetch(`${API_BASE}/promo/${encodeURIComponent(code.trim())}?total=${totalCents}`, { cache: "no-store" });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new ApiError(data?.error === "too many requests" ? "забагато спроб, зачекайте хвилину" : data?.error || "промокод не перевірено");
+  return data;
+}
+
+export type AuditRow = {
+  id: string;
+  admin_login: string | null;
+  method: string;
+  path: string;
+  status: number;
+  entity: string | null;
+  entity_id: string | null;
+  details: Record<string, unknown> | null;
+  ip: string | null;
+  created_at: string;
+};
+export function listAudit(
+  _token: string,
+  q: { before?: string; entity?: string; admin?: string; limit?: number } = {},
+): Promise<AuditRow[]> {
+  const p = new URLSearchParams();
+  for (const [k, v] of Object.entries(q)) if (v != null && v !== "") p.set(k, String(v));
+  return adminRequest(`/admin/audit?${p}`, _token);
+}
+
+export type TeamMember = {
+  id: number;
+  login: string;
+  created_at: string;
+  last_login_at: string | null;
+  last_login_ip: string | null;
+  locked_until: string | null;
+  failed: number;
+  sessions: number;
+  me: boolean;
+};
+export type AdminSession = { id: number; login: string; ip: string | null; created_at: string; expires_at: string; current: boolean };
+export function listTeam(_token: string): Promise<TeamMember[]> {
+  return adminRequest("/admin/team", _token);
+}
+export function createAdmin(_token: string, login: string, password: string) {
+  return adminRequest("/admin/team", _token, { method: "POST", body: JSON.stringify({ login, password }) });
+}
+export function deleteAdmin(_token: string, id: number) {
+  return adminRequest(`/admin/team/${id}`, _token, { method: "DELETE" });
+}
+export function unlockAdmin(_token: string, id: number) {
+  return adminRequest(`/admin/team/${id}/unlock`, _token, { method: "POST" });
+}
+export function listAdminSessions(_token: string): Promise<AdminSession[]> {
+  return adminRequest("/admin/sessions", _token);
+}
+export function revokeAdminSession(_token: string, id: number) {
+  return adminRequest(`/admin/sessions/${id}`, _token, { method: "DELETE" });
+}
+
+export type SearchHits = {
+  orders: { id: number; status: string; total_cents: number; customer_name: string | null; customer_email: string | null; customer_phone: string | null; ttn: string | null; created_at: string }[];
+  books: { id: number; slug: string; title: string; author: string | null; sku: string | null; status: string; cover_url: string | null; cover_pos: string | null }[];
+  users: { id: number; email: string; name: string | null; phone: string | null; reader_code: string | null }[];
+  submissions: { id: number; name: string; email: string; title: string | null; status: string }[];
+};
+export function adminSearch(_token: string, q: string): Promise<SearchHits> {
+  return adminRequest(`/admin/search?q=${encodeURIComponent(q)}`, _token);
+}
+
+export type AdminUserCard = {
+  id: number;
+  email: string;
+  name: string | null;
+  phone: string | null;
+  reader_code: string | null;
+  created_at: string;
+  np_city: string | null;
+  np_warehouse: string | null;
+  avatar_url: string | null;
+  google: boolean;
+  newsletter: boolean;
+  orders: { id: number; status: string; total_cents: number; created_at: string; payment_method: string; promo_code: string | null; titles: string | null }[];
+};
+export function getAdminUser(_token: string, id: number): Promise<AdminUserCard> {
+  return adminRequest(`/admin/users/${id}`, _token);
+}
+
+// --- letters to buyers, settings, Nova Poshta ----------------------------------
+
+export type MailKind = "created" | "paid" | "shipped" | "fulfilled" | "cancelled";
+export type NpSender = {
+  ref: string;
+  name: string;
+  contact_ref: string;
+  contact_name: string;
+  phone: string;
+  city_ref: string;
+  city_name: string;
+  warehouse_ref: string;
+  warehouse_name: string;
+};
+export type AdminSettings = {
+  np_source?: "admin" | "env" | null;
+  values: {
+    seo: import("./seo").Seo;
+    integrations: Integrations;
+    mail: Record<MailKind, boolean>;
+    np: { autosync: boolean; ttn_ships: boolean; auto_fulfilled: boolean; default_weight_g: number; sender: NpSender | null };
+  };
+  mail: { configured: boolean; mode: "log" | "smtp"; host: string | null; from: string | null; missing: string[]; source?: "admin" | "env" | null };
+  np_key: boolean;
+};
+export type EmailRow = {
+  id: string;
+  order_id: number | null;
+  kind: MailKind;
+  to_email: string;
+  subject: string;
+  status: "sent" | "failed" | "skipped";
+  error: string | null;
+  created_by: string | null;
+  created_at: string;
+};
+export function getSettings(_token: string): Promise<AdminSettings> {
+  return adminRequest("/admin/settings", _token);
+}
+export function saveSetting(_token: string, key: "mail" | "np", patch: Record<string, unknown>) {
+  return adminRequest(`/admin/settings/${key}`, _token, { method: "PUT", body: JSON.stringify(patch) });
+}
+export function listEmails(_token: string): Promise<EmailRow[]> {
+  return adminRequest("/admin/emails", _token);
+}
+export function orderEmails(_token: string, id: number): Promise<{ log: EmailRow[]; kinds: Record<MailKind, string> }> {
+  return adminRequest(`/admin/orders/${id}/emails`, _token);
+}
+export function sendOrderEmail(_token: string, id: number, kind: MailKind): Promise<{ status: string; error?: string | null }> {
+  return adminRequest(`/admin/orders/${id}/emails`, _token, { method: "POST", body: JSON.stringify({ kind }) });
+}
+export const emailPreviewUrl = (id: number, kind: MailKind) => `${API_BASE}/admin/orders/${id}/emails/preview?kind=${kind}`;
+export function sendTestEmail(_token: string, to: string) {
+  return adminRequest("/admin/mail/test", _token, { method: "POST", body: JSON.stringify({ to }) });
+}
+export function npSenders(_token: string): Promise<{ ref: string; name: string; contacts: { ref: string; name: string; phone: string }[] }[]> {
+  return adminRequest("/admin/np/senders", _token);
+}
+export function npSync(_token: string, ids?: number[]): Promise<{ checked: number; updated: number; moved: number }> {
+  return adminRequest("/admin/np/sync", _token, { method: "POST", body: JSON.stringify(ids ? { ids } : {}) });
+}
+export function createTtn(
+  _token: string,
+  id: number,
+  opts: { weight?: number; cost?: number; description?: string; payer?: "Recipient" | "Sender" },
+): Promise<{ ttn: string; cost?: number; estimated?: string }> {
+  return adminRequest(`/admin/orders/${id}/ttn`, _token, { method: "POST", body: JSON.stringify(opts) });
+}
+export const npLabelUrl = (ttn: string) => `${API_BASE}/admin/np/label/${encodeURIComponent(ttn)}`;
+
+// --- SEO and integrations -------------------------------------------------------
+
+export type SeoSettings = import("./seo").Seo;
+export type Integrations = {
+  smtp_host: string;
+  smtp_port: string;
+  smtp_user: string;
+  /** masked: "••••••1234" when set */
+  smtp_pass: string;
+  mail_from: string;
+  mail_reply_to: string;
+  np_api_key: string;
+};
+export function saveSeo(_token: string, patch: Partial<SeoSettings>): Promise<SeoSettings> {
+  return adminRequest("/admin/settings/seo", _token, { method: "PUT", body: JSON.stringify(patch) });
+}
+export function saveIntegrations(_token: string, patch: Partial<Integrations> & { clear_smtp_pass?: boolean; clear_np_api_key?: boolean }): Promise<Integrations> {
+  return adminRequest("/admin/settings/integrations", _token, { method: "PUT", body: JSON.stringify(patch) });
+}
+
+// --- today's to-do, the order pulse, book sales, notes, the list by hand ------
+
+export type AttentionOrder = {
+  id: number;
+  status: string;
+  total_cents: number;
+  created_at: string;
+  payment_method: PayMethod | null;
+  customer_name: string | null;
+  np_status: string | null;
+  np_status_at: string | null;
+  np_status_code?: number | null;
+  trouble?: boolean;
+  ttn: string | null;
+};
+type Group<T> = { total: number; rows: T[] };
+export type Attention = {
+  to_ship: Group<AttentionOrder>;
+  stale_payment: Group<AttentionOrder>;
+  parcels: Group<AttentionOrder>;
+  manuscripts: Group<{ id: number; name: string; title: string | null; created_at: string }>;
+  sold_out: Group<{ id: number; title: string; sku: string | null; cover_url: string | null; cover_pos: string | null }>;
+};
+export function getAttention(_token: string): Promise<Attention> {
+  return adminRequest("/admin/attention", _token);
+}
+
+export type Pulse = { last_order_id: number; awaiting: number; fresh: number };
+export function getPulse(_token: string): Promise<Pulse> {
+  return adminRequest("/admin/pulse", _token);
+}
+export function getOrdersAfter(
+  _token: string,
+  after: number,
+): Promise<{ id: number; total_cents: number; customer_name: string | null; payment_method: PayMethod | null; created_at: string }[]> {
+  return adminRequest(`/admin/pulse/orders?after=${after}`, _token);
+}
+
+export type BookSales = {
+  formats: { format: Format; copies: number; revenue: string; copies_30: number | null }[];
+  last_sale: string | null;
+  recent: { id: number; status: string; created_at: string; customer_name: string | null; format: Format; quantity: number }[];
+};
+export function getBookSales(_token: string, id: number): Promise<BookSales> {
+  return adminRequest(`/admin/books/${id}/sales`, _token);
+}
+
+export function saveSubmissionNote(_token: string, id: number, note: string): Promise<Submission> {
+  return adminRequest(`/admin/submissions/${id}/note`, _token, { method: "PUT", body: JSON.stringify({ note }) });
+}
+
+export function addSubscriber(_token: string, email: string): Promise<{ id: number; email: string; created_at: string }> {
+  return adminRequest("/admin/subscribers", _token, { method: "POST", body: JSON.stringify({ email }) });
+}
+export function removeSubscriber(_token: string, id: number) {
+  return adminRequest(`/admin/subscribers/${id}`, _token, { method: "DELETE" });
+}

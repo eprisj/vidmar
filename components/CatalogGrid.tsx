@@ -27,7 +27,7 @@ function quickFormat(b: Book): Format | null {
   return null;
 }
 
-function BookCard({ b }: { b: Book }) {
+function BookCard({ b, baked }: { b: Book; baked: boolean }) {
   const toast = useToast();
   const cart = useCart();
   const from = fromPrice(b);
@@ -35,7 +35,8 @@ function BookCard({ b }: { b: Book }) {
   const price = f && (f === "print" ? b.print_price_cents : b.ebook_price_cents);
   const was = f ? oldPrice(b, f) : null;
   const inCart = cart.some((l) => l.slug === b.slug);
-  const href = `/book?s=${b.slug}`;
+  // books from the build have their own page; newer ones open by query until the next deploy
+  const href = baked ? `/book/${b.slug}` : `/book?s=${b.slug}`;
   const soldOut = b.print_price_cents != null && !b.in_stock && b.ebook_price_cents == null;
 
   return (
@@ -109,6 +110,8 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
   // the shelf as it stood at build time paints at once; the API then brings
   // prices and stock up to date instead of the reader waiting on it
   const [books, setBooks] = useState<Book[] | null>(initial);
+  // the slugs the build baked a page for; the prop, not the state, which the API refreshes
+  const baked = useMemo(() => new Set((initial ?? []).map((b) => b.slug)), [initial]);
   const [genre, setGenre] = useState<string | null>(null);
   const [format, setFormat] = useState<FormatFilter>("all");
   const [sort, setSort] = useState<Sort>("order");
@@ -264,7 +267,7 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
         <div className={styles.books}>
           {shown.map((b, i) => (
             <Reveal key={b.slug} delay={Math.min(i, 6) * 40} className={styles.slot}>
-              <BookCard b={b} />
+              <BookCard b={b} baked={baked.has(b.slug)} />
             </Reveal>
           ))}
         </div>

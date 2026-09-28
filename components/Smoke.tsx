@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import styles from "./Smoke.module.css";
+import { LITE_EVENT, isLite } from "@/lib/lite";
 
 type Props = {
   /** warm light rising through the smoke, 0–1 per channel */
@@ -135,7 +136,8 @@ export default function Smoke({
     gl.uniform1f(gl.getUniformLocation(prog, "u_int"), intensity);
     gl.uniform2f(gl.getUniformLocation(prog, "u_src"), source[0], source[1]);
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // weak machines (lib/lite) get the same smoke as one still frame
+    let still = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isLite();
     const scale = Math.min(window.devicePixelRatio || 1, 2) * 0.5;
 
     // compared against what *this* program was last told, not the canvas: on a
@@ -168,7 +170,7 @@ export default function Smoke({
 
     const loop = () => {
       draw();
-      if (visible && !reduced) raf = requestAnimationFrame(loop);
+      if (visible && !still) raf = requestAnimationFrame(loop);
     };
 
     const io = new IntersectionObserver(([e]) => {
@@ -179,11 +181,18 @@ export default function Smoke({
     io.observe(canvas);
     draw();
 
+    const onLite = () => {
+      still = true;
+      cancelAnimationFrame(raf);
+    };
+    window.addEventListener(LITE_EVENT, onLite);
+
     // no loseContext() here: React remounts effects in development and would
     // get the same, now dead, context back from getContext()
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
+      window.removeEventListener(LITE_EVENT, onLite);
       canvas.removeEventListener("webglcontextlost", onLost);
     };
     // tint/source are fixed per instance

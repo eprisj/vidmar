@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BookCover from "@/components/BookCover";
 import { useToast } from "@/components/ToastProvider";
 import {
@@ -18,7 +18,7 @@ import {
 } from "@/lib/api";
 import { addLine, useCart } from "@/lib/cart";
 import { genres } from "@/lib/content";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, bookPath } from "@/lib/seo";
 import styles from "./book.module.css";
 import BookMaterials from "./BookMaterials";
 
@@ -37,7 +37,7 @@ function jsonLd(b: Book) {
         availability:
           f === "ebook" || b.in_stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
         itemCondition: "https://schema.org/NewCondition",
-        url: `${SITE_URL}/book?s=${b.slug}`,
+        url: `${SITE_URL}${bookPath(b.slug)}`,
       };
     })
     .filter(Boolean);
@@ -64,8 +64,19 @@ function startFormat(b: Book): Format {
   return "print";
 }
 
-function BookView({ initial }: { initial: Book[] }) {
+/** /book?s=<slug>, the address for books newer than the build */
+function QueryBook({ initial }: { initial: Book[] }) {
   const slug = useSearchParams().get("s") || "";
+  const router = useRouter();
+  // a book with its own static page lives there: one address per book for search engines
+  const baked = initial.some((b) => b.slug === slug);
+  useEffect(() => {
+    if (baked) router.replace(bookPath(slug));
+  }, [baked, slug, router]);
+  return <BookView initial={initial} slug={slug} />;
+}
+
+function BookView({ initial, slug }: { initial: Book[]; slug: string }) {
   const toast = useToast();
   const cart = useCart();
   // the catalogue as baked at build: a known book paints at once, and the
@@ -86,7 +97,8 @@ function BookView({ initial }: { initial: Book[] }) {
     getBook(slug).then((b) => {
       setBook(b);
       if (!b) return;
-      document.title = `${b.title} – ВІДЬМАР`;
+      // the same title the static page and search results carry
+      document.title = b.seo_title || `${b.title}${b.author ? ` – ${b.author}` : ""} – ВІДЬМАР`;
       // a book the build didn't know yet starts on what can be bought; a
       // known one keeps whatever the reader has picked meanwhile
       if (!known) setFormat(startFormat(b));
@@ -340,7 +352,12 @@ function BookView({ initial }: { initial: Book[] }) {
             {related.map((b) => {
               const p = b.print_price_cents ?? b.ebook_price_cents;
               return (
-                <Link key={b.slug} href={`/book?s=${b.slug}`} prefetch={false} className={styles.relatedBook}>
+                <Link
+                  key={b.slug}
+                  href={initial.some((x) => x.slug === b.slug) ? bookPath(b.slug) : `/book?s=${b.slug}`}
+                  prefetch={false}
+                  className={styles.relatedBook}
+                >
                   <BookCover title={b.title} author={b.author} src={b.cover_url} pos={b.cover_pos} />
                   <span>{b.title}</span>
                   {p != null && <span className={styles.relatedPrice}>{formatPrice(p, b.currency)}</span>}
@@ -374,13 +391,17 @@ function BookView({ initial }: { initial: Book[] }) {
   );
 }
 
-export default function BookClient({ initial }: { initial: Book[] }) {
+export default function BookClient({ initial, slug }: { initial: Book[]; slug?: string }) {
   return (
     <section className={`deep ${styles.root}`} data-field="dark">
       <div className="wrapMax">
-        <Suspense fallback={<div className={styles.loading} />}>
-          <BookView initial={initial} />
-        </Suspense>
+        {slug ? (
+          <BookView initial={initial} slug={slug} />
+        ) : (
+          <Suspense fallback={<div className={styles.loading} />}>
+            <QueryBook initial={initial} />
+          </Suspense>
+        )}
       </div>
     </section>
   );

@@ -3,11 +3,12 @@ import Reveal from "@/components/Reveal";
 import Atmosphere from "@/components/Atmosphere";
 import PageHero from "@/components/PageHero";
 import SubmissionForm from "@/components/SubmissionForm";
-import { pageMeta } from "@/lib/seo";
+import { seoMeta } from "@/lib/seo";
 import styles from "./submissions.module.css";
 import { MailLink, Txt, TxtItems } from "@/components/SiteText";
 
-export const metadata: Metadata = pageMeta(
+export const generateMetadata = (): Promise<Metadata> =>
+  seoMeta(
   "Авторам – ВІДЬМАР",
   "Умови прийому рукописів у видавництво ВІДЬМАР: що ми шукаємо і як надіслати текст.",
   "/submissions",

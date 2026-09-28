@@ -318,6 +318,12 @@ function OrderView() {
                 <dt>Доставка</dt>
                 <dd>{order.np_warehouse ? "Нова пошта" : "електронна"}</dd>
               </div>
+              {!!order.discount_cents && (
+                <div>
+                  <dt>Промокод {order.promo_code}</dt>
+                  <dd>−{formatPrice(order.discount_cents, order.currency)}</dd>
+                </div>
+              )}
             </dl>
             <div className={styles.total}>
               <span>Разом</span>

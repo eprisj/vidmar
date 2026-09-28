@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -9,11 +9,23 @@ import {
   adminLogin,
   adminLogout,
   adminMe,
-  getAdminStats,
-  listSubmissions,
+  getOrdersAfter,
+  getPulse,
 } from "@/lib/api";
 import Drawer from "./Drawer";
+import CommandPalette from "./CommandPalette";
+import { requestOpen } from "./openRequest";
+import { uah } from "./labels";
+import p from "./plus.module.css";
+import x from "./extra.module.css";
 import s from "./admin.module.css";
+
+/** Fired on window when new orders arrive, so an open orders table reloads itself. */
+export const NEW_ORDERS_EVENT = "vidmar-admin-new-orders";
+const PULSE_MS = 45_000;
+const PAY: Record<string, string> = { mono: "monobank", liqpay: "LiqPay", iban: "на рахунок", cod: "накладений платіж" };
+
+type Toast = { id: number; total_cents: number; customer_name: string | null; payment_method: string | null };
 
 type Ctx = {
   /** the signed-in admin's login (requests travel on the session cookie) */
@@ -48,6 +60,12 @@ const I = {
   key: "M15 7a4 4 0 1 1-3.9 4.9L4 19v2h3v-2h2v-2h2l1.1-1.1A4 4 0 0 1 15 7zM16 9h.01",
   content: "M4 5h16M4 10h16M4 15h10M4 20h7M17 14l3 3-5 5h-3v-3z",
   reports: "M6 3h9l4 4v14H6zM14 3v5h5M9 17v-3M12 17v-6M15 17v-4",
+  promo: "M3 12V4h8l10 10-8 8zM7.5 7.5h.01",
+  seo: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4M8 11h6M11 8v6",
+  journal: "M12 8v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z",
+  team: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4",
+  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4",
+  settings: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z",
 };
 
 export function Icon({ d, size = 18 }: { d: string; size?: number }) {
@@ -181,6 +199,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [counts, setCounts] = useState<{ awaiting: number; fresh: number }>({ awaiting: 0, fresh: 0 });
   const [tick, setTick] = useState(0);
   const [menu, setMenu] = useState(false);
+  const [find, setFind] = useState(false);
 
   useEffect(() => {
     // a key from the old token sign-in has no use any more
@@ -205,17 +224,56 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     [logout],
   );
 
+  /* The pulse: a cheap poll while the tab is open. It keeps the sidebar counts
+     fresh and, when an order id above the last one seen shows up, raises a toast
+     and puts the number of unseen orders in the tab title. The first answer only
+     sets the mark, so opening the admin never replays old orders. */
+  const seen = useRef<number | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [unseen, setUnseen] = useState(0);
   useEffect(() => {
     if (!token) return;
-    Promise.all([getAdminStats(token, true), listSubmissions(token)])
-      .then(([st, subs]) =>
-        setCounts({
-          awaiting: st.by_status.awaiting_payment ?? 0,
-          fresh: subs.filter((x) => (x.status ?? "new") === "new").length,
-        }),
-      )
-      .catch(fail);
+    let stop = false;
+    const beat = async () => {
+      if (document.hidden && seen.current !== null) return;
+      try {
+        const pl = await getPulse(token);
+        if (stop) return;
+        setCounts({ awaiting: pl.awaiting, fresh: pl.fresh });
+        if (seen.current === null) seen.current = pl.last_order_id;
+        else if (pl.last_order_id > seen.current) {
+          const fresh = await getOrdersAfter(token, seen.current);
+          seen.current = pl.last_order_id;
+          if (stop || !fresh.length) return;
+          setToasts((t) => [...fresh.slice(-3).reverse(), ...t].slice(0, 3));
+          if (document.hidden) setUnseen((n) => n + fresh.length);
+          window.dispatchEvent(new CustomEvent(NEW_ORDERS_EVENT));
+        }
+      } catch (e) {
+        fail(e);
+      }
+    };
+    beat();
+    const t = setInterval(beat, PULSE_MS);
+    const onVisible = () => {
+      if (!document.hidden) {
+        setUnseen(0);
+        beat();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      stop = true;
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [token, tick, fail]);
+
+  // "(2) …" in the tab title while new orders wait unseen in a background tab
+  useEffect(() => {
+    const clean = document.title.replace(/^\(\d+\) /, "");
+    document.title = unseen ? `(${unseen}) ${clean}` : clean;
+  }, [unseen, path]);
 
   useEffect(() => setMenu(false), [path]);
 
@@ -237,7 +295,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     { href: `${base}/manuscripts`, label: "Рукописи", icon: I.scripts, badge: counts.fresh },
     { href: `${base}/subscribers`, label: "Розсилка", icon: I.subs },
     { href: `${base}/content`, label: "Контент", icon: I.content },
+    { href: `${base}/promos`, label: "Промокоди", icon: I.promo },
+    { href: `${base}/seo`, label: "SEO", icon: I.seo },
     { href: `${base}/reports`, label: "Звіти", icon: I.reports },
+    { href: `${base}/audit`, label: "Журнал дій", icon: I.journal },
+    { href: `${base}/team`, label: "Команда", icon: I.team },
+    { href: `${base}/settings`, label: "Налаштування", icon: I.settings },
   ];
   const active = (href: string) => (href === base ? path === base : path.startsWith(href));
 
@@ -256,6 +319,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               </svg>
             </button>
           </div>
+          <button type="button" className={p.searchBtn} onClick={() => setFind(true)}>
+            <Icon d={I.search} size={16} />
+            <span>Пошук</span>
+            <span className={p.kbd}>Ctrl K</span>
+          </button>
           <nav className={s.nav}>
             {nav.map((n) => (
               <Link key={n.href} href={n.href} className={`${s.navItem} ${active(n.href) ? s.navOn : ""}`}>
@@ -282,6 +350,37 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </aside>
         <main className={s.main}>{children}</main>
         {pwOpen && <PasswordDrawer onClose={() => setPwOpen(false)} />}
+        <CommandPalette token={token} base={base} nav={nav} open={find} setOpen={setFind} />
+        {toasts.length > 0 && (
+          <div className={x.toasts} role="status" aria-live="polite">
+            {toasts.map((t) => (
+              <div key={t.id} className={x.toast}>
+                <Link
+                  href={`${base}/orders?open=${t.id}`}
+                  className={x.toastBody}
+                  onClick={() => {
+                    requestOpen("orders", t.id);
+                    setToasts((all) => all.filter((y) => y.id !== t.id));
+                  }}
+                >
+                  <span className={x.toastTitle}>Нове замовлення №{t.id}</span>
+                  <span>
+                    {t.customer_name || "Покупець"} · {uah(t.total_cents)}
+                  </span>
+                  {t.payment_method && <span className={s.dim}>{PAY[t.payment_method] ?? t.payment_method}</span>}
+                </Link>
+                <button
+                  type="button"
+                  className={x.toastClose}
+                  aria-label="Закрити"
+                  onClick={() => setToasts((all) => all.filter((y) => y.id !== t.id))}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </AdminCtx.Provider>
   );

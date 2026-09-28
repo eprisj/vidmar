@@ -5,7 +5,10 @@ import Header from "@/components/Header";
 import CandleLight from "@/components/CandleLight";
 import Footer from "@/components/Footer";
 import ToastProvider from "@/components/ToastProvider";
-import { SITE_URL, pageMeta } from "@/lib/seo";
+import { SITE_URL, getSeoAtBuild, orgJsonLd, seoMeta } from "@/lib/seo";
+import Analytics from "@/components/Analytics";
+import PerfGuard from "@/components/PerfGuard";
+import { LITE_BOOT } from "@/lib/lite";
 import "./globals.css";
 
 /** the hand — slogans and signatures only, never a paragraph.
@@ -34,29 +37,52 @@ const golos = Golos_Text({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  ...pageMeta(
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoAtBuild();
+  const base = await seoMeta(
     "ВІДЬМАР – видавництво",
-    "ВІДЬМАР – бутикове видавництво книг про езотерику, містику й відьомство. Готуємо перше видання і відкриті до рукописів.",
-  ),
-};
+    seo.default_description ||
+      "ВІДЬМАР – бутикове видавництво книг про езотерику, містику й відьомство. Готуємо перше видання і відкриті до рукописів.",
+  );
+  const other: Record<string, string> = {};
+  if (seo.bing_verification) other["msvalidate.01"] = seo.bing_verification;
+  return {
+    metadataBase: new URL(SITE_URL),
+    ...base,
+    ...(seo.google_verification || seo.bing_verification
+      ? { verification: { ...(seo.google_verification ? { google: seo.google_verification } : {}), other } }
+      : {}),
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const seo = await getSeoAtBuild();
   return (
     <html
       lang="uk"
+      // the lite flag is set by the boot script before React ever sees <html>
+      suppressHydrationWarning
       className={`${denistina.variable} ${golos.variable}`}
     >
       <head>
+        {/* weak devices are flagged before the first paint, so they never
+            start the effects they would have to drop a second later */}
+        <script dangerouslySetInnerHTML={{ __html: LITE_BOOT }} />
         {/* the header's cart badge, the catalogue and the book page all ask the
             API; the TLS handshake to it starts while the HTML is still parsing */}
         <link rel="preconnect" href="https://api.vidmar.com.ua" crossOrigin="anonymous" />
       </head>
       <body>
+        <script
+          type="application/ld+json"
+          // the data is ours, built at build time; no user text reaches it
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd(seo)).replace(/</g, "\\u003c") }}
+        />
+        <Analytics />
         <ToastProvider>
           <Header />
           <CandleLight />
+          <PerfGuard />
           <main>{children}</main>
           <Footer />
         </ToastProvider>

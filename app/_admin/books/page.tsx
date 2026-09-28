@@ -1,20 +1,26 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import BookCover from "@/components/BookCover";
 import { Icon, useAdmin } from "@/components/admin/AdminShell";
 import Drawer from "@/components/admin/Drawer";
 import s from "@/components/admin/admin.module.css";
-import { uah } from "@/components/admin/labels";
+import SerpPreview, { Count } from "@/components/admin/SerpPreview";
+import { useOpenRequest } from "@/components/admin/openRequest";
+import { ORDER_STATUS, uah, when } from "@/components/admin/labels";
+import x from "@/components/admin/extra.module.css";
 import {
   createBook,
   deleteBook,
+  getBookSales,
   listAdminBooks,
   updateBook,
   uploadEbook,
   uploadImage,
   type AdminBook,
   type BookInput,
+  type BookSales,
 } from "@/lib/api";
 import { genres } from "@/lib/content";
 import BookFiles from "@/components/admin/BookFiles";
@@ -52,6 +58,9 @@ const EMPTY: BookInput = {
   weight_g: null,
   age_rating: "",
   is_demo: false,
+  seo_title: "",
+  seo_description: "",
+  og_image_url: "",
 };
 
 const toUah = (c: number | null | undefined) => (c == null ? "" : String(c / 100));
@@ -100,18 +109,104 @@ function Field({
   );
 }
 
+/** What the book has earned: copies by format, money, the last sale and the
+ * last orders it was in, each a link into the orders table. */
+function Sales({ bookId }: { bookId: number }) {
+  const { token, base, fail } = useAdmin();
+  const [d, setD] = useState<BookSales | null>(null);
+  useEffect(() => {
+    getBookSales(token, bookId).then(setD).catch(fail);
+  }, [token, bookId, fail]);
+  if (!d) return null;
+  const f = (k: "print" | "ebook") => d.formats.find((r) => r.format === k);
+  const revenue = d.formats.reduce((a, r) => a + Number(r.revenue), 0);
+  const last30 = d.formats.reduce((a, r) => a + (r.copies_30 ?? 0), 0);
+  return (
+    <div className={s.fieldset}>
+      <span className={s.legend}>Продажі · оплачені, без тестових</span>
+      {d.formats.length === 0 ? (
+        <p className={s.dim} style={{ margin: 0 }}>
+          Ще не продавалась.
+        </p>
+      ) : (
+        <div className={x.salesGrid}>
+          <div className={x.salesCell}>
+            <span className={s.dim}>Паперових</span>
+            <span className={x.salesValue}>{f("print")?.copies ?? 0}</span>
+          </div>
+          <div className={x.salesCell}>
+            <span className={s.dim}>Електронних</span>
+            <span className={x.salesValue}>{f("ebook")?.copies ?? 0}</span>
+          </div>
+          <div className={x.salesCell}>
+            <span className={s.dim}>Виручка</span>
+            <span className={x.salesValue}>{uah(revenue)}</span>
+          </div>
+          <div className={x.salesCell}>
+            <span className={s.dim}>За 30 днів</span>
+            <span className={x.salesValue}>{last30} шт.</span>
+          </div>
+        </div>
+      )}
+      {d.last_sale && <span className={s.dim}>Останній продаж {when(d.last_sale)}</span>}
+      {d.recent.length > 0 && (
+        <ul className={x.otherOrders}>
+          {d.recent.map((o) => (
+            <li key={`${o.id}-${o.format}`}>
+              <Link href={`${base}/orders?open=${o.id}`} className={x.otherOrder}>
+                <span className={x.todoMain}>
+                  №{o.id} · {o.customer_name || "–"} · {o.format === "ebook" ? "e-book" : "паперова"} × {o.quantity}
+                </span>
+                <span className={`${s.pill} ${s[`s_${o.status}`]}`}>{ORDER_STATUS[o.status] ?? o.status}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** A copy of a book for the next edition or a sibling title: everything but
+ * what must be unique (address, SKU, ISBN) and what is this copy's own (stock,
+ * files); it starts hidden so nothing half-made reaches the catalogue. */
+function copyOf(b: AdminBook): BookInput {
+  const f = fromBook(b);
+  const title = `${f.title} (копія)`;
+  return { ...f, title, slug: slugify(title), sku: "", isbn: "", stock: null, status: "coming_soon" };
+}
+
 function BookDrawer({
   book,
+  seed,
   onClose,
   onSaved,
+  onDuplicate,
 }: {
   book: AdminBook | null;
+  /** a prefilled new book (a copy); ignored when `book` is set */
+  seed?: BookInput;
   onClose: () => void;
   onSaved: () => void;
+  onDuplicate?: (b: AdminBook) => void;
 }) {
   const { token, fail } = useAdmin();
-  const [f, setF] = useState<BookInput>(book ? fromBook(book) : EMPTY);
+  const initial = useMemo(() => (book ? fromBook(book) : (seed ?? EMPTY)), [book, seed]);
+  const [f, setF] = useState<BookInput>(initial);
   const [slugTouched, setSlugTouched] = useState(!!book);
+  const dirty = JSON.stringify(f) !== JSON.stringify(initial);
+
+  // closing or leaving the page with edits asks first
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  const close = useCallback(() => {
+    if (dirty && !confirm("Є незбережені зміни. Закрити без збереження?")) return;
+    onClose();
+  }, [dirty, onClose]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [upload, setUpload] = useState<Record<string, string>>({});
@@ -150,17 +245,33 @@ function BookDrawer({
 
   return (
     <Drawer
-      title={book ? book.title : "Нова книга"}
-      sub={book ? `${book.sku ?? ""} · ${book.slug}` : "Заповніть і збережіть: книга зʼявиться на сайті одразу, якщо статус «у каталозі»"}
-      onClose={onClose}
+      title={book ? book.title : seed ? "Копія книги" : "Нова книга"}
+      sub={
+        book
+          ? `${book.sku ?? ""} · ${book.slug}`
+          : seed
+            ? "Перевірте назву й адресу: копія збережеться прихованою, без артикула, ISBN і залишку"
+            : "Заповніть і збережіть: книга зʼявиться на сайті одразу, якщо статус «у каталозі»"
+      }
+      onClose={close}
       foot={
         <>
           {book && (
-            <button type="button" className={s.btnDanger} onClick={remove} style={{ marginRight: "auto" }}>
+            <button type="button" className={s.btnDanger} onClick={remove}>
               Видалити
             </button>
           )}
-          <button type="button" className={s.btnGhost} onClick={onClose}>
+          {book && onDuplicate && (
+            <button
+              type="button"
+              className={s.btnGhost}
+              onClick={() => (!dirty || confirm("Незбережені зміни не потраплять у копію. Продовжити?")) && onDuplicate(book)}
+            >
+              Дублювати
+            </button>
+          )}
+          <span className={x.dirty}>{dirty ? "● незбережені зміни" : ""}</span>
+          <button type="button" className={s.btnGhost} onClick={close}>
             Скасувати
           </button>
           <button type="button" className={s.btnPrimary} disabled={busy || !f.title || !f.slug} onClick={save}>
@@ -336,6 +447,34 @@ function BookDrawer({
         </Field>
       </div>
 
+      <div className={s.fieldset}>
+        <span className={s.legend}>Пошук і соцмережі</span>
+        <span className={s.dim}>
+          Порожні поля заповняться самі: заголовок з назви й автора, опис з перших речень опису, картинка з обкладинки. Сторінка
+          книги в пошуку оновлюється після наступного викладання сайту.
+        </span>
+        <label className={s.field}>
+          <span style={{ display: "flex", justifyContent: "space-between" }}>
+            SEO-заголовок <Count n={(f.seo_title ?? "").length} max={60} />
+          </span>
+          <input {...text("seo_title")} placeholder={`${f.title}${f.author ? ` – ${f.author}` : ""} – ВІДЬМАР`} />
+        </label>
+        <label className={s.field}>
+          <span style={{ display: "flex", justifyContent: "space-between" }}>
+            SEO-опис <Count n={(f.seo_description ?? "").length} max={160} />
+          </span>
+          <textarea rows={3} {...text("seo_description")} placeholder="Про що книга і чому її варто прочитати — одне-два речення." />
+        </label>
+        <Field label="Картинка для соцмереж (1200×630), якщо не обкладинка">
+          <input {...text("og_image_url")} placeholder="/media/… або https://…" />
+        </Field>
+        <SerpPreview
+          title={f.seo_title || `${f.title}${f.author ? ` – ${f.author}` : ""} – ВІДЬМАР`}
+          description={f.seo_description || (f.description ?? "").replace(/\s+/g, " ").slice(0, 158)}
+          url={`https://vidmar.com.ua/book/${f.slug || "…"}`}
+        />
+      </div>
+
       {book && (
         <div className={s.fieldset}>
           <span className={s.legend}>Електронна книга · основні файли для покупців</span>
@@ -370,6 +509,8 @@ function BookDrawer({
           </div>
         </div>
       )}
+
+      {book && <Sales bookId={book.id} />}
 
       {book ? (
         <BookFiles bookId={book.id} />
@@ -427,6 +568,11 @@ export default function BooksPage() {
   const [tab, setTab] = useState<"all" | "live" | "hidden" | "low">("all");
   const [q, setQ] = useState("");
   const [open, setOpen] = useState<AdminBook | "new" | null>(null);
+  const [copy, setCopy] = useState<BookInput | null>(null);
+  useOpenRequest("books", books !== null, (id) => {
+    const b = books?.find((x) => x.id === id);
+    if (b) setOpen(b);
+  });
   const [error, setError] = useState("");
 
   const load = useCallback(
@@ -478,7 +624,14 @@ export default function BooksPage() {
           </p>
         </div>
         <div className={s.headActions}>
-          <button type="button" className={s.btnPrimary} onClick={() => setOpen("new")}>
+          <button
+            type="button"
+            className={s.btnPrimary}
+            onClick={() => {
+              setCopy(null);
+              setOpen("new");
+            }}
+          >
             <Icon d={PLUS} size={16} /> Нова книга
           </button>
         </div>
@@ -601,10 +754,18 @@ export default function BooksPage() {
 
       {open && (
         <BookDrawer
-          key={open === "new" ? "new" : open.id}
+          key={open === "new" ? (copy ? "copy" : "new") : open.id}
           book={open === "new" ? null : open}
-          onClose={() => setOpen(null)}
+          seed={open === "new" ? (copy ?? undefined) : undefined}
+          onClose={() => {
+            setOpen(null);
+            setCopy(null);
+          }}
           onSaved={load}
+          onDuplicate={(b) => {
+            setCopy(copyOf(b));
+            setOpen("new");
+          }}
         />
       )}
     </>

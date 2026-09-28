@@ -84,3 +84,11 @@
     mask: none;
   }
 }
+
+/* weak machines (html.lite, lib/lite) drop the non-composited turns, as
+   phones do */
+:global(.lite) .ring,
+:global(.lite) .star,
+:global(.lite) .moon {
+  animation: none;
+}

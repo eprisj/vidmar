@@ -6,6 +6,7 @@ import BookCover from "@/components/BookCover";
 import {
   FORMAT_LABEL,
   apiMessage,
+  checkPromo,
   formatPrice,
   getBooks,
   getMe,
@@ -180,6 +181,11 @@ export default function CartPage() {
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState<PlacedOrder | null>(null);
   const [summaryOn, setSummaryOn] = useState(false);
+  const [promoOpen, setPromoOpen] = useState(false);
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{ code: string; discount_cents: number } | null>(null);
+  const [promoMsg, setPromoMsg] = useState("");
+  const [promoBusy, setPromoBusy] = useState(false);
   const summaryRef = useRef<HTMLElement>(null);
 
   // the phone bar steps aside once the real summary is on screen: two
@@ -244,6 +250,38 @@ export default function CartPage() {
   const full = lines.reduce((s, l) => s + Math.max(l.old_price_cents ?? 0, l.price_cents) * l.quantity, 0);
   const saved = full - total;
   const count = cartCount(lines);
+  const pay = total - (promo?.discount_cents ?? 0);
+
+  // the cart changed under an applied code: ask again, the sum or the minimum may differ now
+  useEffect(() => {
+    if (!promo) return;
+    checkPromo(promo.code, total)
+      .then((r) => {
+        if (r.discount_cents !== promo.discount_cents) setPromo(r);
+      })
+      .catch((e) => {
+        setPromo(null);
+        setPromoOpen(true);
+        setPromoInput(promo.code);
+        setPromoMsg(e instanceof Error ? e.message : "промокод більше не діє");
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [total]);
+
+  async function applyPromo() {
+    const code = promoInput.trim();
+    if (!code) return;
+    setPromoBusy(true);
+    setPromoMsg("");
+    try {
+      setPromo(await checkPromo(code, total));
+      setPromoOpen(false);
+    } catch (e) {
+      setPromoMsg(e instanceof Error ? e.message : "промокод не перевірено");
+    } finally {
+      setPromoBusy(false);
+    }
+  }
 
   const available = useMemo(
     // what works today first; the providers still being connected go last
@@ -307,6 +345,7 @@ export default function CartPage() {
                       : undefined,
                   comment,
                   payment_method: chosen,
+                  promo_code: promo?.code,
                 });
                 clearCart();
                 if (order.payment_url) {
@@ -462,14 +501,56 @@ export default function CartPage() {
                     <dd>−{formatPrice(saved, "UAH")}</dd>
                   </div>
                 )}
+                {promo && (
+                  <div className={styles.save}>
+                    <dt>Промокод {promo.code}</dt>
+                    <dd>−{formatPrice(promo.discount_cents, "UAH")}</dd>
+                  </div>
+                )}
                 <div>
                   <dt>Доставка</dt>
                   <dd>{needsDelivery ? "за тарифом НП" : "не потрібна"}</dd>
                 </div>
               </dl>
+              <div className={styles.promo}>
+                {promo ? (
+                  <div className={styles.promoOn}>
+                    <span>Промокод застосовано</span>
+                    <button type="button" onClick={() => setPromo(null)}>
+                      прибрати
+                    </button>
+                  </div>
+                ) : promoOpen ? (
+                  <>
+                    <div className={styles.promoRow}>
+                      <input
+                        value={promoInput}
+                        onChange={(e) => setPromoInput(e.target.value)}
+                        placeholder="Промокод"
+                        aria-label="Промокод"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            applyPromo();
+                          }
+                        }}
+                      />
+                      <button type="button" onClick={applyPromo} disabled={promoBusy || !promoInput.trim()}>
+                        {promoBusy ? "…" : "Застосувати"}
+                      </button>
+                    </div>
+                    {promoMsg && <p className={styles.promoMsg}>{promoMsg}</p>}
+                  </>
+                ) : (
+                  <button type="button" className={styles.promoToggle} onClick={() => setPromoOpen(true)}>
+                    Маю промокод
+                  </button>
+                )}
+              </div>
               <div className={styles.total}>
                 <span>До сплати</span>
-                <strong>{formatPrice(total, "UAH")}</strong>
+                <strong>{formatPrice(pay, "UAH")}</strong>
               </div>
 
               {error && (
@@ -481,14 +562,14 @@ export default function CartPage() {
                 {busy
                   ? "Оформлюємо…"
                   : chosen && ONLINE.includes(chosen)
-                    ? `Оплатити ${formatPrice(total, "UAH")}`
+                    ? `Оплатити ${formatPrice(pay, "UAH")}`
                     : "Підтвердити замовлення"}
               </button>
 
               <div className={`${styles.phoneBar} ${summaryOn ? styles.phoneBarOff : ""}`} aria-hidden="true">
                 <span>
                   <small>До сплати</small>
-                  <b>{formatPrice(total, "UAH")}</b>
+                  <b>{formatPrice(pay, "UAH")}</b>
                 </span>
                 <button type="submit" className="pill pill--solid" disabled={busy} tabIndex={-1}>
                   {busy ? "Оформлюємо…" : chosen && ONLINE.includes(chosen) ? "Оплатити" : "Оформити"}

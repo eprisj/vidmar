@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, bookPath, getSeoAtBuild } from "@/lib/seo";
+import { getBooksAtBuild } from "@/lib/api";
 
 /** `output: export` builds these as files, which Next only does when the
  * route is explicitly static. */
@@ -19,12 +20,24 @@ const pages: { path: string; priority: number }[] = [
   { path: "/terms", priority: 0.2 },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
-  return pages.map(({ path, priority }) => ({
-    url: `${SITE_URL}${path}`,
-    lastModified,
-    changeFrequency: "monthly",
-    priority,
-  }));
+  if ((await getSeoAtBuild()).noindex) return [];
+  const books = (await getBooksAtBuild()).filter((b) => !b.is_demo);
+  return [
+    ...pages.map(({ path, priority }) => ({
+      url: `${SITE_URL}${path}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority,
+    })),
+    // every book the build baked a page for, with its cover for image search
+    ...books.map((b) => ({
+      url: `${SITE_URL}${bookPath(b.slug)}`,
+      lastModified: b.updated_at ? new Date(b.updated_at) : lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+      ...(b.cover_url ? { images: [new URL(b.cover_url, SITE_URL).href] } : {}),
+    })),
+  ];
 }
