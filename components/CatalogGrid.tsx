@@ -7,6 +7,7 @@ import { discountPct, formatPrice, getBooks, oldPrice, type Book, type Format } 
 import { addLine, useCart } from "@/lib/cart";
 import { useToast } from "./ToastProvider";
 import BookCover from "./BookCover";
+import CatalogEmpty, { NotifyForm } from "./CatalogEmpty";
 import Reveal from "./Reveal";
 import Seal from "./Seal";
 import styles from "./CatalogGrid.module.css";
@@ -262,7 +263,16 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
       </div>
 
       {shown.length === 0 ? (
-        <p className={`body ${styles.none}`}>Нічого не знайшлось. Спробуйте інший напрям чи формат.</p>
+        <CatalogEmpty
+          genre={genres.find((g) => g.slug === genre) ?? null}
+          q={q}
+          format={format}
+          onReset={() => {
+            setGenre(null);
+            setFormat("all");
+            setQ("");
+          }}
+        />
       ) : (
         <div className={styles.books}>
           {shown.map((b, i) => (
@@ -279,6 +289,15 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
 function GenreShelf({ genres }: { genres: Genre[] }) {
   return (
     <>
+      {/* the shelf is bare: say so, and let a reader hear first */}
+      <div className={styles.soon}>
+        <span className={styles.soonSeal} aria-hidden="true" />
+        <h3 className={styles.soonTitle}>Перші книги вже в роботі</h3>
+        <p className={styles.soonText}>
+          Каталог ще наповнюється. Залиште пошту, і ми напишемо, щойно зʼявиться перше видання.
+        </p>
+        <NotifyForm />
+      </div>
       <div className={styles.head}>
         <span className="micro micro--bright">напрями видавництва</span>
         <span className={`micro ${styles.hint}`}>оберіть напрям, щоб дізнатися більше</span>

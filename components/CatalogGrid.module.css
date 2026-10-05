@@ -647,3 +647,39 @@ a.card:hover .arrow {
     min-height: 46px;
   }
 }
+
+/* the whole catalogue is empty: a calm note above the six closed volumes */
+.soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 560px;
+  margin: 0 auto clamp(28px, 5vw, 56px);
+  text-align: center;
+}
+
+.soon form {
+  justify-content: center;
+  width: 100%;
+}
+
+.soonSeal {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(140deg, #f1d58e, #c9a961 50%, #8a6d2f);
+  -webkit-mask: url(/emblem.svg) center / contain no-repeat;
+  mask: url(/emblem.svg) center / contain no-repeat;
+}
+
+.soonTitle {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--on-dark);
+}
+
+.soonText {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--on-dark-mute);
+}
