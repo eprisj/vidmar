@@ -45,40 +45,38 @@
 
 ## Установка на VPS
 
-Нужны Node 20+, git и rsync. Сборке Next нужно около 1–1,5 ГБ памяти, поэтому
-на маленьком VPS стоит включить swap.
+Нужен Node 20+ (git и rsync `install.sh` поставит сам). На сервере, от root:
 
 ```bash
-# пользователь для сборки и группа, через которую API пишет запросы
-useradd --system --create-home --home-dir /srv/vidmar-build-home vidmar-build
-groupadd --system vidmar-publish
-usermod -aG vidmar-publish vidmar-build
-usermod -aG vidmar-publish <пользователь, под которым работает API>
-
-install -d -o vidmar-build -g vidmar-publish -m 2775 /var/lib/vidmar-publish
-install -d -o vidmar-build -g vidmar-build /srv/vidmar-build
-chown -R vidmar-build /var/www/vidmar
-
-install -d /usr/local/lib/vidmar-publish
-install -m 755 vidmar-publish.sh status.mjs /usr/local/lib/vidmar-publish/
-install -d -m 750 -g vidmar-build /etc/vidmar
-install -m 640 -g vidmar-build publish.env.example /etc/vidmar/publish.env
-#   впишите VIDMAR_ADMIN_PATH (последняя часть ADMIN_URL из ~/.vidmar-admin)
-
-cp vidmar-publish.path vidmar-publish.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable --now vidmar-publish.path
-
-# проверка без API
-echo '{"by":"root","at":"'"$(date -Is)"'"}' > /var/lib/vidmar-publish/request.json
-journalctl -fu vidmar-publish
-cat /var/lib/vidmar-publish/status.json
+git clone https://github.com/eprisj/vidmar.git /root/vidmar-src
+cd /root/vidmar-src/ops/publish
+VIDMAR_ADMIN_PATH=<секретный путь админки> ./install.sh
 ```
 
-Скрипт берётся из `/usr/local/lib`, а не из клона: клон переписывается во
-время сборки. После изменений в этой папке файлы нужно установить заново.
+Путь — последняя часть `ADMIN_URL` из `~/.vidmar-admin` на ноутбуке, с
+которого запускают `deploy.sh`.
 
-`deploy.sh` с ноутбука продолжает работать как запасной путь.
+Что делает `install.sh`:
+- проверяет Node и путь: на живом сайте должен быть файл `<путь>.html`;
+- создаёт пользователя `vidmar-build` и группу `vidmar-publish`;
+- готовит `/var/lib/vidmar-publish` и `/srv/vidmar-build`, отдаёт `/var/www/vidmar` пользователю `vidmar-build`;
+- добавляет пользователя `vidmar-api` в группу и перезапускает API. Если API работает от root, этот шаг пропускается;
+- кладёт скрипт в `/usr/local/lib/vidmar-publish`, а настройки в `/etc/vidmar/publish.env`;
+- включает `vidmar-publish.path`;
+- подсказывает, как добавить swap, если памяти меньше 2 ГБ.
+
+Запускать повторно безопасно. После изменений в этой папке перезапустите
+`install.sh`: скрипт берётся из `/usr/local/lib`, а не из клона, потому что
+клон переписывается во время сборки.
+
+Защита от ошибок в настройках: если `VIDMAR_ADMIN_PATH` пуст или не
+совпадает с путём живой админки, публикация останавливается до сборки, сайт
+не трогается. Чтобы намеренно перенести админку на новый путь, задайте один
+раз `ADMIN_PATH_MOVE=1` в `publish.env`.
+
+`deploy.sh` с ноутбука продолжает работать как запасной путь. Если на сервере
+есть `vidmar-build`, он выкладывает файлы от его имени, чтобы серверная
+публикация могла их перезаписать.
 
 ## API
 

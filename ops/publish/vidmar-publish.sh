@@ -50,7 +50,7 @@ build_once() {
   fi
   cd "$SRC_DIR"
   git fetch --depth 50 origin "$BRANCH" >>"$LOG" 2>&1
-  git reset --hard "origin/$BRANCH" >>"$LOG" 2>&1
+  git reset --hard FETCH_HEAD >>"$LOG" 2>&1
   # the last run's admin copy and anything else untracked; dependencies and the build cache stay
   git clean -fdx -e node_modules -e .next >>"$LOG" 2>&1
   COMMIT="$(git rev-parse HEAD)"
@@ -65,11 +65,7 @@ build_once() {
   STEP="помилка під час збирання сайту"
   # the catalogue is baked with a cached fetch: a fresh build must ask the API again
   rm -rf .next/cache/fetch-cache
-  if [ -n "$ADMIN_PATH" ]; then
-    cp -R app/_admin "app/$ADMIN_PATH"
-  else
-    echo "!! VIDMAR_ADMIN_PATH is not set: building WITHOUT the admin" >>"$LOG"
-  fi
+  cp -R app/_admin "app/$ADMIN_PATH"
   npm run build >>"$LOG" 2>&1
 
   STEP="API не віддав каталог під час збирання – сайт не чіпали"
@@ -79,7 +75,7 @@ build_once() {
     echo "!! no book pages in out/, $(book_pages "$WEB_ROOT") on the site" >>"$LOG"
     false
   fi
-  if [ -n "$ADMIN_PATH" ] && [ ! -e "out/$ADMIN_PATH.html" ] && [ ! -e "out/$ADMIN_PATH/index.html" ]; then
+  if [ ! -e "out/$ADMIN_PATH.html" ] && [ ! -e "out/$ADMIN_PATH/index.html" ]; then
     STEP="адмінка не зібралася – сайт не чіпали"
     false
   fi
@@ -91,6 +87,23 @@ build_once() {
   rm -f "$RUN"
   echo "published $COMMIT" >>"$LOG"
 }
+
+# Without the admin's path the build has no admin, and rsync --delete would
+# take the live one off the site; a path that differs from the live one (a
+# typo in publish.env) would quietly move it. Both stop before anything runs.
+# ADMIN_PATH_MOVE=1 allows a deliberate move to a new path, once.
+if [ -z "$ADMIN_PATH" ]; then
+  rm -f "$REQ"
+  STEP="на сервері не задано VIDMAR_ADMIN_PATH (/etc/vidmar/publish.env) – сайт не чіпали"
+  : >"$LOG"
+  false
+fi
+if [ -e "$WEB_ROOT/index.html" ] && [ ! -e "$WEB_ROOT/$ADMIN_PATH.html" ] && [ "${ADMIN_PATH_MOVE:-}" != 1 ]; then
+  rm -f "$REQ"
+  STEP="адмінки за шляхом із publish.env на сайті немає – перевірте VIDMAR_ADMIN_PATH; сайт не чіпали"
+  : >"$LOG"
+  false
+fi
 
 while [ -e "$REQ" ]; do
   build_once
