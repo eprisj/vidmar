@@ -620,3 +620,120 @@ a.order:hover {
   width: 16px;
   height: 16px;
 }
+
+/* ---------------- the shelf ---------------- */
+.shelf {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.shelfLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #d9b45f;
+}
+
+.shelfRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 0 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.shelfRow::-webkit-scrollbar {
+  display: none;
+}
+
+.shelfBook {
+  flex: none;
+  width: 58px;
+  transform-origin: bottom center;
+  transition: transform 0.3s var(--ease);
+}
+
+.shelfBook:nth-child(3n + 2) {
+  width: 52px;
+}
+
+.shelfBook:hover {
+  transform: translateY(-6px) rotate(-2deg);
+}
+
+.shelfBook > div {
+  box-shadow: 4px 6px 12px -4px rgba(0, 0, 0, 0.7);
+}
+
+/* a dark wood board with a gold edge */
+.shelfBoard {
+  height: 10px;
+  margin-top: -10px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #e9cd84 0 2px, #3a2a14 2px, #1e150a);
+  box-shadow: 0 12px 18px -10px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------------- the order's way ---------------- */
+.track {
+  display: flex;
+  gap: 4px;
+  margin: 6px 0 2px;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  font-size: 0.68rem;
+  color: var(--on-dark-mute);
+  opacity: 0.6;
+}
+
+.step i {
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(245, 222, 179, 0.15);
+}
+
+.stepOn {
+  opacity: 1;
+}
+
+.stepOn i {
+  background: linear-gradient(90deg, #b8913f, #e9cd84);
+}
+
+.stepNow span {
+  color: #e9cd84;
+  font-weight: 600;
+}
+
+.stepNow i {
+  box-shadow: 0 0 10px rgba(233, 205, 132, 0.6);
+  animation: glow 2.4s ease-in-out infinite;
+}
+
+@keyframes glow {
+  50% {
+    box-shadow: 0 0 2px rgba(233, 205, 132, 0.2);
+  }
+}
+
+@media (max-width: 600px) {
+  .step span {
+    display: none;
+  }
+
+  .stepNow span {
+    display: block;
+    white-space: nowrap;
+  }
+}

@@ -38,7 +38,8 @@ const SECTIONS = [
 ] as const;
 
 function Orders({ orders }: { orders: MyOrder[] | null }) {
-  if (orders === null) return <div className={styles.skeleton} aria-busy="true" />;
+  if (orders === null)
+    return <div className={styles.skeleton} aria-busy="true" />;
 
   if (orders.length === 0) {
     return (
@@ -52,58 +53,144 @@ function Orders({ orders }: { orders: MyOrder[] | null }) {
     );
   }
 
+  // every book bought, once, newest first: the reader's own shelf
+  const seen = new Set<string>();
+  const shelf = orders
+    .filter((o) => o.status !== "cancelled")
+    .flatMap((o) => o.items)
+    .filter((i) => (seen.has(i.title) ? false : (seen.add(i.title), true)));
+
   return (
-    <ul className={styles.orders}>
-      {orders.map((o) => {
-        const st = STATUS[o.status] ?? { text: o.status, tone: "wait" };
-        const count = o.items.reduce((n, i) => n + i.quantity, 0);
-        const href = o.access_token ? `/order?id=${o.id}&t=${o.access_token}` : null;
-        const body = (
-          <>
-            <span className={styles.covers} aria-hidden="true">
-              {o.items.slice(0, 3).map((i, k) => (
-                <span key={k} className={styles.cover}>
-                  <BookCover title={i.title} src={i.cover_url} pos={i.cover_pos} size="small" />
-                </span>
-              ))}
-            </span>
-            <span className={styles.orderInfo}>
-              <span className={styles.orderTop}>
-                <b>№{o.id}</b>
-                <span className={`${styles.status} ${styles[st.tone]}`}>{st.text}</span>
+    <>
+      {shelf.length > 0 && (
+        <div className={styles.shelf}>
+          <span className={styles.shelfLabel}>
+            Ваша полиця · {shelf.length}
+          </span>
+          <div className={styles.shelfRow}>
+            {shelf.slice(0, 12).map((i) => (
+              <span key={i.title} className={styles.shelfBook} title={i.title}>
+                <BookCover
+                  title={i.title}
+                  src={i.cover_url}
+                  pos={i.cover_pos}
+                  size="small"
+                />
               </span>
-              <span className={styles.orderTitles}>{o.items.map((i) => i.title).join(", ")}</span>
-              <span className={styles.orderMeta}>
-                {new Date(o.created_at).toLocaleDateString("uk-UA", { day: "numeric", month: "long", year: "numeric" })}
-                {" · "}
-                {count} {count === 1 ? "книга" : count < 5 ? "книги" : "книг"}
-                {o.payment_method && ` · ${PAY_INFO[o.payment_method]?.title ?? ""}`}
-                {o.ttn && ` · ТТН ${o.ttn}`}
+            ))}
+          </div>
+          <span className={styles.shelfBoard} aria-hidden="true" />
+        </div>
+      )}
+      <ul className={styles.orders}>
+        {orders.map((o) => {
+          const st = STATUS[o.status] ?? { text: o.status, tone: "wait" };
+          const count = o.items.reduce((n, i) => n + i.quantity, 0);
+          const href = o.access_token
+            ? `/order?id=${o.id}&t=${o.access_token}`
+            : null;
+          const body = (
+            <>
+              <span className={styles.covers} aria-hidden="true">
+                {o.items.slice(0, 3).map((i, k) => (
+                  <span key={k} className={styles.cover}>
+                    <BookCover
+                      title={i.title}
+                      src={i.cover_url}
+                      pos={i.cover_pos}
+                      size="small"
+                    />
+                  </span>
+                ))}
               </span>
-            </span>
-            <span className={styles.orderSum}>{formatPrice(o.total_cents, o.currency)}</span>
-          </>
-        );
-        return (
-          <li key={o.id}>
-            {href ? (
-              <Link href={href} prefetch={false} className={styles.order}>
-                {body}
-                <span className={styles.chev} aria-hidden="true">
-                  →
+              <span className={styles.orderInfo}>
+                <span className={styles.orderTop}>
+                  <b>№{o.id}</b>
+                  <span className={`${styles.status} ${styles[st.tone]}`}>
+                    {st.text}
+                  </span>
                 </span>
-              </Link>
-            ) : (
-              <div className={styles.order}>{body}</div>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+                <span className={styles.orderTitles}>
+                  {o.items.map((i) => i.title).join(", ")}
+                </span>
+                {o.status !== "cancelled" && o.status !== "fulfilled" && (
+                  <Track status={o.status} cod={o.payment_method === "cod"} />
+                )}
+                <span className={styles.orderMeta}>
+                  {new Date(o.created_at).toLocaleDateString("uk-UA", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                  {" · "}
+                  {count} {count === 1 ? "книга" : count < 5 ? "книги" : "книг"}
+                  {o.payment_method &&
+                    ` · ${PAY_INFO[o.payment_method]?.title ?? ""}`}
+                  {o.ttn && ` · ТТН ${o.ttn}`}
+                </span>
+              </span>
+              <span className={styles.orderSum}>
+                {formatPrice(o.total_cents, o.currency)}
+              </span>
+            </>
+          );
+          return (
+            <li key={o.id}>
+              {href ? (
+                <Link href={href} prefetch={false} className={styles.order}>
+                  {body}
+                  <span className={styles.chev} aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              ) : (
+                <div className={styles.order}>{body}</div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }
 
-function Profile({ user, onSaved }: { user: User; onSaved: (u: User) => void }) {
+/** where an order is on its way: placed, paid, on the road, received */
+const STEPS = ["Оформлено", "Оплачено", "У дорозі", "Отримано"];
+const STEP_OF: Record<string, number> = {
+  awaiting_payment: 0,
+  paid: 1,
+  shipped: 2,
+  fulfilled: 3,
+};
+
+function Track({ status, cod }: { status: string; cod: boolean }) {
+  const at = STEP_OF[status];
+  if (at === undefined) return null;
+  const steps = cod
+    ? ["Оформлено", "Підтверджено", "У дорозі", "Отримано"]
+    : STEPS;
+  return (
+    <span className={styles.track} aria-label={`Етап: ${steps[at]}`}>
+      {steps.map((label, k) => (
+        <span
+          key={label}
+          className={`${styles.step} ${k <= at ? styles.stepOn : ""} ${k === at ? styles.stepNow : ""}`}
+        >
+          <i aria-hidden="true" />
+          <span>{label}</span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function Profile({
+  user,
+  onSaved,
+}: {
+  user: User;
+  onSaved: (u: User) => void;
+}) {
   const toast = useToast();
   const [name, setName] = useState(user.name || "");
   const [phone, setPhone] = useState(user.phone || "");
@@ -130,12 +217,21 @@ function Profile({ user, onSaved }: { user: User; onSaved: (u: User) => void }) 
     >
       <label className={styles.field}>
         <span>Імʼя та прізвище</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoComplete="name"
+        />
       </label>
       <div className={styles.row2}>
         <label className={styles.field}>
           <span>Пошта</span>
-          <input value={user.email} readOnly aria-readonly="true" className={styles.readonly} />
+          <input
+            value={user.email}
+            readOnly
+            aria-readonly="true"
+            className={styles.readonly}
+          />
         </label>
         <label className={styles.field}>
           <span>Телефон</span>
@@ -155,7 +251,11 @@ function Profile({ user, onSaved }: { user: User; onSaved: (u: User) => void }) 
         </p>
       )}
       <div className={styles.formEnd}>
-        <button type="submit" className="pill pill--solid" disabled={busy || !dirty}>
+        <button
+          type="submit"
+          className="pill pill--solid"
+          disabled={busy || !dirty}
+        >
           {busy ? "Зберігаємо…" : "Зберегти"}
         </button>
       </div>
@@ -163,10 +263,18 @@ function Profile({ user, onSaved }: { user: User; onSaved: (u: User) => void }) 
   );
 }
 
-function Delivery({ user, onSaved }: { user: User; onSaved: (u: User) => void }) {
+function Delivery({
+  user,
+  onSaved,
+}: {
+  user: User;
+  onSaved: (u: User) => void;
+}) {
   const toast = useToast();
   const d = user.delivery;
-  const [city, setCity] = useState<NpCity | null>(d ? { ref: d.cityRef, name: d.cityName, area: d.area || "" } : null);
+  const [city, setCity] = useState<NpCity | null>(
+    d ? { ref: d.cityRef, name: d.cityName, area: d.area || "" } : null,
+  );
   const [warehouse, setWarehouse] = useState<NpWarehouse | null>(
     d ? { ref: d.warehouseRef, name: d.warehouseName, number: "" } : null,
   );
@@ -180,7 +288,13 @@ function Delivery({ user, onSaved }: { user: User; onSaved: (u: User) => void })
         delivery:
           clear || !city || !warehouse
             ? null
-            : { cityRef: city.ref, cityName: city.name, area: city.area, warehouseRef: warehouse.ref, warehouseName: warehouse.name },
+            : {
+                cityRef: city.ref,
+                cityName: city.name,
+                area: city.area,
+                warehouseRef: warehouse.ref,
+                warehouseName: warehouse.name,
+              },
       });
       onSaved(u);
       if (clear) {
@@ -197,14 +311,29 @@ function Delivery({ user, onSaved }: { user: User; onSaved: (u: User) => void })
 
   return (
     <div className={styles.form}>
-      <NovaPoshta city={city} setCity={setCity} warehouse={warehouse} setWarehouse={setWarehouse} />
+      <NovaPoshta
+        city={city}
+        setCity={setCity}
+        warehouse={warehouse}
+        setWarehouse={setWarehouse}
+      />
       <div className={styles.formEnd}>
         {d && (
-          <button type="button" className={styles.textBtn} disabled={busy} onClick={() => save(true)}>
+          <button
+            type="button"
+            className={styles.textBtn}
+            disabled={busy}
+            onClick={() => save(true)}
+          >
             Прибрати адресу
           </button>
         )}
-        <button type="button" className="pill pill--solid" disabled={busy || !warehouse || !changed} onClick={() => save()}>
+        <button
+          type="button"
+          className="pill pill--solid"
+          disabled={busy || !warehouse || !changed}
+          onClick={() => save()}
+        >
           {busy ? "Зберігаємо…" : "Зберегти адресу"}
         </button>
       </div>
@@ -212,7 +341,13 @@ function Delivery({ user, onSaved }: { user: User; onSaved: (u: User) => void })
   );
 }
 
-function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void }) {
+function Security({
+  user,
+  onSaved,
+}: {
+  user: User;
+  onSaved: (u: User) => void;
+}) {
   const toast = useToast();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
@@ -229,29 +364,46 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
           setBusy(true);
           setError("");
           try {
-            await changePassword(user.has_password === false ? "" : current, next);
-            if (user.has_password === false) onSaved({ ...user, has_password: true });
+            await changePassword(
+              user.has_password === false ? "" : current,
+              next,
+            );
+            if (user.has_password === false)
+              onSaved({ ...user, has_password: true });
             setCurrent("");
             setNext("");
             toast("пароль змінено, інші пристрої вийшли з акаунта");
           } catch (err) {
-            setError(err instanceof Error ? err.message : "не вдалося змінити пароль");
+            setError(
+              err instanceof Error ? err.message : "не вдалося змінити пароль",
+            );
           } finally {
             setBusy(false);
           }
         }}
       >
-        <span className={styles.subhead}>{user.has_password === false ? "Встановити пароль" : "Пароль"}</span>
+        <span className={styles.subhead}>
+          {user.has_password === false ? "Встановити пароль" : "Пароль"}
+        </span>
         {user.google && (
           <span className={styles.googleOn}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.2 14.6 2.2 12 2.2 6.6 2.2 2.3 6.6 2.3 12s4.3 9.8 9.7 9.8c5.6 0 9.3-3.9 9.3-9.5 0-.6-.1-1.1-.2-1.6H12z" />
+              <path
+                fill="#EA4335"
+                d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.2 14.6 2.2 12 2.2 6.6 2.2 2.3 6.6 2.3 12s4.3 9.8 9.7 9.8c5.6 0 9.3-3.9 9.3-9.5 0-.6-.1-1.1-.2-1.6H12z"
+              />
             </svg>
             Вхід через Google підключено
           </span>
         )}
         {/* lets the browser's password manager tie the new password to this account */}
-        <input type="email" value={user.email} autoComplete="username" readOnly hidden />
+        <input
+          type="email"
+          value={user.email}
+          autoComplete="username"
+          readOnly
+          hidden
+        />
         {user.has_password !== false && (
           <label className={styles.field}>
             <span>Поточний пароль</span>
@@ -284,9 +436,17 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
           <button
             type="submit"
             className="pill"
-            disabled={busy || (user.has_password !== false && !current) || next.length < 8}
+            disabled={
+              busy ||
+              (user.has_password !== false && !current) ||
+              next.length < 8
+            }
           >
-            {busy ? "Зберігаємо…" : user.has_password === false ? "Встановити пароль" : "Змінити пароль"}
+            {busy
+              ? "Зберігаємо…"
+              : user.has_password === false
+                ? "Встановити пароль"
+                : "Змінити пароль"}
           </button>
         </div>
       </form>
@@ -320,9 +480,28 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
   );
 }
 
-const MONTHS = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+const MONTHS = [
+  "січня",
+  "лютого",
+  "березня",
+  "квітня",
+  "травня",
+  "червня",
+  "липня",
+  "серпня",
+  "вересня",
+  "жовтня",
+  "листопада",
+  "грудня",
+];
 
-function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }) {
+function Cabinet({
+  user: initial,
+  signOut,
+}: {
+  user: User;
+  signOut: () => void;
+}) {
   const [user, setUser] = useState(initial);
   const [orders, setOrders] = useState<MyOrder[] | null>(null);
   const [current, setCurrent] = useState<string>(SECTIONS[0][0]);
@@ -341,7 +520,10 @@ function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }
       })()
     : "";
   const live = (orders || []).filter((o) => o.status !== "cancelled");
-  const books = live.reduce((n, o) => n + o.items.reduce((k, i) => k + i.quantity, 0), 0);
+  const books = live.reduce(
+    (n, o) => n + o.items.reduce((k, i) => k + i.quantity, 0),
+    0,
+  );
 
   useEffect(() => {
     listMyOrders()
@@ -351,10 +533,14 @@ function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }
 
   // the tab of the panel in view lights up as the page scrolls
   useEffect(() => {
-    const els = SECTIONS.map(([id]) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const els = SECTIONS.map(([id]) => document.getElementById(id)).filter(
+      Boolean,
+    ) as HTMLElement[];
     const io = new IntersectionObserver(
       (entries) => {
-        const seen = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        const seen = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
         if (seen[0]) setCurrent(seen[0].target.id);
       },
       { rootMargin: "-30% 0px -55% 0px" },
@@ -370,15 +556,26 @@ function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }
         <div className={styles.who}>
           {user.avatar_url ? (
             // Google's own avatar URL: a plain img, not next/image (static export)
-            <img className={styles.avatar} src={user.avatar_url} alt="" width={64} height={64} referrerPolicy="no-referrer" />
+            <img
+              className={styles.avatar}
+              src={user.avatar_url}
+              alt=""
+              width={64}
+              height={64}
+              referrerPolicy="no-referrer"
+            />
           ) : (
             <span className={styles.monogram} aria-hidden="true">
               {initials}
             </span>
           )}
           <div className={styles.whoText}>
-            <span className={styles.kicker}>{since ? `Читач з ${since}` : "Кабінет читача"}</span>
-            <h2 className={styles.hello}>{first ? `Вітаємо, ${first}` : "Вітаємо"}</h2>
+            <span className={styles.kicker}>
+              {since ? `Читач з ${since}` : "Кабінет читача"}
+            </span>
+            <h2 className={styles.hello}>
+              {first ? `Вітаємо, ${first}` : "Вітаємо"}
+            </h2>
             <p className={styles.email}>{user.email}</p>
           </div>
         </div>
@@ -400,14 +597,22 @@ function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }
             </div>
           )}
         </dl>
-        <button type="button" className={`pill ${styles.out}`} onClick={signOut}>
+        <button
+          type="button"
+          className={`pill ${styles.out}`}
+          onClick={signOut}
+        >
           Вийти
         </button>
       </header>
 
       <nav className={styles.tabs} aria-label="Розділи кабінету">
         {SECTIONS.map(([id, label]) => (
-          <a key={id} href={`#${id}`} aria-current={current === id ? "true" : undefined}>
+          <a
+            key={id}
+            href={`#${id}`}
+            aria-current={current === id ? "true" : undefined}
+          >
             {label}
           </a>
         ))}
@@ -437,7 +642,13 @@ function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }
         </div>
 
         <aside id="card" className={styles.side}>
-          {user.reader_code && <ReaderCard code={user.reader_code} name={user.name} createdAt={user.created_at} />}
+          {user.reader_code && (
+            <ReaderCard
+              code={user.reader_code}
+              name={user.name}
+              createdAt={user.created_at}
+            />
+          )}
         </aside>
       </div>
     </div>
@@ -452,7 +663,12 @@ export default function AccountPage() {
       <section className={`ink ${styles.root}`} data-field="dark">
         <div className="wrapMax">
           <AuthGate
-            aside={<p>Історія замовлень, збережена адреса доставки й картка читача з QR-кодом.</p>}
+            aside={
+              <p>
+                Історія замовлень, збережена адреса доставки й картка читача з
+                QR-кодом.
+              </p>
+            }
           >
             {(user, signOut) => <Cabinet user={user} signOut={signOut} />}
           </AuthGate>
