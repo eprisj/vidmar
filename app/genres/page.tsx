@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GENRE_PLATE } from "@/lib/plates";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
@@ -11,14 +12,7 @@ import { Txt } from "@/components/SiteText";
  * generated stone-and-tint texture recoloured six times — each picked for
  * what the genre actually is, not just tinted differently. All public
  * domain (Doré, d. 1883); duotone-mapped to the site's ink/paper values. */
-const tilePlate: Record<string, string> = {
-  ezoteryka: "mystique-forest",
-  vidmovstvo: "macbeth-cave",
-  tryler: "bluebeard",
-  psyhroman: "death-moon",
-  fentezi: "fantasy-giant",
-  "mistyka-proza": "witches-storm",
-};
+const tilePlate = GENRE_PLATE;
 
 /** Native width of each plate's largest export, for the srcSet descriptor.
  * Restored from the pre-optimisation scans in git history (2x–3x what the

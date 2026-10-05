@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { showsNote, type Genre } from "@/lib/content";
-import Atmosphere from "./Atmosphere";
-import Seal from "./Seal";
+import { GENRE_PLATE } from "@/lib/plates";
 import styles from "./GenreRows.module.css";
 
 /**
@@ -15,13 +14,19 @@ import styles from "./GenreRows.module.css";
 export default function GenreRows({ genres }: { genres: Genre[] }) {
   const [active, setActive] = useState<number | null>(null);
   const [enabled, setEnabled] = useState(false);
+  // the plates load on the first hover, not with the page
+  const [warm, setWarm] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
   const target = useRef({ x: 0, y: 0 });
   const pos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fine = window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    ).matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     setEnabled(fine && !reduced);
   }, []);
 
@@ -59,7 +64,10 @@ export default function GenreRows({ genres }: { genres: Genre[] }) {
             href={`/genres#${g.slug}`}
             className={`${styles.row} ${active === i ? styles.rowOn : ""}`}
             style={{ "--tint": g.tint } as CSSProperties}
-            onPointerEnter={() => setActive(i)}
+            onPointerEnter={() => {
+              setActive(i);
+              setWarm(true);
+            }}
           >
             <span className={styles.title}>{g.title}</span>
             {showsNote(genres, i) && <span className="micro">{g.note}</span>}
@@ -75,12 +83,30 @@ export default function GenreRows({ genres }: { genres: Genre[] }) {
           style={{ "--tint": current?.tint ?? "#161616" } as CSSProperties}
           aria-hidden="true"
         >
-          <Atmosphere />
+          {/* every plate stacked, the hovered one faded in: switching rows
+              crossfades instead of flashing an empty panel while it loads */}
+          {warm &&
+            genres.map((g, i) => {
+              const plate = GENRE_PLATE[g.slug];
+              return plate ? (
+                <img
+                  key={g.slug}
+                  className={`${styles.panelImg} ${active === i ? styles.panelImgOn : ""}`}
+                  src={`/gravure/${plate}-2xs.webp`}
+                  srcSet={`/gravure/${plate}-2xs.webp 360w, /gravure/${plate}-xs.webp 560w`}
+                  sizes="340px"
+                  alt=""
+                  decoding="async"
+                />
+              ) : null;
+            })}
           <span className={styles.panelTint} />
-          <span className={styles.panelSeal}>
-            <Seal ticks={42} star={false} />
+          <span className={styles.panelSeal} />
+          <span className={styles.panelText}>
+            <span className={styles.panelKicker}>Напрям</span>
+            <span className={styles.panelTitle}>{current?.title}</span>
+            <span className={styles.panelMore}>Дивитися книги →</span>
           </span>
-          <span className={styles.panelTitle}>{current?.title}</span>
         </div>
       )}
     </>
