@@ -1,0 +1,16 @@
+[Unit]
+Description=Build and publish vidmar.com.ua
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=vidmar-build
+Group=vidmar-publish
+UMask=0002
+EnvironmentFile=/etc/vidmar/publish.env
+ExecStart=/usr/local/lib/vidmar-publish/vidmar-publish.sh
+# a run killed by the timeout or a stop must not leave "building" behind
+ExecStopPost=/usr/bin/env node /usr/local/lib/vidmar-publish/status.mjs /var/lib/vidmar-publish/status.json stale
+TimeoutStartSec=20min
+Nice=10

@@ -563,7 +563,7 @@ function StockCell({ b, onSaved }: { b: AdminBook; onSaved: () => void }) {
 }
 
 export default function BooksPage() {
-  const { token, fail } = useAdmin();
+  const { token, fail, refreshCounts } = useAdmin();
   const [books, setBooks] = useState<AdminBook[] | null>(null);
   const [tab, setTab] = useState<"all" | "live" | "hidden" | "low">("all");
   const [q, setQ] = useState("");
@@ -590,6 +590,12 @@ export default function BooksPage() {
     load();
   }, [load]);
 
+  // a saved book is waiting to be published: reload the list and the sidebar's publish count
+  const changed = useCallback(() => {
+    load();
+    refreshCounts();
+  }, [load, refreshCounts]);
+
   const all = books ?? [];
   const tabs = {
     all: all,
@@ -608,7 +614,7 @@ export default function BooksPage() {
   async function toggleLive(b: AdminBook) {
     try {
       await updateBook(token, b.id, { status: b.status === "published" ? "coming_soon" : "published" });
-      load();
+      changed();
     } catch (e) {
       setError(fail(e));
     }
@@ -724,7 +730,7 @@ export default function BooksPage() {
                     )}
                   </td>
                   <td className={s.right}>
-                    <StockCell b={b} onSaved={load} />
+                    <StockCell b={b} onSaved={changed} />
                   </td>
                   <td className={s.hideSm}>
                     <span className={s.dim}>
@@ -761,7 +767,7 @@ export default function BooksPage() {
             setOpen(null);
             setCopy(null);
           }}
-          onSaved={load}
+          onSaved={changed}
           onDuplicate={(b) => {
             setCopy(copyOf(b));
             setOpen("new");

@@ -1,0 +1,9 @@
+[Unit]
+Description=Publish vidmar.com.ua when the admin asks
+
+[Path]
+PathExists=/var/lib/vidmar-publish/request.json
+Unit=vidmar-publish.service
+
+[Install]
+WantedBy=multi-user.target

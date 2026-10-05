@@ -69,7 +69,7 @@ function Panel({ title, sub, children }: { title: string; sub?: string; children
 }
 
 export default function SeoPage() {
-  const { token, fail } = useAdmin();
+  const { token, fail, refreshCounts } = useAdmin();
   const [seo, setSeo] = useState<SeoSettings | null>(null);
   const [saved, setSaved] = useState<string>("");
   const [books, setBooks] = useState<AdminBook[]>([]);
@@ -140,7 +140,8 @@ export default function SeoPage() {
       const next = await saveSeo(token, seo);
       setSeo(next);
       setSaved(JSON.stringify(next));
-      setMsg("Збережено. Аналітика діє вже зараз; заголовки, описи й коди підтвердження зʼявляться на сайті після наступного викладання.");
+      setMsg("Збережено. Аналітика діє вже зараз; заголовки, описи й коди підтвердження зʼявляться на сайті після публікації (кнопка внизу меню).");
+      refreshCounts();
     } catch (e) {
       setError(fail(e));
     } finally {

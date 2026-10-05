@@ -1120,3 +1120,46 @@ export function addSubscriber(_token: string, email: string): Promise<{ id: numb
 export function removeSubscriber(_token: string, id: number) {
   return adminRequest(`/admin/subscribers/${id}`, _token, { method: "DELETE" });
 }
+
+// --- publishing: the site is a static export, so what the admin changes in
+// books, SEO and texts reaches the HTML (search results, shared links, new
+// book pages) only when the server rebuilds it. See ops/publish/README.md.
+
+export type PublishState = "idle" | "building" | "ok" | "failed";
+export type PublishStatus = {
+  /** the last run: "building" while one is going */
+  state: PublishState;
+  /** asked for and not started yet (a request made during a build waits for the next one) */
+  queued: boolean;
+  requested_by: string | null;
+  requested_at: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  /** when the last good build read the catalogue: changes after this are not on the site yet */
+  published_at: string | null;
+  /** when the last good build went live */
+  published_done_at: string | null;
+  commit: string | null;
+  error: string | null;
+  /** the end of the build log, kept only when it failed */
+  log: string[];
+  pending: {
+    books: { id: number; title: string; updated_at: string }[];
+    deleted_books: number;
+    texts: { key: string; updated_at: string }[];
+    seo: boolean;
+  };
+};
+
+/** null when the API has no publishing yet, so the admin hides the button */
+export async function getPublishStatus(_token: string): Promise<PublishStatus | null> {
+  try {
+    return await adminRequest("/admin/publish", _token);
+  } catch (err) {
+    if (err instanceof ApiError && /\((404|405|501)\)|not found/.test(err.message)) return null;
+    throw err;
+  }
+}
+export function requestPublish(_token: string): Promise<PublishStatus> {
+  return adminRequest("/admin/publish", _token, { method: "POST", body: "{}" });
+}
