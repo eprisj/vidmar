@@ -1,3 +1,9 @@
+@property --p {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
 .root {
   padding-block: clamp(28px, 4vw, 56px) clamp(60px, 8vw, 110px);
 }
@@ -58,15 +64,14 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--ink);
   background: radial-gradient(circle at 30% 25%, #fff3cf, #e9cd84 45%, #b8913f);
-  box-shadow: 0 0 0 3px rgba(11, 22, 43, 0.6), 0 0 0 4px rgba(217, 180, 95, 0.5);
 }
 
 .stats {
@@ -602,10 +607,9 @@ a.order:hover {
 
 .avatar {
   flex: none;
-  width: 64px;
-  height: 64px;
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(11, 22, 43, 0.6), 0 0 0 4px rgba(217, 180, 95, 0.5);
 }
 
 .googleOn {
@@ -735,5 +739,82 @@ a.order:hover {
   .stepNow span {
     display: block;
     white-space: nowrap;
+  }
+}
+
+/* ---------------- banner: degree ring and fireflies ---------------- */
+.ring {
+  --p: 0;
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: conic-gradient(#e9cd84 calc(var(--p) * 360deg), rgba(245, 222, 179, 0.1) 0);
+  transition: --p 1s var(--ease);
+}
+
+.ring::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: #12254a;
+}
+
+.ring > * {
+  position: relative;
+  z-index: 1;
+}
+
+.rank {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--on-dark-mute);
+}
+
+.rank b {
+  color: #e9cd84;
+  font-weight: 600;
+}
+
+.flies {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.flies i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #f6e7b4;
+  box-shadow: 0 0 6px 2px rgba(240, 212, 130, 0.45);
+  opacity: 0;
+  animation: fly 7s ease-in-out infinite;
+}
+
+@keyframes fly {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  30%,
+  70% {
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(14px, -18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flies {
+    display: none;
   }
 }

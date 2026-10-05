@@ -480,6 +480,23 @@ function Security({
   );
 }
 
+/* a symbolic degree for the reader, by books on the shelf; no perks attached */
+const RANKS = [
+  { at: 0, name: "Гість бібліотеки" },
+  { at: 1, name: "Учень" },
+  { at: 3, name: "Адепт" },
+  { at: 7, name: "Хранитель рукописів" },
+  { at: 12, name: "Магістр читання" },
+];
+
+// fixed positions so the server and the browser draw the same swarm
+const FLIES = Array.from({ length: 9 }, (_, i) => ({
+  left: `${(i * 37 + 11) % 100}%`,
+  top: `${(i * 53 + 17) % 100}%`,
+  delay: `${(i * 0.7) % 4}s`,
+  dur: `${6 + (i % 4) * 1.5}s`,
+}));
+
 const MONTHS = [
   "січня",
   "лютого",
@@ -524,6 +541,10 @@ function Cabinet({
     (n, o) => n + o.items.reduce((k, i) => k + i.quantity, 0),
     0,
   );
+  const rankIdx = RANKS.reduce((r, x, i) => (books >= x.at ? i : r), 0);
+  const rank = RANKS[rankIdx];
+  const next = RANKS[rankIdx + 1];
+  const progress = next ? (books - rank.at) / (next.at - rank.at) : 1;
 
   useEffect(() => {
     listMyOrders()
@@ -553,22 +574,45 @@ function Cabinet({
     <div className={styles.cabinet}>
       <header className={styles.top}>
         <span className={styles.topSeal} aria-hidden="true" />
-        <div className={styles.who}>
-          {user.avatar_url ? (
-            // Google's own avatar URL: a plain img, not next/image (static export)
-            <img
-              className={styles.avatar}
-              src={user.avatar_url}
-              alt=""
-              width={64}
-              height={64}
-              referrerPolicy="no-referrer"
+        <span className={styles.flies} aria-hidden="true">
+          {FLIES.map((f, i) => (
+            <i
+              key={i}
+              style={{
+                left: f.left,
+                top: f.top,
+                animationDelay: f.delay,
+                animationDuration: f.dur,
+              }}
             />
-          ) : (
-            <span className={styles.monogram} aria-hidden="true">
-              {initials}
-            </span>
-          )}
+          ))}
+        </span>
+        <div className={styles.who}>
+          <span
+            className={styles.ring}
+            style={{ "--p": orders ? progress : 0 } as React.CSSProperties}
+            title={
+              next
+                ? `До ступеня «${next.name}»: ще ${next.at - books}`
+                : "Найвищий ступінь"
+            }
+          >
+            {user.avatar_url ? (
+              // Google's own avatar URL: a plain img, not next/image (static export)
+              <img
+                className={styles.avatar}
+                src={user.avatar_url}
+                alt=""
+                width={64}
+                height={64}
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <span className={styles.monogram} aria-hidden="true">
+                {initials}
+              </span>
+            )}
+          </span>
           <div className={styles.whoText}>
             <span className={styles.kicker}>
               {since ? `Читач з ${since}` : "Кабінет читача"}
@@ -577,6 +621,21 @@ function Cabinet({
               {first ? `Вітаємо, ${first}` : "Вітаємо"}
             </h2>
             <p className={styles.email}>{user.email}</p>
+            {orders && (
+              <span className={styles.rank}>
+                <b>{rank.name}</b>
+                {next && (
+                  <>
+                    {" · "}до «{next.name}» ще {next.at - books}{" "}
+                    {next.at - books === 1
+                      ? "книга"
+                      : next.at - books < 5
+                        ? "книги"
+                        : "книг"}
+                  </>
+                )}
+              </span>
+            )}
           </div>
         </div>
         <dl className={styles.stats}>

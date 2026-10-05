@@ -304,3 +304,45 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* how ready the letter is: three pips that fill in gold */
+.progress {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: -6px;
+}
+
+.pip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  color: var(--on-dark-mute);
+  transition: color 0.3s var(--ease);
+}
+
+.pip i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 222, 179, 0.3);
+  transition: background 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+
+.pipOn {
+  color: var(--on-dark);
+}
+
+.pipOn i {
+  border-color: #e9cd84;
+  background: radial-gradient(circle at 35% 30%, #fff3cf, #d9b45f 60%, #a7853f);
+  box-shadow: 0 0 8px rgba(233, 205, 132, 0.5);
+}
+
+.progressNote {
+  margin-left: auto;
+  font-size: 0.74rem;
+  color: #d9b45f;
+}

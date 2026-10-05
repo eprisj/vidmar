@@ -32,6 +32,13 @@ export default function SubmissionForm() {
   const set = (k: keyof Draft, v: string) =>
     setD((cur) => ({ ...cur, [k]: v }));
   const { genre, note } = d;
+  // three things the letter needs: who, where to answer, what it is about
+  const ready = [
+    d.name.trim().length > 1,
+    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email),
+    note.trim().length >= 20,
+  ];
+  const done = ready.filter(Boolean).length;
 
   useEffect(() => {
     try {
@@ -99,6 +106,24 @@ export default function SubmissionForm() {
         <span className={styles.seal} aria-hidden="true" />
         <span className={styles.kicker}>Лист до редакції</span>
         {restored && <span className={styles.draft}>чернетку відновлено</span>}
+      </div>
+
+      <div
+        className={styles.progress}
+        aria-label={`Лист готовий на ${done} з 3`}
+      >
+        {["Імʼя", "Пошта", "Опис"].map((label, i) => (
+          <span
+            key={label}
+            className={`${styles.pip} ${ready[i] ? styles.pipOn : ""}`}
+          >
+            <i aria-hidden="true" />
+            {label}
+          </span>
+        ))}
+        <span className={styles.progressNote}>
+          {done === 3 ? "Можна надсилати" : `Готово ${done} з 3`}
+        </span>
       </div>
 
       <div className={styles.row}>
