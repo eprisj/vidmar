@@ -474,3 +474,14 @@
     transition: none;
   }
 }
+
+/* a phone: the seal steps back into the corner, clear of the "since" line */
+@media (max-width: 420px) {
+  .seal {
+    width: 38px;
+    height: 38px;
+    right: 10px;
+    bottom: 8px;
+    opacity: 0.85;
+  }
+}

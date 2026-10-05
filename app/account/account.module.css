@@ -818,3 +818,92 @@ a.order:hover {
     display: none;
   }
 }
+
+/* phone: the ring on top, the words below it at full width, the exit button
+   in the corner, the three numbers in one even row */
+@media (max-width: 600px) {
+  .top {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .who {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .whoText {
+    width: 100%;
+  }
+
+  .email {
+    overflow-wrap: normal;
+    word-break: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .out {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    min-height: 40px !important;
+    padding: 0 16px !important;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 0;
+  }
+
+  .stats > div {
+    min-width: 0;
+    padding: 4px 14px;
+  }
+
+  .stats dd {
+    font-size: 1.35rem;
+  }
+
+  .stats .statCode {
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .topSeal {
+    width: 160px;
+    height: 160px;
+    right: -50px;
+    top: 30%;
+  }
+}
+
+/* the sticky tab bar sits over the top of the page: a jump to a panel lands
+   below it, not under it */
+.panel,
+.side {
+  scroll-margin-top: calc(var(--nav-h) + 76px);
+}
+
+@media (max-width: 600px) {
+  /* covers on the left, everything else stacked: the sum moves under the
+     details instead of squeezing them into a 120px column */
+  .order {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .orderSum {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: -6px;
+  }
+
+  .orderTitles {
+    white-space: normal;
+  }
+}
