@@ -80,77 +80,28 @@ cat /var/lib/vidmar-publish/status.json
 
 `deploy.sh` с ноутбука продолжает работать как запасной путь.
 
-## Что нужно добавить в API
+## API
 
-Оба эндпоинта только для вошедшего админа (та же cookie-сессия), с записью в
-журнал действий.
+Эндпоинты лежат в `vidmar-backend/publish.js`. Оба только для вошедшего админа,
+а POST сам записывается в журнал действий.
 
-### `POST /admin/publish`
+- `POST /admin/publish` атомарно записывает `request.json` вида
+  `{ "by": "<логин>", "at": "<время>" }`. Если файл уже есть, его просто
+  перезаписывают: несколько нажатий до старта сборки дают одну сборку.
+  Отвечает 202 и тем же телом, что `GET`.
+- `GET /admin/publish` отдаёт `status.json`, а к нему `queued` (есть ли
+  `request.json`) и `pending`:
+  - книги с `updated_at` позже `published_at`;
+  - удалённые книги, по журналу действий;
+  - тексты, по `site_content` и его истории, включая возврат к встроенному тексту;
+  - флаг, менялись ли настройки SEO.
 
-Атомарно запишите `request.json` (во временный файл, затем `rename`):
+  До первой публикации в `pending` попадает всё за последние 30 дней.
 
-```json
-{ "by": "<логин админа>", "at": "2026-10-05T09:00:00.000Z" }
-```
+Папка берётся из `PUBLISH_DIR` в `.env` API, по умолчанию
+`/var/lib/vidmar-publish`. Пока её нет, оба эндпоинта отвечают 501, и админка
+не показывает кнопку. Поэтому порядок выкладки любой: API, сайт, сервер.
 
-Если файл уже есть, его просто перезаписывают: несколько нажатий
-объединяются в одну сборку. Ответ такой же, как у `GET`.
-
-### `GET /admin/publish`
-
-Ответ: содержимое `status.json` плюс два вычисляемых поля:
-
-```jsonc
-{
-  // из status.json (если файла нет: state "idle", остальное null, log [])
-  "state": "idle" | "building" | "ok" | "failed",
-  "requested_by": "olena", "requested_at": "…",
-  "started_at": "…", "finished_at": "…",
-  "published_at": "…",       // когда последняя удачная сборка читала API
-  "published_done_at": "…",  // когда она стала живой
-  "commit": "3b5eb77…", "error": null, "log": [],
-
-  // вычисляет API
-  "queued": true,            // request.json существует
-  "pending": {
-    "books": [{ "id": 3, "title": "…", "updated_at": "…" }],   // updated_at > published_at
-    "deleted_books": 0,                                          // удалены после published_at
-    "texts": [{ "key": "home.slogan", "updated_at": "…" }],    // site texts, updated_at > published_at
-    "seo": false                                                 // настройки SEO менялись после published_at
-  }
-}
-```
-
-Если `published_at` равен null (из админки ещё не публиковали), отдайте как
-изменения всё, что менялось за последние, скажем, 30 дней. Иначе первый
-список будет бесконечным.
-
-Удалённые книги проще всего считать по журналу действий: записи `DELETE` по
-сущности книги после `published_at`. Так же можно считать и всё остальное,
-если удобнее.
-
-Пример на Node (Express), чтобы было понятно, сколько тут работы:
-
-```js
-const DIR = "/var/lib/vidmar-publish";
-const readJson = (f) => fs.promises.readFile(f, "utf8").then(JSON.parse).catch(() => null);
-
-app.get("/admin/publish", requireAdmin, async (req, res) => {
-  const st = (await readJson(`${DIR}/status.json`)) ?? { state: "idle", log: [] };
-  const since = st.published_at ?? new Date(Date.now() - 30 * 864e5).toISOString();
-  res.json({
-    requested_by: null, requested_at: null, started_at: null, finished_at: null,
-    published_at: null, published_done_at: null, commit: null, error: null,
-    ...st,
-    queued: fs.existsSync(`${DIR}/request.json`),
-    pending: await pendingSince(since), // books / deleted_books / texts / seo из базы
-  });
-});
-
-app.post("/admin/publish", requireAdmin, async (req, res) => {
-  const tmp = `${DIR}/request.json.${process.pid}`;
-  await fs.promises.writeFile(tmp, JSON.stringify({ by: req.admin.login, at: new Date().toISOString() }));
-  await fs.promises.rename(tmp, `${DIR}/request.json`);
-  // …и ответ как у GET
-});
-```
+Пользователь, под которым работает API, должен быть в группе
+`vidmar-publish` (см. установку выше). После `usermod` перезапустите
+`vidmar-api`, иначе процесс не увидит новую группу.

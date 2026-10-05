@@ -1151,12 +1151,12 @@ export type PublishStatus = {
   };
 };
 
-/** null when the API has no publishing yet, so the admin hides the button */
+/** null when the API or the server has no publishing yet (404, or 501 "publishing is not set up"), so the admin hides the button */
 export async function getPublishStatus(_token: string): Promise<PublishStatus | null> {
   try {
     return await adminRequest("/admin/publish", _token);
   } catch (err) {
-    if (err instanceof ApiError && /\((404|405|501)\)|not found/.test(err.message)) return null;
+    if (err instanceof ApiError && /\((404|405|501)\)|not found|not set up/.test(err.message)) return null;
     throw err;
   }
 }
