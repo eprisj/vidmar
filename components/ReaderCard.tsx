@@ -167,6 +167,7 @@ export default function ReaderCard({
   const [svg, setSvg] = useState("");
   const [note, setNote] = useState("");
   const [big, setBig] = useState(false);
+  const [flipped, setFlipped] = useState(false);
   const noteTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -247,12 +248,13 @@ export default function ReaderCard({
   return (
     <div className={styles.wrap}>
       <div
-        className={styles.card}
+        className={styles.stage}
         onPointerMove={(e) => {
           if (e.pointerType !== "mouse") return;
           // a slight tilt and a foil glint that follow the mouse, like a card in the hand
           const r = e.currentTarget.getBoundingClientRect();
-          const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+          const x = (e.clientX - r.left) / r.width,
+            y = (e.clientY - r.top) / r.height;
           const st = e.currentTarget.style;
           st.setProperty("--mx", `${x * 100}%`);
           st.setProperty("--my", `${y * 100}%`);
@@ -264,50 +266,80 @@ export default function ReaderCard({
           ["--mx", "--my", "--rx", "--ry"].forEach((k) => st.removeProperty(k));
         }}
       >
-        <span className={styles.sheen} aria-hidden="true" />
-        {/* the publisher's seal: blind-embossed large in the stock, and
+        <div className={`${styles.flipper} ${flipped ? styles.flipped : ""}`}>
+          <div className={styles.card} aria-hidden={flipped}>
+            <span className={styles.sheen} aria-hidden="true" />
+            {/* the publisher's seal: blind-embossed large in the stock, and
             stamped small in gold foil whose shine follows the mouse */}
-        <span className={styles.water} aria-hidden="true" />
-        <span className={styles.seal} aria-hidden="true" />
-        <div className={styles.band}>
-          <span className={styles.brand} role="img" aria-label="ВІДЬМАР" />
-          <span className={styles.kind}>картка читача</span>
-        </div>
+            <span className={styles.water} aria-hidden="true" />
+            <span className={styles.seal} aria-hidden="true" />
+            <div className={styles.band}>
+              <span className={styles.brand} role="img" aria-label="ВІДЬМАР" />
+              <span className={styles.kind}>картка читача</span>
+            </div>
 
-        <div className={styles.body}>
-          <button
-            type="button"
-            className={styles.qr}
-            onClick={() => setBig(true)}
-            aria-label={`Показати QR-код картки ${code} на весь екран`}
-            title="На весь екран – для сканування"
-          >
-            <span
-              className={styles.qrImg}
-              dangerouslySetInnerHTML={{ __html: svg }}
-            />
-            <span className={styles.zoom} aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
-              </svg>
+            <div className={styles.body}>
+              <button
+                type="button"
+                className={styles.qr}
+                onClick={() => setBig(true)}
+                aria-label={`Показати QR-код картки ${code} на весь екран`}
+                title="На весь екран – для сканування"
+              >
+                <span
+                  className={styles.qrImg}
+                  dangerouslySetInnerHTML={{ __html: svg }}
+                />
+                <span className={styles.zoom} aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+                  </svg>
+                </span>
+              </button>
+              <div className={styles.meta}>
+                {name && <span className={styles.name}>{name}</span>}
+                <span className={styles.code}>
+                  <span className={styles.prefix}>{head}</span>
+                  {rest.map((p, i) => (
+                    <span key={i}>{p}</span>
+                  ))}
+                </span>
+                {createdAt && (
+                  <span className={styles.since}>
+                    читач з {since(createdAt)}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* the back: house linen, a gold frame and the seal in foil */}
+          <div className={styles.back} aria-hidden={!flipped}>
+            <span className={styles.backFrame} />
+            <span className={styles.backSeal} />
+            <span className={styles.backName}>Видавництво ВІДЬМАР</span>
+            <span className={styles.backLine}>
+              картка читача · vidmar.com.ua
             </span>
-          </button>
-          <div className={styles.meta}>
-            {name && <span className={styles.name}>{name}</span>}
-            <span className={styles.code}>
-              <span className={styles.prefix}>{head}</span>
-              {rest.map((p, i) => (
-                <span key={i}>{p}</span>
-              ))}
-            </span>
-            {createdAt && (
-              <span className={styles.since}>читач з {since(createdAt)}</span>
-            )}
           </div>
         </div>
       </div>
 
       <div className={styles.actions}>
+        <button
+          type="button"
+          className={styles.flipBtn}
+          onClick={() => setFlipped((f) => !f)}
+          aria-pressed={flipped}
+          aria-label={
+            flipped ? "Показати лицьовий бік картки" : "Перевернути картку"
+          }
+          title={flipped ? "Лицьовий бік" : "Перевернути"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4" />
+          </svg>
+        </button>
         <button type="button" onClick={copy}>
           Скопіювати код
         </button>
