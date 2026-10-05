@@ -37,21 +37,14 @@ const SECTIONS = [
   ["security", "Безпека"],
 ] as const;
 
-function Orders() {
-  const [orders, setOrders] = useState<MyOrder[] | null>(null);
-
-  useEffect(() => {
-    listMyOrders()
-      .then(setOrders)
-      .catch(() => setOrders([]));
-  }, []);
-
+function Orders({ orders }: { orders: MyOrder[] | null }) {
   if (orders === null) return <div className={styles.skeleton} aria-busy="true" />;
 
   if (orders.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>Замовлень поки немає.</p>
+        <span className={styles.emptySeal} aria-hidden="true" />
+        <p>Тут зʼявляться ваші замовлення. Поки що полиця порожня.</p>
         <Link className="pill pill--solid" href="/catalog">
           До каталогу
         </Link>
@@ -327,31 +320,94 @@ function Security({ user, onSaved }: { user: User; onSaved: (u: User) => void })
   );
 }
 
+const MONTHS = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+
 function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }) {
   const [user, setUser] = useState(initial);
+  const [orders, setOrders] = useState<MyOrder[] | null>(null);
+  const [current, setCurrent] = useState<string>(SECTIONS[0][0]);
   const first = (user.name || "").split(" ")[0];
+  const initials =
+    (user.name || user.email || "")
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0] || "")
+      .join("")
+      .toUpperCase() || "В";
+  const since = user.created_at
+    ? (() => {
+        const d = new Date(user.created_at);
+        return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+      })()
+    : "";
+  const live = (orders || []).filter((o) => o.status !== "cancelled");
+  const books = live.reduce((n, o) => n + o.items.reduce((k, i) => k + i.quantity, 0), 0);
+
+  useEffect(() => {
+    listMyOrders()
+      .then(setOrders)
+      .catch(() => setOrders([]));
+  }, []);
+
+  // the tab of the panel in view lights up as the page scrolls
+  useEffect(() => {
+    const els = SECTIONS.map(([id]) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (entries) => {
+        const seen = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (seen[0]) setCurrent(seen[0].target.id);
+      },
+      { rootMargin: "-30% 0px -55% 0px" },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div className={styles.cabinet}>
       <header className={styles.top}>
+        <span className={styles.topSeal} aria-hidden="true" />
         <div className={styles.who}>
-          {user.avatar_url && (
+          {user.avatar_url ? (
             // Google's own avatar URL: a plain img, not next/image (static export)
-            <img className={styles.avatar} src={user.avatar_url} alt="" width={48} height={48} referrerPolicy="no-referrer" />
+            <img className={styles.avatar} src={user.avatar_url} alt="" width={64} height={64} referrerPolicy="no-referrer" />
+          ) : (
+            <span className={styles.monogram} aria-hidden="true">
+              {initials}
+            </span>
           )}
-          <div>
+          <div className={styles.whoText}>
+            <span className={styles.kicker}>{since ? `Читач з ${since}` : "Кабінет читача"}</span>
             <h2 className={styles.hello}>{first ? `Вітаємо, ${first}` : "Вітаємо"}</h2>
             <p className={styles.email}>{user.email}</p>
           </div>
         </div>
-        <button type="button" className="pill" onClick={signOut}>
+        <dl className={styles.stats}>
+          <div>
+            <dt>Замовлень</dt>
+            <dd>{orders ? live.length : "–"}</dd>
+          </div>
+          <div>
+            <dt>Книг</dt>
+            <dd>{orders ? books : "–"}</dd>
+          </div>
+          {user.reader_code && (
+            <div>
+              <dt>Картка</dt>
+              <dd className={styles.statCode}>
+                <a href="#card">{user.reader_code}</a>
+              </dd>
+            </div>
+          )}
+        </dl>
+        <button type="button" className={`pill ${styles.out}`} onClick={signOut}>
           Вийти
         </button>
       </header>
 
       <nav className={styles.tabs} aria-label="Розділи кабінету">
         {SECTIONS.map(([id, label]) => (
-          <a key={id} href={`#${id}`}>
+          <a key={id} href={`#${id}`} aria-current={current === id ? "true" : undefined}>
             {label}
           </a>
         ))}
@@ -361,7 +417,7 @@ function Cabinet({ user: initial, signOut }: { user: User; signOut: () => void }
         <div className={styles.main}>
           <section id="orders" className={styles.panel}>
             <h3 className={styles.h3}>Замовлення</h3>
-            <Orders />
+            <Orders orders={orders} />
           </section>
 
           <section id="profile" className={styles.panel}>
