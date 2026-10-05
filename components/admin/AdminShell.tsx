@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import Drawer from "./Drawer";
 import CommandPalette from "./CommandPalette";
+import Publish from "./Publish";
 import { requestOpen } from "./openRequest";
 import { uah } from "./labels";
 import p from "./plus.module.css";
@@ -334,6 +335,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             ))}
           </nav>
           <div className={s.sideFoot}>
+            <Publish token={token} base={base} tick={tick} fail={fail} className={s.navItem} />
             <a href="/" className={s.navItem} target="_blank" rel="noopener noreferrer">
               <Icon d={I.site} />
               <span>Відкрити сайт</span>

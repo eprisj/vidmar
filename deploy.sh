@@ -26,8 +26,16 @@ else
 fi
 npm run build
 
+# Once publishing from the admin is set up (ops/publish), the server builds as
+# vidmar-build and must be able to overwrite what lands here: keep that owner
+# rather than this laptop's user id.
+OWNER=()
+if ssh -i "$KEY" "$HOST" id -u vidmar-build >/dev/null 2>&1; then
+  OWNER=(--chown=vidmar-build:vidmar-publish)
+fi
+
 echo "Syncing out/ to VPS (/var/www/vidmar)..."
-rsync -avz --delete \
+rsync -avz --delete "${OWNER[@]}" \
   -e "ssh -i $KEY" \
   "$SCRIPT_DIR/out/" \
   "$HOST:/var/www/vidmar/" \

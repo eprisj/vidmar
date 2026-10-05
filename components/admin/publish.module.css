@@ -1,0 +1,89 @@
+/* The publish button in the sidebar and its drawer. */
+
+.calm {
+  color: var(--a-dim);
+}
+
+.working {
+  color: var(--a-info);
+}
+
+.failed {
+  color: var(--a-bad);
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.state p {
+  margin: 0;
+}
+
+.log {
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(8, 16, 33, 0.6);
+  border: 1px solid var(--a-line);
+  font: 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--a-mute);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.h3 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.list a {
+  color: var(--a-text);
+  text-decoration: underline;
+  text-decoration-color: var(--a-line-2);
+  text-underline-offset: 3px;
+}
+
+.list a:hover {
+  text-decoration-color: var(--a-gold);
+}

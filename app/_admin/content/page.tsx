@@ -128,7 +128,7 @@ function tidy(f: TextField, v: Value): Value | null {
 }
 
 export default function ContentPage() {
-  const { token, fail } = useAdmin();
+  const { token, fail, refreshCounts } = useAdmin();
   const [saved, setSaved] = useState<Record<string, SavedText> | null>(null);
   const [drafts, setDrafts] = useState<Drafts>({});
   const [q, setQ] = useState("");
@@ -185,6 +185,7 @@ export default function ContentPage() {
       await saveContent(token, values);
       setDrafts({});
       await load();
+      refreshCounts();
       setFlash(`Збережено ${dirty.length} ${dirty.length === 1 ? "поле" : "полів"} – уже на сайті`);
       setTimeout(() => setFlash(""), 3500);
     } catch (e) {
