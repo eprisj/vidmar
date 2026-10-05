@@ -10,6 +10,8 @@ type Props = {
   className?: string;
   style?: React.CSSProperties;
   id?: string;
+  /** already on screen at load: shown in the static HTML, no wait for scripts */
+  instant?: boolean;
 };
 
 export default function Reveal({
@@ -19,13 +21,14 @@ export default function Reveal({
   className = "",
   style,
   id,
+  instant = false,
 }: Props) {
   const ref = useRef<HTMLElement>(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(instant);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || instant) return;
 
     if (!("IntersectionObserver" in window)) {
       setShown(true);
@@ -44,7 +47,7 @@ export default function Reveal({
 
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [instant]);
 
   return (
     <Tag

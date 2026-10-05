@@ -27,7 +27,7 @@ function quickFormat(b: Book): Format | null {
   return null;
 }
 
-function BookCard({ b, baked }: { b: Book; baked: boolean }) {
+function BookCard({ b, baked, first }: { b: Book; baked: boolean; first?: boolean }) {
   const toast = useToast();
   const cart = useCart();
   const from = fromPrice(b);
@@ -43,7 +43,7 @@ function BookCard({ b, baked }: { b: Book; baked: boolean }) {
     <div className={styles.book}>
       <Link href={href} prefetch={false} className={styles.bookLink}>
         <span className={styles.coverBox}>
-          <BookCover title={b.title} author={b.author} src={b.cover_url} pos={b.cover_pos} />
+          <BookCover title={b.title} author={b.author} src={b.cover_url} pos={b.cover_pos} priority={first} />
           <span className={styles.badges}>
             {was != null && price != null && <span className={styles.badgeSale}>−{discountPct(price, was)}%</span>}
             {b.stock_left != null && b.stock_left > 0 && <span className={styles.badgeLow}>Останні {b.stock_left}</span>}
@@ -266,8 +266,8 @@ export default function CatalogGrid({ genres, initial = null }: { genres: Genre[
       ) : (
         <div className={styles.books}>
           {shown.map((b, i) => (
-            <Reveal key={b.slug} delay={Math.min(i, 6) * 40} className={styles.slot}>
-              <BookCard b={b} baked={baked.has(b.slug)} />
+            <Reveal key={b.slug} delay={Math.min(i, 6) * 40} className={styles.slot} instant={i < 4}>
+              <BookCard b={b} baked={baked.has(b.slug)} first={i < 4} />
             </Reveal>
           ))}
         </div>

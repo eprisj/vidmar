@@ -20,7 +20,7 @@
   z-index: 0;
   background:
     radial-gradient(60% 55% at 50% 38%, rgba(8, 17, 34, 0.15) 0%, rgba(8, 17, 34, 0.82) 100%),
-    url("/gravure/death-moon.webp");
+    url("/gravure/death-moon-bg.webp");
   background-repeat: no-repeat, no-repeat;
   background-position: center, center 30%;
   background-size: cover, cover;
@@ -197,7 +197,7 @@
   .scene::before {
     background-image:
       radial-gradient(60% 55% at 50% 38%, rgba(8, 17, 34, 0.15) 0%, rgba(8, 17, 34, 0.82) 100%),
-      url("/gravure/death-moon-sm.webp");
+      url("/gravure/death-moon-bg-sm.webp");
   }
 
   .letterLit {

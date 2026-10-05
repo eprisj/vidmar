@@ -8,6 +8,8 @@ type Props = {
   pos?: string | null;
   /** big = the book page; small = cart rows */
   size?: "card" | "big" | "small";
+  /** the first covers on screen: load at once, not lazily (they are the page's LCP) */
+  priority?: boolean;
 };
 
 /**
@@ -24,12 +26,13 @@ const SIZES = {
 /** A Doré plate comes in three widths; a card shows it ~240px wide and used
  * to pull the 1200px file (~700KB) for it, ten times over on the catalogue. */
 function plateSet(src: string) {
-  const m = src.match(/^(\/gravure\/[a-z-]+?)(?:-md|-sm|-xs)?\.webp$/);
+  const m = src.match(/^(\/gravure\/[a-z-]+?)(?:-md|-sm|-xs|-2xs)?\.webp$/);
   if (!m) return undefined;
-  return `${m[1]}-xs.webp 560w, ${m[1]}-sm.webp 780w, ${m[1]}-md.webp 1200w`;
+  return `${m[1]}-2xs.webp 360w, ${m[1]}-xs.webp 560w, ${m[1]}-sm.webp 780w, ${m[1]}-md.webp 1200w`;
 }
 
-export default function BookCover({ title, author, src, pos, size = "card" }: Props) {
+export default function BookCover({ title, author, src, pos, size = "card", priority }: Props) {
+  const eager = priority || size === "big";
   const plate = !src || src.startsWith("/gravure/");
   return (
     <div className={`${styles.cover} ${styles[size]}`}>
@@ -40,8 +43,8 @@ export default function BookCover({ title, author, src, pos, size = "card" }: Pr
           srcSet={plateSet(src)}
           sizes={SIZES[size]}
           alt=""
-          loading={size === "big" ? "eager" : "lazy"}
-          fetchPriority={size === "big" ? "high" : undefined}
+          loading={eager ? "eager" : "lazy"}
+          fetchPriority={eager ? "high" : undefined}
           decoding="async"
           style={{ objectPosition: pos || "50% 50%" }}
         />
