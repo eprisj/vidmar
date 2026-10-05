@@ -81,7 +81,11 @@ build_once() {
   fi
 
   STEP="не вдалося викласти файли на сайт"
-  rsync -a --delete --exclude=".DS_Store" out/ "$WEB_ROOT/" >>"$LOG" 2>&1
+  # SELinux: /usr/bin/rsync started by systemd enters rsync_t, which may not
+  # read the build or write the web root. install.sh puts a copy next to this
+  # script (bin_t, no domain change); fall back to the system rsync elsewhere.
+  RSYNC="$(dirname "$0")/rsync"; [ -x "$RSYNC" ] || RSYNC=rsync
+  "$RSYNC" -a --delete --exclude=".DS_Store" out/ "$WEB_ROOT/" >>"$LOG" 2>&1
 
   status ok "$COMMIT"
   rm -f "$RUN"

@@ -67,6 +67,10 @@ fi
 say "script, settings, units"
 install -d "$LIB"
 install -m 755 "$HERE/vidmar-publish.sh" "$HERE/status.mjs" "$LIB/"
+# own rsync copy: the system one is labelled rsync_exec_t, and under SELinux a
+# systemd service that runs it lands in rsync_t, which cannot touch the web root
+install -m 755 "$(command -v rsync)" "$LIB/rsync"
+command -v restorecon >/dev/null && restorecon -F "$LIB/rsync" || true
 install -d -m 750 -g vidmar-publish /etc/vidmar
 if [ -f "$ENV_FILE" ] && [ -z "${VIDMAR_ADMIN_PATH:-}" ]; then
   echo "keeping $ENV_FILE"
