@@ -316,23 +316,42 @@
     0 40px 70px -34px rgba(0, 0, 0, 0.95);
 }
 
-/* the moon-and-star seal, pressed into the stock in gold */
-.seal {
+/* blind emboss: the seal pressed into the stock, no ink, only light and shade */
+.water {
   position: absolute;
-  right: 12px;
-  bottom: 10px;
-  z-index: 1;
-  width: 46px;
-  height: 46px;
-  fill: none;
-  stroke: rgba(138, 109, 47, 0.55);
-  stroke-width: 2;
+  right: -14%;
+  top: 8%;
+  z-index: 0;
+  width: 78%;
+  aspect-ratio: 1;
   pointer-events: none;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.55), rgba(138, 109, 47, 0.16) 60%);
+  -webkit-mask: url(/emblem.svg) center / contain no-repeat;
+  mask: url(/emblem.svg) center / contain no-repeat;
+  opacity: 0.55;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.6));
 }
 
-.seal path {
-  fill: rgba(138, 109, 47, 0.35);
-  stroke: none;
+/* gold foil: a metal gradient that slides as the card tilts */
+.seal {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  z-index: 3;
+  width: 54px;
+  height: 54px;
+  pointer-events: none;
+  background: linear-gradient(
+    125deg,
+    #6e5119 0%,
+    #b8913f calc(var(--mx, 60%) - 25%),
+    #f3d98f var(--mx, 60%),
+    #a8812f calc(var(--mx, 60%) + 18%),
+    #5e4413 100%
+  );
+  -webkit-mask: url(/emblem.svg) center / contain no-repeat;
+  mask: url(/emblem.svg) center / contain no-repeat;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.5));
 }
 
 .band,

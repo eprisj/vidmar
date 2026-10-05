@@ -86,6 +86,33 @@ async function cardPng(code: string, name?: string | null, createdAt?: string) {
   g.textAlign = "right";
   g.fillText("КАРТКА ЧИТАЧА", W - 56, 76);
   g.textAlign = "left";
+  // the seal: a pale emboss across the right of the stock, and a gold stamp in the corner
+  try {
+    const em = new Image();
+    em.src = "/emblem.svg";
+    await em.decode();
+    const tint = (size: number, fill: string | CanvasGradient) => {
+      const t = document.createElement("canvas");
+      t.width = t.height = size;
+      const tg = t.getContext("2d")!;
+      tg.drawImage(em, 0, 0, size, size);
+      tg.globalCompositeOperation = "source-in";
+      tg.fillStyle = fill;
+      tg.fillRect(0, 0, size, size);
+      return t;
+    };
+    g.globalAlpha = 0.1;
+    g.drawImage(tint(560, "#8a6d2f"), W - 400, 150);
+    g.globalAlpha = 1;
+    const gold = g.createLinearGradient(0, 0, 96, 96);
+    gold.addColorStop(0, "#8a6d2f");
+    gold.addColorStop(0.45, "#f1d58e");
+    gold.addColorStop(0.6, "#d9b45f");
+    gold.addColorStop(1, "#8a6d2f");
+    g.drawImage(tint(96, gold), W - 140, H - 140);
+  } catch {
+    /* the card still works without the seal */
+  }
   // QR on paper
   g.fillStyle = PAPER;
   g.beginPath();
@@ -238,12 +265,10 @@ export default function ReaderCard({
         }}
       >
         <span className={styles.sheen} aria-hidden="true" />
-        <svg className={styles.seal} viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r="46" />
-          <circle cx="50" cy="50" r="38" />
-          <path d="M58 30a22 22 0 1 0 0 40a18 18 0 1 1 0-40z" />
-          <path d="M72 42l1.6 3.4 3.7.5-2.7 2.6.6 3.7-3.2-1.8-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" />
-        </svg>
+        {/* the publisher's seal: blind-embossed large in the stock, and
+            stamped small in gold foil whose shine follows the mouse */}
+        <span className={styles.water} aria-hidden="true" />
+        <span className={styles.seal} aria-hidden="true" />
         <div className={styles.band}>
           <span className={styles.brand} role="img" aria-label="ВІДЬМАР" />
           <span className={styles.kind}>картка читача</span>

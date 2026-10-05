@@ -7,11 +7,11 @@ export default function Footer() {
     <footer className={`ink ${styles.root}`} data-field="dark">
       <div className={`wrapMax ${styles.grid}`}>
         <div className={styles.col}>
-          <span
-            className={styles.mark}
-            role="img"
-            aria-label="ВІДЬМАР"
-          />
+          {/* the publisher's seal beside the wordmark: the full sign-off */}
+          <span className={styles.lockup}>
+            <span className={styles.seal} aria-hidden="true" />
+            <span className={styles.mark} role="img" aria-label="ВІДЬМАР" />
+          </span>
           {/* "Бутикове видавництво" is already said twice above the fold —
               under the wordmark and again as the whole point of the shelf
               section. Here the line carries only what it publishes. */}
