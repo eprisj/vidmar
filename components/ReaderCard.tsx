@@ -219,7 +219,31 @@ export default function ReaderCard({
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.card}>
+      <div
+        className={styles.card}
+        onPointerMove={(e) => {
+          if (e.pointerType !== "mouse") return;
+          // a slight tilt and a foil glint that follow the mouse, like a card in the hand
+          const r = e.currentTarget.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+          const st = e.currentTarget.style;
+          st.setProperty("--mx", `${x * 100}%`);
+          st.setProperty("--my", `${y * 100}%`);
+          st.setProperty("--rx", `${(0.5 - y) * 6}deg`);
+          st.setProperty("--ry", `${(x - 0.5) * 8}deg`);
+        }}
+        onPointerLeave={(e) => {
+          const st = e.currentTarget.style;
+          ["--mx", "--my", "--rx", "--ry"].forEach((k) => st.removeProperty(k));
+        }}
+      >
+        <span className={styles.sheen} aria-hidden="true" />
+        <svg className={styles.seal} viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" />
+          <circle cx="50" cy="50" r="38" />
+          <path d="M58 30a22 22 0 1 0 0 40a18 18 0 1 1 0-40z" />
+          <path d="M72 42l1.6 3.4 3.7.5-2.7 2.6.6 3.7-3.2-1.8-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" />
+        </svg>
         <div className={styles.band}>
           <span className={styles.brand} role="img" aria-label="ВІДЬМАР" />
           <span className={styles.kind}>картка читача</span>

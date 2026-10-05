@@ -8,16 +8,23 @@
 }
 
 .card {
+  --mx: 70%;
+  --my: 0%;
   position: relative;
+  isolation: isolate;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
   display: flex;
   flex-direction: column;
   aspect-ratio: 1.586;
   overflow: hidden;
   border-radius: 16px;
   color: var(--ink);
+  /* guilloche: fine wavy lines like on a banknote, only in the right half */
   background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='160' viewBox='0 0 240 160'%3E%3Cg fill='none' stroke='%23162e59' stroke-opacity='.07' stroke-width='.8'%3E%3Cpath d='M0 20q30-16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 40q30-16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 60q30-16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 80q30-16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 100q30-16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 120q30-16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 140q30-16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 30q30 16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 70q30 16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 110q30 16 60 0t60 0 60 0 60 0'/%3E%3Cpath d='M0 150q30 16 60 0t60 0 60 0 60 0'/%3E%3C/g%3E%3C/svg%3E") right bottom / 240px 160px repeat,
     radial-gradient(120% 90% at 100% 0%, rgba(201, 169, 97, 0.42), transparent 62%),
-    var(--ash);
+    linear-gradient(170deg, #f8e6c2, var(--ash) 55%, #ecd09c);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.55) inset,
     0 30px 60px -34px rgba(0, 0, 0, 0.9);
@@ -25,13 +32,19 @@
 
 /* a thin gold rule along the band, like foil on a printed ticket */
 .band {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
   padding: 14px 18px;
-  background: var(--ink);
-  border-bottom: 2px solid rgba(201, 169, 97, 0.75);
+  /* the night sky from the house engravings, sunk into the blue */
+  background:
+    linear-gradient(90deg, rgba(22, 46, 89, 0.96) 30%, rgba(22, 46, 89, 0.6)),
+    url(/gravure/mystique-forest-xs.webp) center 30% / cover,
+    var(--ink);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, #8a6d2f, #e8c876 40%, #fff1c4 50%, #e8c876 60%, #8a6d2f) 1;
 }
 
 .brand {
@@ -51,6 +64,7 @@
 }
 
 .body {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;
@@ -132,6 +146,7 @@
 
 /* VR · XXXX · XXXX: groups with air between them, read aloud in threes */
 .code {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65), 0 -1px 0 rgba(11, 22, 43, 0.12);
   display: flex;
   flex-wrap: wrap;
   gap: 0 0.45em;
@@ -279,5 +294,56 @@
 
   .name {
     font-size: 0.92rem;
+  }
+}
+
+/* foil glint that follows the mouse; still in one place on touch screens */
+.sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(40% 55% at var(--mx) var(--my), rgba(255, 248, 225, 0.55), transparent 70%),
+    linear-gradient(115deg, transparent 35%, rgba(232, 200, 118, 0.18) 48%, rgba(159, 211, 220, 0.14) 52%, transparent 65%);
+  mix-blend-mode: soft-light;
+}
+
+.card:hover {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 40px 70px -34px rgba(0, 0, 0, 0.95);
+}
+
+/* the moon-and-star seal, pressed into the stock in gold */
+.seal {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  fill: none;
+  stroke: rgba(138, 109, 47, 0.55);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.seal path {
+  fill: rgba(138, 109, 47, 0.35);
+  stroke: none;
+}
+
+.band,
+.body {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transform: none !important;
+    transition: none;
   }
 }
