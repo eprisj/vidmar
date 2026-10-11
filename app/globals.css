@@ -76,6 +76,38 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* an anchor or a focused field lands below the fixed bar, not under it */
+  scroll-padding-top: calc(var(--nav-h) + 20px);
+  /* a thin wheat-gold thumb on the night, instead of the system grey slab */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 169, 97, 0.55) var(--ink-deep);
+  -webkit-tap-highlight-color: transparent;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* the first Tab stop: jumps over the bar straight to the content */
+.skip {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 300;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--on-dark);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transform: translateY(-160%);
+  transition: transform 0.25s var(--ease);
+}
+
+.skip:focus-visible {
+  transform: none;
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 body {
@@ -131,6 +163,22 @@ h4 {
 
 p {
   margin: 0;
+  /* no one-word last lines */
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+a,
+button,
+summary,
+label,
+select {
+  touch-action: manipulation;
 }
 
 ul {
@@ -145,8 +193,18 @@ ul {
 }
 
 :focus-visible {
-  outline: 1px solid var(--on-dark);
+  outline: 2px solid var(--gold);
   outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* a field in focus warms to gold instead of the browser's blue ring */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(201, 169, 97, 0.16);
 }
 
 /* ---------------- fields ---------------- */
@@ -325,12 +383,18 @@ ul {
   transition:
     background 0.25s var(--ease),
     color 0.25s var(--ease),
-    border-color 0.25s var(--ease);
+    border-color 0.25s var(--ease),
+    transform 0.2s var(--ease),
+    box-shadow 0.3s var(--ease);
 }
 
 .pill:hover {
   background: rgba(245, 222, 179, 0.08);
   border-color: var(--on-dark);
+}
+
+.pill:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
 }
 
 .pill:focus-visible {
@@ -365,6 +429,7 @@ ul {
   background: var(--gold);
   border-color: var(--gold);
   color: var(--ink);
+  box-shadow: 0 10px 30px -12px rgba(201, 169, 97, 0.65);
 }
 
 .ash .pill--solid,
@@ -396,12 +461,17 @@ ul {
 }
 
 .link:hover {
+  color: var(--gold);
   border-color: currentColor;
 }
 
 .ash .link {
   color: var(--on-light);
   border-color: var(--hair-l);
+}
+
+.ash .link:hover {
+  color: var(--gold-deep);
 }
 
 /* ---------------- reveal ---------------- */

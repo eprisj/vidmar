@@ -39,6 +39,7 @@
 }
 
 .title {
+  transition: color 0.4s var(--ease);
   font-size: var(--fs-h3);
   font-weight: 500;
   letter-spacing: -0.045em;
@@ -56,6 +57,10 @@
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.7s var(--ease);
+}
+
+.rowOn .title {
+  color: var(--gold-hi);
 }
 
 .rowOn .bar {

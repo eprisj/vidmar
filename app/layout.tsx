@@ -80,10 +80,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
         <Analytics />
         <ToastProvider>
+          <a className="skip" href="#main">
+            До змісту
+          </a>
           <Header />
           <CandleLight />
           <PerfGuard />
-          <main>{children}</main>
+          <main id="main" tabIndex={-1}>
+            {children}
+          </main>
           <Footer />
         </ToastProvider>
       </body>

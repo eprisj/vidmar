@@ -19,7 +19,13 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   white-space: nowrap;
+  box-shadow:
+    0 14px 40px -12px rgba(8, 17, 34, 0.7),
+    0 0 0 1px rgba(245, 222, 179, 0.35) inset;
   animation: rise 0.4s var(--ease);
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @keyframes rise {

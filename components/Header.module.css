@@ -95,6 +95,27 @@
   color: var(--on-dark-mute);
   transition: color 0.3s var(--ease);
   padding-block: 6px;
+  position: relative;
+}
+
+/* a gold hairline draws in under the label on hover, and stays under the
+   page you are on */
+.nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0.18em;
+  bottom: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+
+.nav a:hover::after,
+.nav a[data-on="true"]::after {
+  transform: scaleX(1);
 }
 
 /* the scrim above holds the field steady, but a branch or a bright ruled
@@ -160,6 +181,24 @@
   font-weight: 700;
   line-height: 18px;
   text-align: center;
+  animation: badgePop 0.45s var(--ease);
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0.4);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+}
+
+.cart {
+  transition: transform 0.25s var(--ease);
+}
+
+.cart:hover {
+  transform: translateY(-1px) scale(1.06);
 }
 
 /* the hit area is the button, not the two rules drawn inside it: at 24x32
