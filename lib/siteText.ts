@@ -5,7 +5,7 @@
  * components/SiteText.tsx. The admin's «Контент» page is generated from this
  * list, so adding a field here is all it takes to make a text editable.
  */
-import { EMAIL, founderLetter, positioning, status, submissionNote, submissionRules } from "./content";
+import { EMAIL, EMAIL_GOOGLE, founderLetter, positioning, status, submissionNote, submissionRules } from "./content";
 
 export type FieldKind = "text" | "long" | "list" | "records";
 
@@ -40,6 +40,15 @@ export const TEXT_FIELDS: TextField[] = [
     kind: "text",
     default: EMAIL,
     hint: "Підвал, сторінка «Авторам», умови та політика конфіденційності.",
+    page: "/",
+  },
+  {
+    key: "site.email_google",
+    section: "Загальне",
+    label: "Друга пошта (Google)",
+    kind: "text",
+    default: EMAIL_GOOGLE,
+    hint: "Другий рядок у контактах підвалу. Порожньо не залишається: якщо стерти, повернеться стара адреса.",
     page: "/",
   },
   {

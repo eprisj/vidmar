@@ -87,8 +87,8 @@ export function TxtItems({ k, as = "li", className }: { k: string; as?: string; 
 }
 
 /** the contact address, as a mail link */
-export function MailLink({ className, subject }: { className?: string; subject?: string }) {
-  const email = useSiteText("site.email");
+export function MailLink({ className, subject, k = "site.email" }: { className?: string; subject?: string; k?: string }) {
+  const email = useSiteText(k);
   return (
     <a className={className} href={`mailto:${email}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`}>
       {email}

@@ -50,6 +50,7 @@ export default function Footer() {
           <h4>Контакти</h4>
           <div className={styles.stack}>
             <MailLink className={styles.big} />
+            <MailLink className={styles.alt} k="site.email_google" />
           </div>
         </div>
       </div>

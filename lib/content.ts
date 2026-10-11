@@ -1,4 +1,6 @@
 export const EMAIL = "info@vidmar.com.ua";
+/** the earlier Google address, still read, so it stays in the contacts */
+export const EMAIL_GOOGLE = "vidmarpublishing@gmail.com";
 
 export type Genre = {
   slug: string;

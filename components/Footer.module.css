@@ -76,6 +76,14 @@
   color: var(--on-dark);
 }
 
+/* the second address sits under the first, quieter */
+.alt {
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  color: var(--on-dark-mute);
+  white-space: nowrap;
+}
+
 .legal {
   font-family: var(--font-golos), sans-serif;
   display: flex;
