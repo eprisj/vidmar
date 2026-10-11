@@ -30,15 +30,26 @@ npm run build
 # vidmar-build and must be able to overwrite what lands here: keep that owner
 # rather than this laptop's user id.
 OWNER=()
+CHOWN_AFTER=""
 if ssh -i "$KEY" "$HOST" id -u vidmar-build >/dev/null 2>&1; then
-  OWNER=(--chown=vidmar-build:vidmar-publish)
+  # macOS ships openrsync, which has no --chown; there the owner is set on
+  # the server once the files are across
+  if rsync --help 2>&1 | grep -q -- "--chown"; then
+    OWNER=(--chown=vidmar-build:vidmar-publish)
+  else
+    CHOWN_AFTER="vidmar-build:vidmar-publish"
+  fi
 fi
 
 echo "Syncing out/ to VPS (/var/www/vidmar)..."
-rsync -avz --delete "${OWNER[@]}" \
+rsync -avz --delete ${OWNER[@]+"${OWNER[@]}"} \
   -e "ssh -i $KEY" \
   "$SCRIPT_DIR/out/" \
   "$HOST:/var/www/vidmar/" \
   --exclude=".DS_Store"
+
+if [ -n "$CHOWN_AFTER" ]; then
+  ssh -i "$KEY" "$HOST" "chown -R $CHOWN_AFTER /var/www/vidmar"
+fi
 
 echo "✓ vidmar.com.ua deployed"
