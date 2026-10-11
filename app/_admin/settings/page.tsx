@@ -670,6 +670,7 @@ export default function SettingsPage() {
             </label>
             <Toggle on={st.values.mail.submission_notify} label="Лист редакторам про новий рукопис" hint="автор, назва, жанр і текст листа; «Відповісти» напише автору" onChange={flip("mail", "submission_notify")} />
             <Toggle on={st.values.mail.submission_ack} label="Підтвердження автору" hint="коротка відповідь, що рукопис отримано" onChange={flip("mail", "submission_ack")} />
+            <Toggle on={st.values.mail.enrollment_notify} label="Лист про запис на курс чи консультацію" hint="з застосунку: що обрали, імʼя, контакт, Telegram; на пошту заявника «Відповісти» напише йому" onChange={flip("mail", "enrollment_notify")} />
             <Toggle on={st.values.mail.welcome_subscribe} label="Привітання після підписки" hint="лише для нової адреси, повторна підписка листа не надсилає" onChange={flip("mail", "welcome_subscribe")} />
             <Toggle on={st.values.mail.welcome_register} label="Привітання після реєстрації" hint="коротко про кабінет читача" onChange={flip("mail", "welcome_register")} />
             <div className={p.gen}>

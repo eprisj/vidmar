@@ -968,6 +968,7 @@ export type AdminSettings = {
       editor_email: string;
       submission_notify: boolean;
       submission_ack: boolean;
+      enrollment_notify: boolean;
       welcome_subscribe: boolean;
       welcome_register: boolean;
     };
@@ -999,7 +1000,7 @@ export type PaymentSettings = {
 export type EmailRow = {
   id: string;
   order_id: number | null;
-  kind: MailKind | "shop_created" | "shop_paid" | "submission_notify" | "submission_ack" | "welcome_subscribe" | "welcome_register";
+  kind: MailKind | "shop_created" | "shop_paid" | "submission_notify" | "submission_ack" | "enrollment_notify" | "welcome_subscribe" | "welcome_register";
   to_email: string;
   subject: string;
   status: "sent" | "failed" | "skipped";
