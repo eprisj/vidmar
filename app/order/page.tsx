@@ -16,6 +16,7 @@ import {
   type PublicOrder,
 } from "@/lib/api";
 import { ONLINE, PAY_INFO } from "@/lib/payments";
+import { MailLink } from "@/components/SiteText";
 import styles from "./order.module.css";
 
 const PAID = ["paid", "shipped", "fulfilled"];
@@ -365,7 +366,7 @@ function OrderView() {
 
           <p className={styles.keep}>
             Збережіть це посилання: воно відкриває замовлення без входу в кабінет. Питання щодо замовлення:{" "}
-            <a href={`mailto:vidmarpublishing@gmail.com?subject=Замовлення №${order.id}`}>vidmarpublishing@gmail.com</a>
+            <MailLink subject={`Замовлення №${order.id}`} />
           </p>
         </aside>
       </div>

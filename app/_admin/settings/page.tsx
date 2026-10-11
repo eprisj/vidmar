@@ -435,6 +435,7 @@ function IntegrationsPanel({ values, onSaved }: { values: Integrations; onSaved:
   const [error, setError] = useState("");
   const set = (k: keyof Integrations) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
   const presets: Record<string, { host: string; port: string }> = {
+    "ADM.TOOLS (пошта vidmar.com.ua)": { host: "mail.adm.tools", port: "465" },
     "Google Workspace / Gmail": { host: "smtp.gmail.com", port: "465" },
     "Zoho Mail": { host: "smtp.zoho.eu", port: "465" },
     "Ukr.net": { host: "smtp.ukr.net", port: "465" },
@@ -484,7 +485,7 @@ function IntegrationsPanel({ values, onSaved }: { values: Integrations; onSaved:
           </label>
           <label className={s.field}>
             <span>Логін</span>
-            <input value={f.smtp_user} onChange={set("smtp_user")} placeholder="shop@vidmar.com.ua" autoComplete="off" />
+            <input value={f.smtp_user} onChange={set("smtp_user")} placeholder="info@vidmar.com.ua" autoComplete="off" />
           </label>
           <label className={s.field}>
             <span>Пароль {values.smtp_pass ? <span className={s.dim}>(збережено {values.smtp_pass})</span> : null}</span>
@@ -498,11 +499,11 @@ function IntegrationsPanel({ values, onSaved }: { values: Integrations; onSaved:
           </label>
           <label className={s.field}>
             <span>Від кого</span>
-            <input value={f.mail_from} onChange={set("mail_from")} placeholder="ВІДЬМАР <shop@vidmar.com.ua>" />
+            <input value={f.mail_from} onChange={set("mail_from")} placeholder="ВІДЬМАР <info@vidmar.com.ua>" />
           </label>
           <label className={s.field}>
             <span>Відповіді на адресу (необовʼязково)</span>
-            <input value={f.mail_reply_to} onChange={set("mail_reply_to")} placeholder="hello@vidmar.com.ua" />
+            <input value={f.mail_reply_to} onChange={set("mail_reply_to")} placeholder="info@vidmar.com.ua" />
           </label>
         </div>
         <span className={s.dim}>
@@ -651,7 +652,7 @@ export default function SettingsPage() {
               <input
                 type="email"
                 defaultValue={st.values.mail.shop_email}
-                placeholder="orders@vidmar.com.ua – порожньо, щоб не надсилати"
+                placeholder="editor@vidmar.com.ua – порожньо, щоб не надсилати"
                 onBlur={(e) => e.target.value.trim() !== st.values.mail.shop_email && saveMailText("shop_email", e.target.value.trim())}
               />
             </label>

@@ -1,4 +1,4 @@
-export const EMAIL = "vidmarpublishing@gmail.com";
+export const EMAIL = "info@vidmar.com.ua";
 
 export type Genre = {
   slug: string;

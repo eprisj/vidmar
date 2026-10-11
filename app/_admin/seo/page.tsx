@@ -326,7 +326,7 @@ export default function SeoPage() {
             </label>
             <label className={s.field}>
               <span>Пошта</span>
-              <input value={seo.org.email} onChange={(e) => setOrg("email", e.target.value)} placeholder="hello@vidmar.com.ua" />
+              <input value={seo.org.email} onChange={(e) => setOrg("email", e.target.value)} placeholder="info@vidmar.com.ua" />
             </label>
             <label className={s.field}>
               <span>Телефон</span>
