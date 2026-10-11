@@ -658,6 +658,20 @@ export default function SettingsPage() {
             </label>
             <Toggle on={st.values.mail.shop_created} label="Нове замовлення" hint="одразу після оформлення: книги, покупець, доставка, оплата" onChange={flip("mail", "shop_created")} />
             <Toggle on={st.values.mail.shop_paid} label="Надійшла оплата" hint="після онлайн-оплати або коли ви ставите «Оплачено»" onChange={flip("mail", "shop_paid")} />
+            <span className={s.sectionTitle}>Рукописи та підписка</span>
+            <label className={s.field}>
+              <span>Сповіщення про нові рукописи надсилати на</span>
+              <input
+                type="email"
+                defaultValue={st.values.mail.editor_email}
+                placeholder="editor@vidmar.com.ua – порожньо, щоб не надсилати"
+                onBlur={(e) => e.target.value.trim() !== st.values.mail.editor_email && saveMailText("editor_email", e.target.value.trim())}
+              />
+            </label>
+            <Toggle on={st.values.mail.submission_notify} label="Лист редакторам про новий рукопис" hint="автор, назва, жанр і текст листа; «Відповісти» напише автору" onChange={flip("mail", "submission_notify")} />
+            <Toggle on={st.values.mail.submission_ack} label="Підтвердження автору" hint="коротка відповідь, що рукопис отримано" onChange={flip("mail", "submission_ack")} />
+            <Toggle on={st.values.mail.welcome_subscribe} label="Привітання після підписки" hint="лише для нової адреси, повторна підписка листа не надсилає" onChange={flip("mail", "welcome_subscribe")} />
+            <Toggle on={st.values.mail.welcome_register} label="Привітання після реєстрації" hint="коротко про кабінет читача" onChange={flip("mail", "welcome_register")} />
             <div className={p.gen}>
               <label className={s.field} style={{ flex: 1 }}>
                 <span>Надіслати тестовий лист на</span>

@@ -961,7 +961,16 @@ export type AdminSettings = {
   values: {
     seo: import("./seo").Seo;
     integrations: Integrations;
-    mail: Record<MailKind, boolean> & { shop_email: string; shop_created: boolean; shop_paid: boolean };
+    mail: Record<MailKind, boolean> & {
+      shop_email: string;
+      shop_created: boolean;
+      shop_paid: boolean;
+      editor_email: string;
+      submission_notify: boolean;
+      submission_ack: boolean;
+      welcome_subscribe: boolean;
+      welcome_register: boolean;
+    };
     payments: PaymentSettings;
     np: { autosync: boolean; ttn_ships: boolean; auto_fulfilled: boolean; default_weight_g: number; sender: NpSender | null };
   };
@@ -990,7 +999,7 @@ export type PaymentSettings = {
 export type EmailRow = {
   id: string;
   order_id: number | null;
-  kind: MailKind | "shop_created" | "shop_paid";
+  kind: MailKind | "shop_created" | "shop_paid" | "submission_notify" | "submission_ack" | "welcome_subscribe" | "welcome_register";
   to_email: string;
   subject: string;
   status: "sent" | "failed" | "skipped";
