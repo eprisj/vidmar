@@ -1173,3 +1173,50 @@ export async function getPublishStatus(_token: string): Promise<PublishStatus | 
 export function requestPublish(_token: string): Promise<PublishStatus> {
   return adminRequest("/admin/publish", _token, { method: "POST", body: "{}" });
 }
+
+// --- newsletter ---------------------------------------------------------------------
+
+export type Campaign = {
+  id: number;
+  subject: string;
+  status: "sending" | "done" | "interrupted";
+  total: number;
+  sent: number;
+  failed: number;
+  created_by: string | null;
+  created_at: string;
+  finished_at: string | null;
+};
+export type CampaignList = { rows: Campaign[]; subscribers: number; quota: { limit: number; used: number } };
+
+export function listCampaigns(token: string): Promise<CampaignList> {
+  return adminRequest("/admin/campaigns", token);
+}
+export function sendCampaignTest(token: string, subject: string, body: string, to: string) {
+  return adminRequest("/admin/campaigns/test", token, { method: "POST", body: JSON.stringify({ subject, body, to }) });
+}
+export function sendCampaign(token: string, subject: string, body: string): Promise<Campaign> {
+  return adminRequest("/admin/campaigns", token, { method: "POST", body: JSON.stringify({ subject, body }) });
+}
+/** the letter as the reader sees it (html), without sending */
+export async function previewCampaign(subject: string, body: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/admin/campaigns/preview`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ subject, body }),
+  });
+  if (!res.ok) throw new ApiError(`request failed (${res.status})`);
+  return res.text();
+}
+/** the reader's way out, from the link in the letter */
+export async function unsubscribeByToken(token: string): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/unsubscribe`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+  if (!res.ok) throw new ApiError(`request failed (${res.status})`);
+  const data = await res.json();
+  return Boolean(data?.removed);
+}

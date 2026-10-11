@@ -1,14 +1,162 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Icon, useAdmin } from "@/components/admin/AdminShell";
 import s from "@/components/admin/admin.module.css";
 import x from "@/components/admin/extra.module.css";
 import { when } from "@/components/admin/labels";
-import { addSubscriber, listSubscribers, removeSubscriber } from "@/lib/api";
+import {
+  addSubscriber,
+  listCampaigns,
+  listSubscribers,
+  previewCampaign,
+  removeSubscriber,
+  sendCampaign,
+  sendCampaignTest,
+  type CampaignList,
+} from "@/lib/api";
 
 const SEARCH = "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4";
 const DOWNLOAD = "M12 4v11M7 10l5 5 5-5M5 20h14";
+
+
+const CAMPAIGN_STATUS = { sending: "надсилається", done: "надіслано", interrupted: "перервано" } as const;
+
+/** write a letter, see it, send a test to yourself, then send it to the list */
+function Composer({ subscribers }: { subscribers: number }) {
+  const { token, fail } = useAdmin();
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [to, setTo] = useState("");
+  const [busy, setBusy] = useState("");
+  const [note, setNote] = useState("");
+  const [error, setError] = useState("");
+  const [preview, setPreview] = useState("");
+  const [data, setData] = useState<CampaignList | null>(null);
+
+  const load = useCallback(() => {
+    listCampaigns(token).then(setData).catch(() => {});
+  }, [token]);
+  useEffect(load, [load]);
+  // while a campaign is going out, the counters follow it
+  const running = data?.rows.some((r) => r.status === "sending");
+  useEffect(() => {
+    if (!running) return;
+    const t = setInterval(load, 4000);
+    return () => clearInterval(t);
+  }, [running, load]);
+
+  const left = data ? Math.max(0, data.quota.limit - data.quota.used) : null;
+  const ready = subject.trim() && body.trim();
+
+  async function run(what: string, fn: () => Promise<void>) {
+    setBusy(what);
+    setNote("");
+    setError("");
+    try {
+      await fn();
+    } catch (e) {
+      setError(fail(e));
+    } finally {
+      setBusy("");
+    }
+  }
+
+  return (
+    <section className={`${s.panel} ${s.panelBody}`} style={{ marginBottom: 16, display: "grid", gap: 12 }}>
+      <h2 className={s.sectionTitle}>Новий лист підписникам</h2>
+      <label className={s.field}>
+        <span>Тема</span>
+        <input value={subject} onChange={(e) => setSubject(e.target.value)} maxLength={200} placeholder="Вийшла перша книга" />
+      </label>
+      <label className={s.field}>
+        <span>Текст · порожній рядок — новий абзац, посилання стають клікабельними</span>
+        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={9} placeholder={"Добрий день!\n\nМи раді сказати, що…"} />
+      </label>
+      <p className={s.dim} style={{ margin: 0 }}>
+        До кожного листа додається посилання «Відписатися». Сьогодні можна надіслати ще {left ?? "…"} листів із {data?.quota.limit ?? 500}.
+      </p>
+      <div className={x.addRow}>
+        <button
+          type="button"
+          className={s.btn}
+          disabled={!ready || !!busy}
+          onClick={() => run("preview", async () => setPreview(await previewCampaign(subject, body)))}
+        >
+          {busy === "preview" ? "…" : "Переглянути"}
+        </button>
+        <label className={s.field} style={{ flex: "1 1 220px" }}>
+          <input type="email" value={to} onChange={(e) => setTo(e.target.value)} placeholder="тестовий лист на вашу пошту" aria-label="Куди надіслати тест" />
+        </label>
+        <button
+          type="button"
+          className={s.btn}
+          disabled={!ready || !to.trim() || !!busy}
+          onClick={() =>
+            run("test", async () => {
+              await sendCampaignTest(token, subject, body, to.trim());
+              setNote(`Тестовий лист надіслано на ${to.trim()}.`);
+            })
+          }
+        >
+          {busy === "test" ? "Надсилаємо…" : "Надіслати тест"}
+        </button>
+        <button
+          type="button"
+          className={s.btnPrimary}
+          disabled={!ready || !!busy || !subscribers || !!running}
+          onClick={() => {
+            if (!confirm(`Надіслати цей лист усім підписникам (${subscribers})? Скасувати не вийде.`)) return;
+            run("send", async () => {
+              await sendCampaign(token, subject, body);
+              setNote("Розсилка пішла. Лічильник нижче оновлюється сам.");
+              setSubject("");
+              setBody("");
+              load();
+            });
+          }}
+        >
+          {busy === "send" ? "Запускаємо…" : `Надіслати ${subscribers}`}
+        </button>
+      </div>
+      {note && <p className={s.dim} style={{ margin: 0 }}>{note}</p>}
+      {error && <p className={s.error}>{error}</p>}
+      {preview && (
+        <iframe
+          title="Як виглядатиме лист"
+          sandbox=""
+          srcDoc={preview}
+          style={{ width: "100%", height: 460, border: "1px solid var(--hair, #2a3a5c)", borderRadius: 10, background: "#fff" }}
+        />
+      )}
+      {data && data.rows.length > 0 && (
+        <table className={s.table}>
+          <thead>
+            <tr>
+              <th>Лист</th>
+              <th className={s.right}>Надіслано</th>
+              <th className={s.right}>Стан</th>
+              <th className={s.right}>Коли</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.rows.map((r) => (
+              <tr key={r.id}>
+                <td>{r.subject}</td>
+                <td className={s.right}>
+                  {r.sent} з {r.total}
+                  {r.failed > 0 && ` · помилок ${r.failed}`}
+                </td>
+                <td className={`${s.right} ${s.dim}`}>{CAMPAIGN_STATUS[r.status]}</td>
+                <td className={`${s.right} ${s.dim}`}>{when(r.created_at)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
+  );
+}
 
 export default function SubscribersPage() {
   const { token, fail } = useAdmin();
@@ -101,6 +249,8 @@ export default function SubscribersPage() {
       </div>
 
       {error && <p className={s.error}>{error}</p>}
+
+      <Composer subscribers={rows?.length ?? 0} />
 
       <form className={`${s.panel} ${s.panelBody}`} onSubmit={add} style={{ marginBottom: 16 }}>
         <div className={x.addRow}>
