@@ -600,3 +600,235 @@
     font-size: 0.62rem;
   }
 }
+
+
+/* ================= the title page ================= */
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(92svh, 860px);
+  overflow: hidden;
+  padding: calc(var(--nav-h) + clamp(40px, 7vw, 96px)) 0 clamp(48px, 7vw, 96px);
+  text-align: center;
+}
+
+/* an engraving of the heavens behind, dark at the edges and lit from the middle */
+.heroPlate {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(55% 55% at 50% 48%, rgba(201, 169, 97, 0.2), transparent 70%),
+    radial-gradient(120% 90% at 50% 50%, rgba(14, 29, 58, 0.35) 0%, rgba(11, 22, 43, 0.92) 100%),
+    url(/gravure/cellarius-copernicus-md.webp) 50% 45% / cover no-repeat,
+    var(--ink-deep);
+}
+
+.heroPlate::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 34%;
+  background: linear-gradient(to top, var(--ink) 0%, transparent 100%);
+}
+
+.heroRing {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: min(120vmin, 1100px);
+  aspect-ratio: 1;
+  color: rgba(245, 222, 179, 0.2);
+  transform: translate(-50%, -50%) rotate(calc(var(--p, 0.5) * 60deg - 30deg));
+  pointer-events: none;
+  will-change: transform;
+}
+
+.heroIn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2vw, 24px);
+}
+
+.heroKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+  animation: heroIn 0.9s var(--ease) both;
+}
+
+.heroKicker span {
+  width: clamp(28px, 6vw, 72px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+
+.heroKicker span:last-child {
+  transform: scaleX(-1);
+}
+
+/* the five rubrics, as the marks on a title page */
+.heroMarks {
+  display: flex;
+  gap: clamp(10px, 1.6vw, 18px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: heroIn 0.9s var(--ease) 0.08s both;
+}
+
+.heroMarks li {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(201, 169, 97, 0.5);
+  border-radius: 50%;
+  background: rgba(11, 22, 43, 0.5);
+  color: var(--gold);
+  backdrop-filter: blur(3px);
+}
+
+.heroTitle {
+  max-width: 15ch;
+  margin: clamp(6px, 1vw, 14px) 0 0;
+  font-family: var(--font-read), Georgia, serif;
+  font-size: clamp(2.7rem, 7.4vw, 6.4rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+  text-wrap: balance;
+  color: transparent;
+  background: linear-gradient(180deg, #fbefd2 10%, #f5deb3 50%, #c9a961 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 6px 30px rgba(8, 17, 34, 0.7));
+  animation: heroIn 1s var(--ease) 0.16s both;
+}
+
+.heroOrn {
+  display: block;
+  width: min(300px, 62vw);
+  height: 26px;
+  background: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 220 22%27%3E%3Cg fill=%27none%27 stroke=%27%23c9a961%27 stroke-width=%271%27 stroke-linecap=%27round%27%3E%3Cpath d=%27M2 11h82M136 11h82%27 opacity=%27.55%27/%3E%3Cpath d=%27M110 2l9 9-9 9-9-9z%27/%3E%3Cpath d=%27M86 11c5-6 10-6 15 0M119 11c5-6 10-6 15 0%27 opacity=%27.85%27/%3E%3C/g%3E%3Ccircle cx=%27110%27 cy=%2711%27 r=%272.2%27 fill=%27%23c9a961%27/%3E%3Ccircle cx=%2778%27 cy=%2711%27 r=%271.3%27 fill=%27%23c9a961%27 opacity=%27.7%27/%3E%3Ccircle cx=%27142%27 cy=%2711%27 r=%271.3%27 fill=%27%23c9a961%27 opacity=%27.7%27/%3E%3C/svg%3E") center / contain no-repeat;
+  animation: heroIn 1s var(--ease) 0.28s both;
+}
+
+.heroLede {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-read), Georgia, serif;
+  font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+  font-style: italic;
+  line-height: 1.55;
+  text-wrap: balance;
+  color: rgba(245, 222, 179, 0.88);
+  text-shadow: 0 1px 16px rgba(8, 17, 34, 0.8);
+  animation: heroIn 1s var(--ease) 0.36s both;
+}
+
+.heroStats {
+  display: flex;
+  align-items: stretch;
+  margin: clamp(10px, 1.6vw, 22px) 0 0;
+  animation: heroIn 1s var(--ease) 0.46s both;
+}
+
+.heroStats div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 4px;
+  padding-inline: clamp(18px, 4vw, 48px);
+}
+
+.heroStats div + div {
+  border-left: 1px solid rgba(201, 169, 97, 0.4);
+}
+
+.heroStats dt {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--on-dark-mute);
+}
+
+.heroStats dd {
+  margin: 0;
+  font-family: var(--font-read), Georgia, serif;
+  font-size: clamp(1.8rem, 3.4vw, 2.7rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--gold);
+}
+
+/* a thread to pull: down to the contents */
+.heroCue {
+  display: block;
+  width: 26px;
+  height: 64px;
+  margin-top: clamp(8px, 2vw, 22px);
+  animation: heroIn 1s var(--ease) 0.6s both;
+}
+
+.heroCue span {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 100%;
+  margin-inline: auto;
+  background: linear-gradient(to bottom, transparent, var(--gold));
+}
+
+.heroCue span::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  bottom: -2px;
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  background: var(--gold);
+  animation: cue 2.4s ease-in-out infinite;
+}
+
+@keyframes cue {
+  0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
+  50% { transform: translateY(6px) rotate(45deg); opacity: 1; }
+}
+
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    min-height: 0;
+  }
+  .heroMarks li {
+    width: 38px;
+    height: 38px;
+  }
+  .heroKicker {
+    letter-spacing: 0.2em;
+    font-size: 0.66rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroKicker, .heroMarks, .heroTitle, .heroOrn, .heroLede, .heroStats, .heroCue, .heroCue span::after {
+    animation: none;
+  }
+}

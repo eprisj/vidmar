@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import PageHero from "@/components/PageHero";
+import Seal from "@/components/Seal";
+import ScrollProgress from "@/components/ScrollProgress";
 import JournalCover from "@/components/JournalCover";
 import { Icon } from "@/components/JournalIcons";
 import { channels, dateText, entries, entryBySlug, entryPath, FEATURED, inRubric, readTime, rubricOf, rubrics } from "@/lib/journal";
@@ -22,9 +23,54 @@ const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII"];
 export default function JournalPage() {
   const featured = entryBySlug(FEATURED) ?? entries[0];
   const shown = rubrics.filter((r) => inRubric(r.id).length);
+  const since = entries.reduce((y, e) => Math.min(y, new Date(e.date).getFullYear()), 9999);
   return (
     <>
-      <PageHero compact label="Журнал" title={<Txt k="page.journal.title" />} lede={<Txt k="page.journal.lede" />} variant={5} />
+      {/* the title page: the journal opens like a book */}
+      <ScrollProgress className={`deep ${styles.hero}`} data-field="dark" data-candle="">
+        <span className={styles.heroPlate} aria-hidden="true" />
+        <div className={styles.heroRing} aria-hidden="true">
+          <Seal ticks={84} star />
+        </div>
+        <div className={`wrapMax ${styles.heroIn}`}>
+          <span className={styles.heroKicker}>
+            <span aria-hidden="true" />
+            Журнал видавництва ВІДЬМАР
+            <span aria-hidden="true" />
+          </span>
+          <ul className={styles.heroMarks} aria-label="Рубрики журналу">
+            {shown.map((r) => (
+              <li key={r.id} title={r.title}>
+                <Icon name={r.id} size={20} />
+              </li>
+            ))}
+          </ul>
+          <h1 className={styles.heroTitle}>
+            <Txt k="page.journal.title" />
+          </h1>
+          <span className={styles.heroOrn} aria-hidden="true" />
+          <p className={styles.heroLede}>
+            <Txt k="page.journal.lede" />
+          </p>
+          <dl className={styles.heroStats}>
+            <div>
+              <dt>текстів</dt>
+              <dd>{entries.length}</dd>
+            </div>
+            <div>
+              <dt>рубрик</dt>
+              <dd>{shown.length}</dd>
+            </div>
+            <div>
+              <dt>перший текст</dt>
+              <dd>{since}</dd>
+            </div>
+          </dl>
+          <a href="#contents" className={styles.heroCue} aria-label="До змісту">
+            <span aria-hidden="true" />
+          </a>
+        </div>
+      </ScrollProgress>
 
       {/* the text to begin with */}
       {featured && (
@@ -76,7 +122,7 @@ export default function JournalPage() {
       </nav>
 
       {/* the contents: one page of a book, the rubrics as its chapters */}
-      <section className={`ink ${styles.shelf}`} data-field="dark">
+      <section id="contents" className={`ink ${styles.shelf}`} data-field="dark">
         <div className={styles.contents}>
           <header className={styles.contentsHead}>
             <span className={styles.contentsKicker}>Відьмар · Журнал</span>
