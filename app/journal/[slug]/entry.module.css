@@ -1,127 +1,134 @@
-.root {
-  padding-block: clamp(36px, 5vw, 72px) clamp(56px, 8vw, 120px);
+/* ---------- the head ---------- */
+.head {
+  padding-top: clamp(104px, 11vw, 168px);
+  padding-bottom: clamp(36px, 5vw, 72px);
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: minmax(180px, 0.55fr) minmax(0, 1.6fr);
-  gap: clamp(24px, 5vw, 88px);
-  align-items: start;
-}
-
-.aside {
+.headIn {
   display: flex;
   flex-direction: column;
-  gap: 28px;
   align-items: flex-start;
+  gap: clamp(14px, 2vw, 24px);
 }
 
-@media (min-width: 861px) {
-  .aside {
-    position: sticky;
-    top: 96px;
-  }
-}
-
-.facts {
+.crumbs {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--on-dark-mute);
 }
 
-.facts dd {
-  margin: 4px 0 0;
-  font-size: 0.98rem;
-  line-height: 1.45;
-  color: var(--on-dark);
-}
-
-.facts a {
+.crumbs a {
   border-bottom: 1px solid var(--hair-d);
+  padding-bottom: 2px;
   transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 
-.facts a:hover {
+.crumbs a:hover {
   color: var(--gold);
   border-color: currentColor;
 }
 
-/* one readable column */
-.article {
-  max-width: 680px;
+.title {
+  max-width: 19ch;
+  font-size: clamp(2.2rem, 5.2vw, 4.4rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  text-wrap: balance;
+  color: var(--on-dark);
+}
+
+.dek {
+  max-width: 44ch;
+  margin: 0;
+  font-size: var(--fs-lede);
+  line-height: 1.5;
+  color: var(--on-dark-mute);
+  text-wrap: balance;
+}
+
+.meta {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+}
+
+/* ---------- the paper ---------- */
+.paper {
+  padding-block: clamp(36px, 5vw, 80px) clamp(56px, 8vw, 120px);
+}
+
+.sheet {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding-inline: var(--gut);
 }
 
 .figure {
-  margin: 0 0 clamp(22px, 3vw, 36px);
+  margin: 0 0 clamp(28px, 4vw, 52px);
 }
 
 .figure img {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 70vh;
-  object-fit: cover;
-  border-radius: 4px;
+  max-height: 68vh;
+  object-fit: contain;
+  object-position: center top;
+  border-radius: 3px;
+  box-shadow: 0 18px 44px -22px rgba(14, 29, 58, 0.55);
 }
 
-.text p {
-  margin: 0 0 1.15em;
-  font-size: clamp(1.05rem, 1.25vw, 1.2rem);
-  line-height: 1.7;
-  color: rgba(245, 222, 179, 0.9);
-  text-wrap: pretty;
-  overflow-wrap: anywhere;
-}
-
-/* the academy sets its posts in short lines: a paragraph keeps them */
-.line {
-  display: block;
-}
-
-.text strong {
-  color: var(--on-dark);
-  font-weight: 600;
-}
-
-.text a {
-  color: var(--gold);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+/* a portrait picture (a book, a card) stays its own size instead of filling the width */
+@media (min-width: 700px) {
+  .figure img {
+    margin-inline: auto;
+    width: auto;
+    max-width: 100%;
+  }
 }
 
 .source {
-  margin: clamp(28px, 4vw, 48px) 0 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--hair-d);
+  max-width: 38rem;
+  margin: clamp(36px, 5vw, 60px) auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--hair-l);
   font-size: 0.9rem;
-  color: var(--on-dark-mute);
+  color: var(--on-light-mute);
 }
 
 .source a {
-  color: var(--on-dark);
-  border-bottom: 1px solid var(--hair-d);
+  color: var(--on-light);
+  font-weight: 600;
+  border-bottom: 1px solid var(--hair-l);
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 
 .source a:hover {
-  color: var(--gold);
+  color: var(--gold-deep);
   border-color: currentColor;
 }
 
 .pager {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px clamp(16px, 4vw, 56px);
-  margin-top: clamp(40px, 6vw, 80px);
-  padding-top: 28px;
-  border-top: 1px solid var(--hair-d);
+  gap: 16px clamp(16px, 4vw, 48px);
+  max-width: 38rem;
+  margin: clamp(32px, 5vw, 64px) auto 0;
 }
 
 .pagerLink {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: inherit;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--hair-l);
+  color: var(--on-light);
 }
 
 .pagerNext {
@@ -130,18 +137,19 @@
 }
 
 .pagerTitle {
-  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
   line-height: 1.25;
   text-wrap: balance;
   transition: color 0.3s var(--ease);
 }
 
 .pagerLink:hover .pagerTitle {
-  color: var(--gold);
+  color: var(--gold-deep);
 }
 
+/* ---------- more ---------- */
 .more {
   list-style: none;
   margin: clamp(22px, 3vw, 36px) 0 0;
@@ -180,9 +188,6 @@
 }
 
 @media (max-width: 860px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
   .more {
     grid-template-columns: 1fr;
   }
@@ -195,5 +200,37 @@
   .pagerNext {
     text-align: left;
     align-items: flex-start;
+  }
+}
+
+/* how far down the text you are, where the browser can tell */
+.progress {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .progress {
+    display: block;
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    height: 3px;
+    background: var(--gold);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    animation: grow linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress {
+    display: none;
   }
 }

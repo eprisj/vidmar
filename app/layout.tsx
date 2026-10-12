@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Golos_Text } from "next/font/google";
+import { Golos_Text, Literata } from "next/font/google";
 import localFont from "next/font/local";
 import Header from "@/components/Header";
 import CandleLight from "@/components/CandleLight";
@@ -37,6 +37,14 @@ const golos = Golos_Text({
   display: "swap",
 });
 
+/** the reading face of the journal: drawn for long text on a screen, with a
+ * real Cyrillic. Used for the body of an article and nowhere else. */
+const literata = Literata({
+  variable: "--font-read",
+  subsets: ["cyrillic", "latin"],
+  display: "swap",
+});
+
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoAtBuild();
   const base = await seoMeta(
@@ -62,7 +70,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="uk"
       // the lite flag is set by the boot script before React ever sees <html>
       suppressHydrationWarning
-      className={`${denistina.variable} ${golos.variable}`}
+      className={`${denistina.variable} ${golos.variable} ${literata.variable}`}
     >
       <head>
         {/* weak devices are flagged before the first paint, so they never

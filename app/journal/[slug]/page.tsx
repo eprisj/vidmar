@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import PageHero from "@/components/PageHero";
-import Runs from "@/components/Runs";
+import JournalText from "@/components/JournalText";
 import { around, dateText, entries, entryBySlug, entryPath, readTime, rubricOf } from "@/lib/journal";
 import { SITE_URL, getSeoAtBuild, pageMeta } from "@/lib/seo";
 import styles from "./entry.module.css";
@@ -46,64 +45,48 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
   };
   return (
     <>
-      <PageHero compact label={rubric.title} title={e.title} lede={e.dek} variant={5} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <div className={styles.progress} aria-hidden="true" />
 
-      <section className={`ink ${styles.root}`} data-field="dark">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <div className="wrapMax">
-          <div className={styles.layout}>
-            <aside className={styles.aside}>
-              <Link href="/journal" prefetch={false} className="link">
-                ← Журнал
-              </Link>
-              <dl className={styles.facts}>
-                <div>
-                  <dt className="micro">рубрика</dt>
-                  <dd>
-                    <Link href={`/journal#${rubric.id}`} prefetch={false}>
-                      {rubric.title}
-                    </Link>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="micro">опубліковано</dt>
-                  <dd>
-                    <time dateTime={e.date}>{dateText(e.date)}</time>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="micro">читати</dt>
-                  <dd>{readTime(e.minutes)}</dd>
-                </div>
-              </dl>
-            </aside>
+      {/* the head: dark, plain and quiet, so the text below is the page */}
+      <header className={`ink ${styles.head}`} data-field="dark" data-candle="">
+        <div className={`wrapMax ${styles.headIn}`}>
+          <nav className={styles.crumbs} aria-label="Розділ">
+            <Link href="/journal" prefetch={false}>
+              ← Журнал
+            </Link>
+            <span aria-hidden="true">/</span>
+            <Link href={`/journal#${rubric.id}`} prefetch={false}>
+              {rubric.title}
+            </Link>
+          </nav>
+          <h1 className={styles.title}>{e.title}</h1>
+          <p className={styles.dek}>{e.dek}</p>
+          <p className={`micro ${styles.meta}`}>
+            <time dateTime={e.date}>{dateText(e.date)}</time>
+            <span aria-hidden="true">·</span>
+            <span>{readTime(e.minutes)}</span>
+          </p>
+        </div>
+      </header>
 
-            <article className={styles.article}>
-              {e.image && (
-                <figure className={styles.figure}>
-                  <img src={e.image} alt="" decoding="async" />
-                </figure>
-              )}
-              <div className={styles.text}>
-                {e.blocks.map((b, i) => (
-                  <p key={i}>
-                    {b.map((line, k) => (
-                      <span key={k} className={styles.line}>
-                        <Runs line={line} />
-                      </span>
-                    ))}
-                  </p>
-                ))}
-              </div>
-              <p className={styles.source}>
-                Текст уперше з’явився в Telegram:{" "}
-                <a href={e.url} target="_blank" rel="noopener noreferrer">
-                  читати й обговорити там
-                </a>
-                .
-              </p>
-            </article>
-          </div>
+      {/* the paper: the text itself, on wheat */}
+      <section className={`ash ${styles.paper}`} data-field="light">
+        <div className={styles.sheet}>
+          {e.image && (
+            <figure className={styles.figure}>
+              <img src={e.image} alt="" decoding="async" />
+            </figure>
+          )}
+          <article>
+            <JournalText blocks={e.blocks} />
+            <p className={styles.source}>
+              Текст уперше з’явився в Telegram:{" "}
+              <a href={e.url} target="_blank" rel="noopener noreferrer">
+                читати й обговорити там
+              </a>
+            </p>
+          </article>
 
           {(prev || next) && (
             <nav className={styles.pager} aria-label="У цій рубриці">

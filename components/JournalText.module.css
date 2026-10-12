@@ -1,0 +1,197 @@
+/* A journal text set on wheat paper. Dark type on a light field reads longer
+   and easier than wheat on blue, so the body of an article sits on the site's
+   own paper tone, in a book face, about 62 characters to the line. */
+.text {
+  --jt-ink: #14284f;
+  --jt-strong: #0c1a38;
+  --jt-mute: #44587c;
+  --jt-accent: #7a5f26;
+  --jt-rule: rgba(22, 46, 89, 0.2);
+  max-width: 38rem;
+  margin-inline: auto;
+  font-family: var(--font-read), Georgia, "Times New Roman", serif;
+  font-size: clamp(1.12rem, 0.5vw + 1.02rem, 1.3rem);
+  line-height: 1.72;
+  color: var(--jt-ink);
+  font-optical-sizing: auto;
+  font-feature-settings: "kern", "liga", "onum";
+  hyphens: manual;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: auto;
+  text-rendering: optimizeLegibility;
+}
+
+.text p,
+.text ol,
+.text ul,
+.text dl,
+.text blockquote {
+  margin: 0 0 1.2em;
+}
+
+.text p {
+  text-wrap: pretty;
+}
+
+.line {
+  display: block;
+}
+
+.text strong {
+  color: var(--jt-strong);
+  font-weight: 700;
+}
+
+.text em {
+  font-style: italic;
+}
+
+.text a {
+  color: var(--jt-accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.text a:hover {
+  color: var(--jt-strong);
+}
+
+/* the paragraph the text opens on */
+.lede {
+  font-size: 1.16em;
+  line-height: 1.6;
+  color: var(--jt-strong);
+  margin-bottom: 1.5em !important;
+  text-wrap: balance;
+}
+
+/* a section of the text */
+.h {
+  margin: 2.2em 0 0.65em;
+  font-family: var(--font-golos), "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.12em;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--jt-strong);
+  text-wrap: balance;
+}
+
+.h::before {
+  content: "";
+  display: block;
+  width: 2.4em;
+  height: 2px;
+  margin-bottom: 0.75em;
+  background: var(--jt-accent);
+}
+
+.h:first-child {
+  margin-top: 0;
+}
+
+/* steps: the number stands in the margin, the text keeps the column */
+.ol {
+  list-style: none;
+  padding: 0;
+  counter-reset: step;
+}
+
+.ol li {
+  position: relative;
+  counter-increment: step;
+  padding-left: 2.7em;
+  margin-bottom: 1.05em;
+}
+
+.ol li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  display: grid;
+  place-items: center;
+  width: 1.75em;
+  height: 1.75em;
+  border-radius: 50%;
+  background: var(--jt-strong);
+  font-family: var(--font-golos), sans-serif;
+  font-size: 0.78em;
+  font-weight: 700;
+  line-height: 1;
+  color: #f5deb3;
+}
+
+.ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ul li {
+  position: relative;
+  padding-left: 1.6em;
+  margin-bottom: 0.5em;
+}
+
+.ul li::before {
+  content: "";
+  position: absolute;
+  left: 0.2em;
+  top: 0.82em;
+  width: 0.5em;
+  height: 2px;
+  background: var(--jt-accent);
+}
+
+/* a formula to be spoken: set off, never mistaken for the text around it */
+.quote {
+  position: relative;
+  margin-inline: 0;
+  padding: 0.9em 1.2em 0.9em 1.4em;
+  border-left: 3px solid var(--jt-accent);
+  background: rgba(22, 46, 89, 0.06);
+  border-radius: 0 3px 3px 0;
+  font-size: 1.04em;
+  font-style: italic;
+  color: var(--jt-strong);
+}
+
+/* verse keeps its lines, with air between the stanzas */
+.verse {
+  padding-left: 1.1em;
+  border-left: 1px solid var(--jt-rule);
+  color: var(--jt-strong);
+}
+
+/* «Term — text» and «Term → meaning» */
+.terms div {
+  padding-block: 0.7em;
+  border-top: 1px solid var(--jt-rule);
+}
+
+.terms div:last-child {
+  border-bottom: 1px solid var(--jt-rule);
+}
+
+.terms dt {
+  font-weight: 700;
+  color: var(--jt-strong);
+}
+
+.terms dd {
+  margin: 0.15em 0 0;
+  color: var(--jt-ink);
+}
+
+@media (min-width: 700px) {
+  .terms div {
+    display: grid;
+    grid-template-columns: minmax(7em, 0.3fr) 1fr;
+    gap: 0.3em 1.4em;
+  }
+  .terms dd {
+    margin: 0;
+  }
+}
