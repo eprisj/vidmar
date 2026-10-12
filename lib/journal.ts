@@ -77,6 +77,9 @@ export const CARDS_IN: Record<string, Record<string, string>> = {
     маг: "01-magician",
     колісниця: "07-chariot",
     дурень: "00-fool",
+    місяць: "18-moon",
+    башта: "16-tower",
+    зірка: "17-star",
   },
 };
 

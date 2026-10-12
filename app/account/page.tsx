@@ -19,6 +19,7 @@ import {
   type User,
 } from "@/lib/api";
 import { PAY_INFO } from "@/lib/payments";
+import Seal from "@/components/Seal";
 import styles from "./account.module.css";
 
 const STATUS: Record<string, { text: string; tone: string }> = {
@@ -714,6 +715,55 @@ function Cabinet({
   );
 }
 
+/** what the cabinet holds, shown beside the sign-in form */
+const PERKS = [
+  {
+    title: "Замовлення",
+    text: "Історія покупок, статус і ТТН кожної посилки та ваша полиця з усіма книгами.",
+    icon: "M4 7.5 12 4l8 3.5v9L12 20l-8-3.5zM4 7.5l8 3.5m8-3.5-8 3.5M12 11v9",
+  },
+  {
+    title: "Доставка",
+    text: "Відділення Нової пошти збережеться: наступне замовлення — у два кліки.",
+    icon: "M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11zm0-8.2a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z",
+  },
+  {
+    title: "Картка читача",
+    text: "Своя картка з QR-кодом: відкривається без входу, її зручно показати в книгарні.",
+    icon: "M3.5 6.5h17v11h-17zM3.5 10h17M7 14.5h4",
+  },
+];
+
+function Perks() {
+  return (
+    <div className={styles.perks}>
+      <span className={styles.perksKicker}>Усередині кабінету</span>
+      <ul className={styles.perksList}>
+        {PERKS.map((p) => (
+          <li key={p.title}>
+            <span className={styles.perkIcon} aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round">
+                <path d={p.icon} />
+              </svg>
+            </span>
+            <span>
+              <b>{p.title}</b>
+              <span>{p.text}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div className={styles.sample} aria-hidden="true">
+        <span className={styles.sampleBand}>ВІДЬМАР · картка читача</span>
+        <span className={styles.sampleSeal}>
+          <Seal star emblem />
+        </span>
+        <span className={styles.sampleCode}>ВДМ · ·· ·· ··</span>
+      </div>
+    </div>
+  );
+}
+
 export default function AccountPage() {
   return (
     <>
@@ -722,12 +772,7 @@ export default function AccountPage() {
       <section className={`ink ${styles.root}`} data-field="dark">
         <div className="wrapMax">
           <AuthGate
-            aside={
-              <p>
-                Історія замовлень, збережена адреса доставки й картка читача з
-                QR-кодом.
-              </p>
-            }
+            aside={<Perks />}
           >
             {(user, signOut) => <Cabinet user={user} signOut={signOut} />}
           </AuthGate>
