@@ -3,6 +3,7 @@ import type { Line } from "@/lib/journal";
 import { layout } from "@/lib/journal-layout";
 import type { Block } from "@/lib/journal";
 import Runs from "./Runs";
+import Seal from "./Seal";
 import styles from "./JournalText.module.css";
 
 const Lines = ({ lines }: { lines: Line[] }) => (
@@ -25,9 +26,18 @@ function dropCap(lines: Line[]): Line[] {
   return [[head, ...(rest.t ? [rest] : []), ...lines[0].slice(1)], ...lines.slice(1)];
 }
 
+/** «Жриця — тиха вода, берег» in two parts: the name, and what stands round it */
+function splitHead(line: Line): { name: string; where: string } | null {
+  const raw = line.map((r) => r.t).join("").replace(/\s+/g, " ").trim();
+  const at = raw.indexOf(" — ");
+  if (at < 1 || at > 30) return null;
+  const where = raw.slice(at + 3).trim();
+  return where ? { name: raw.slice(0, at).trim(), where: where.charAt(0).toUpperCase() + where.slice(1) } : null;
+}
+
 /** A journal text set for reading: a lead paragraph, headings, numbered steps,
  * glossaries, spoken formulas and verse each in their own form. */
-export default function JournalText({ blocks, pull }: { blocks: Block[]; pull?: string }) {
+export default function JournalText({ blocks, pull, cards }: { blocks: Block[]; pull?: string; cards?: Record<string, string> }) {
   const nodes = layout(blocks);
   // a line from the text, set large a little before the middle, between two paragraphs
   let at = -1;
@@ -104,23 +114,66 @@ export default function JournalText({ blocks, pull }: { blocks: Block[]; pull?: 
                 ))}
               </ul>
             );
-          case "terms":
+          case "terms": {
+            // «Name — setting» then «→ meaning»: each one set as an entry, with its card when the text has them
+            const heads = n.items.map((it) => splitHead(it.term));
+            const entries = heads.every((h) => h) && n.items.every((it) => it.note.length > 0);
+            if (!entries) {
+              return (
+                <dl key={i} className={styles.terms}>
+                  {n.items.map((it, k) => (
+                    <div key={k}>
+                      <dt>
+                        <Runs line={it.term} />
+                      </dt>
+                      {it.note.length > 0 && (
+                        <dd>
+                          <Lines lines={it.note} />
+                        </dd>
+                      )}
+                    </div>
+                  ))}
+                </dl>
+              );
+            }
+            const withCards = !!cards && heads.some((h) => cards[h!.name.toLowerCase()]);
             return (
-              <dl key={i} className={styles.terms}>
-                {n.items.map((it, k) => (
-                  <div key={k}>
-                    <dt>
-                      <Runs line={it.term} />
-                    </dt>
-                    {it.note.length > 0 && (
-                      <dd>
-                        <Lines lines={it.note} />
-                      </dd>
-                    )}
-                  </div>
-                ))}
-              </dl>
+              <ol key={i} className={`${styles.entries} ${withCards ? styles.withCards : ""}`}>
+                {n.items.map((it, k) => {
+                  const h = heads[k]!;
+                  const card = cards?.[h.name.toLowerCase()];
+                  return (
+                    <li key={k} className={styles.entry}>
+                      {withCards && (
+                        <span className={`${styles.thumb} ${k % 2 ? styles.tiltR : styles.tiltL}`} aria-hidden="true">
+                          {card ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={`/tarot/${card}-xs.webp`} alt="" loading="lazy" decoding="async" />
+                          ) : (
+                            <span className={styles.back}>
+                              <span className={styles.backMark}>
+                                <Seal star emblem />
+                              </span>
+                            </span>
+                          )}
+                        </span>
+                      )}
+                      <span className={styles.entryBody}>
+                        <span className={styles.name}>{h.name}</span>
+                        <span className={styles.where}>{h.where}</span>
+                        <span className={styles.meaning}>
+                          <span className={styles.arrow} aria-hidden="true">
+                            →
+                          </span>
+                          <Lines lines={it.note} />
+                        </span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
             );
+          }
           default:
             return (
               <p key={i}>

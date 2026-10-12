@@ -5,7 +5,7 @@ import JournalText from "@/components/JournalText";
 import JournalCover from "@/components/JournalCover";
 import ShareRow from "@/components/ShareRow";
 import { Icon } from "@/components/JournalIcons";
-import { PULL, artFor, creditFor, around, dateText, entries, entryBySlug, entryPath, plateFor, readTime, rubricOf } from "@/lib/journal";
+import { CARDS_IN, PULL, artFor, creditFor, around, dateText, entries, entryBySlug, entryPath, plateFor, readTime, rubricOf } from "@/lib/journal";
 import { SITE_URL, getSeoAtBuild, pageMeta } from "@/lib/seo";
 import styles from "./entry.module.css";
 
@@ -104,7 +104,7 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
             </figure>
           )}
           <article>
-            <JournalText blocks={e.blocks} pull={PULL[e.slug]} />
+            <JournalText blocks={e.blocks} pull={PULL[e.slug]} cards={CARDS_IN[e.slug]} />
             <p className={styles.fleuron} aria-hidden="true">
               ✦
             </p>

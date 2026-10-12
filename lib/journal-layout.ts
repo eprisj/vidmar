@@ -177,6 +177,16 @@ export function layout(blocks: Block[]): Node[] {
     nodes.push({ kind: "p", lines: b });
   }
 
+  // entries that came as one block each are one list
+  for (let k = nodes.length - 1; k > 0; k--) {
+    const a = nodes[k - 1];
+    const b = nodes[k];
+    if (a.kind === "terms" && b.kind === "terms") {
+      a.items.push(...b.items);
+      nodes.splice(k, 1);
+    }
+  }
+
   // the first paragraph leads when it opens the text and is prose of a sensible length
   const n0 = nodes[0];
   if (n0 && n0.kind === "p") {

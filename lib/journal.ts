@@ -67,6 +67,19 @@ const ART: Record<string, Art> = {
   "odyn-namir": { plate: "dore-angels" },
   sluzhnytsia: { plate: "goya-sleep" },
 };
+/** In a text that goes through the arcana one by one, the card that stands
+ * beside each: the first word of the line, lower case, to the card file. An
+ * arcana without a card of its own yet shows the back of the deck. */
+export const CARDS_IN: Record<string, Record<string, string>> = {
+  "prostir-arkaniv": {
+    жриця: "02-high-priestess",
+    імператриця: "03-empress",
+    маг: "01-magician",
+    колісниця: "07-chariot",
+    дурень: "00-fool",
+  },
+};
+
 /** the plate behind the head of a text that has none of its own */
 const RUBRIC_PLATE: Record<string, string> = {
   taro: "cellarius-copernicus",
