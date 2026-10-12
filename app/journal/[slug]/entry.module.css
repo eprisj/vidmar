@@ -140,8 +140,8 @@
 
 @media (min-width: 900px) {
   .sheet {
-    max-width: 52rem;
-    padding: clamp(48px, 5vw, 72px) 5.5rem clamp(40px, 4vw, 60px);
+    max-width: 50rem;
+    padding: clamp(48px, 5vw, 72px) 4.5rem clamp(40px, 4vw, 60px);
     border-radius: 6px;
     background:
       radial-gradient(70% 40% at 50% 0%, rgba(255, 255, 255, 0.45), transparent 70%),
@@ -169,7 +169,7 @@
   justify-content: center;
   gap: 16px;
   margin: 0 auto clamp(26px, 3.4vw, 44px);
-  max-width: 38rem;
+  max-width: 40rem;
   color: var(--gold-deep);
 }
 
@@ -210,7 +210,7 @@
 }
 
 .source {
-  max-width: 38rem;
+  max-width: 40rem;
   margin: clamp(36px, 5vw, 60px) auto 0;
   padding-top: 20px;
   border-top: 1px solid var(--hair-l);
@@ -234,7 +234,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px clamp(16px, 4vw, 48px);
-  max-width: 38rem;
+  max-width: 40rem;
   margin: clamp(32px, 5vw, 64px) auto 0;
 }
 
@@ -402,7 +402,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  max-width: 38rem;
+  max-width: 40rem;
   margin: 0 auto clamp(30px, 4vw, 52px);
   padding-bottom: 12px;
   border-bottom: 3px double rgba(122, 95, 38, 0.4);
@@ -479,7 +479,7 @@ section.paper {
 @media (min-width: 900px) {
   .sheet {
     width: 100%;
-    padding: clamp(48px, 5vw, 72px) 5.5rem clamp(40px, 4vw, 60px);
+    padding: clamp(48px, 5vw, 72px) 4.5rem clamp(40px, 4vw, 60px);
   }
   .sheet::before {
     inset: 12px;

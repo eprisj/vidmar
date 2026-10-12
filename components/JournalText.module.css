@@ -267,7 +267,7 @@
 
 @media (min-width: 1000px) {
   .pull {
-    margin-inline: -4.5rem;
+    margin-inline: -2.5rem;
   }
 }
 
@@ -586,4 +586,66 @@
   border-radius: 2px;
   box-shadow: inset 3px 0 0 var(--jt-accent), inset 0 0 0 1px rgba(122, 95, 38, 0.18);
   background: rgba(122, 95, 38, 0.06);
+}
+
+/* ===== rhythm: one size, one leading, even gaps ===== */
+.text {
+  max-width: 40rem;
+  font-size: clamp(1.06rem, 0.35vw + 1rem, 1.2rem);
+  line-height: 1.62;
+}
+
+.text p,
+.text ol,
+.text ul,
+.text dl,
+.text blockquote {
+  margin-bottom: 1.05em;
+}
+
+/* short lines keep their size and sit closer: the gap is between stanzas, not between lines */
+.text .stanza {
+  margin: 1.3em 0;
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.verse {
+  margin: 1.3em 0;
+  padding: 0.1em 0 0.1em 1.1em;
+  border-left-width: 2px;
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.text .closing {
+  margin-top: 1.8em;
+  font-size: 1.2em;
+}
+
+.lede {
+  font-size: 1.12em;
+  line-height: 1.55;
+  margin-bottom: 1.3em !important;
+}
+
+.ol li,
+.ul li {
+  margin-bottom: 0.7em;
+}
+
+@media (max-width: 699px) {
+  .text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+}
+
+/* ragged right, no hyphens: even word spaces and whole words read cleaner than a justified edge in a column this narrow */
+@media (min-width: 700px) {
+  .text p:not([class]),
+  .lede {
+    text-align: left;
+    hyphens: manual;
+  }
 }
