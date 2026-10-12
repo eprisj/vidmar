@@ -105,6 +105,15 @@
   margin: 0;
 }
 
+.credit {
+  margin: clamp(10px, 1.6vw, 22px) 0 0;
+  max-width: 60ch;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--on-dark-mute);
+  opacity: 0.85;
+}
+
 .metaItem {
   display: inline-flex;
   align-items: center;

@@ -39,37 +39,57 @@ export const channels = [
 
 export const entries: Entry[] = (raw as Entry[]).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
 
-/** The pictures of the journal, from what the house already owns: Doré's
- * plates (public/gravure, duotoned to the house ink) and the tarot cards
- * (public/tarot). A text that came with its own picture shows that; one that
- * did not gets a plate, and a text about an arcana gets that card laid on it. */
+/** The pictures of the journal, all from the public domain and each set in the
+ * house's blue: celestial maps (Cellarius), Doré's plates, Bilibin and
+ * Vasnetsov for the old tales, Dürer, Goya, and the tarot cards of
+ * public/tarot. A text that came with its own photograph shows that and keeps
+ * its plate for the head of the page; one that did not gets the plate for its
+ * cover, and a text about an arcana has that card laid on the plate. */
 export type Art = { plate: string; card?: string };
 const ART: Record<string, Art> = {
-  "pershyi-rozklad": { plate: "mystique-forest", card: "00-fool" },
-  "choho-karty-movchat": { plate: "death-moon", card: "02-high-priestess" },
-  "scho-rozpovist-rozklad": { plate: "fantasy-giant", card: "01-magician" },
-  "arkan-kliuch": { plate: "macbeth-cave", card: "05-hierophant" },
-  "kolir-u-kartakh": { plate: "bluebeard", card: "03-empress" },
-  "prostir-arkaniv": { plate: "witches-storm", card: "07-chariot" },
-  "travy-ta-arkany": { plate: "mystique-forest", card: "08-strength" },
-  "arkany-porohy": { plate: "death-moon", card: "09-hermit" },
-  "rytual-ochyshchennia-kolody": { plate: "mystique-forest" },
-  "kamin-oberih-domu": { plate: "macbeth-cave" },
-  "pershyi-porih": { plate: "witches-storm" },
-  "valpurhiieva-nich": { plate: "witches-storm" },
-  "tykhe-remeslo": { plate: "death-moon" },
-  "odyn-namir": { plate: "mystique-forest" },
+  "pershyi-rozklad": { plate: "cellarius-copernicus", card: "00-fool" },
+  "choho-karty-movchat": { plate: "cellarius-luna", card: "02-high-priestess" },
+  "scho-rozpovist-rozklad": { plate: "cellarius-arateum", card: "01-magician" },
+  "arkan-kliuch": { plate: "cellarius-ptolemaicum", card: "05-hierophant" },
+  "kolir-u-kartakh": { plate: "cellarius-magnitudines", card: "03-empress" },
+  "prostir-arkaniv": { plate: "cellarius-brahea", card: "07-chariot" },
+  "travy-ta-arkany": { plate: "dore-garden", card: "08-strength" },
+  "arkany-porohy": { plate: "dore-lethe-angel", card: "09-hermit" },
+  "skhidne-taro-hanjyfa": { plate: "cellarius-orbis" },
+  "rytual-ochyshchennia-kolody": { plate: "dore-lethe" },
+  "kamin-oberih-domu": { plate: "dore-tree" },
+  "pershyi-porih": { plate: "dore-forest" },
+  "valpurhiieva-nich": { plate: "bilibin-flight" },
+  "prysisty-na-dorizhku": { plate: "bilibin-vasilisa" },
+  "vyshyvanka-inzheneriia": { plate: "bilibin-maria" },
+  "velesova-nich": { plate: "vasnetsov-alyonushka" },
+  "tykhe-remeslo": { plate: "durer-melencolia" },
+  "odyn-namir": { plate: "dore-angels" },
+  sluzhnytsia: { plate: "goya-sleep" },
 };
 /** the plate behind the head of a text that has none of its own */
 const RUBRIC_PLATE: Record<string, string> = {
-  taro: "death-moon",
-  obriad: "macbeth-cave",
-  mif: "fantasy-giant",
-  dumky: "bluebeard",
-  polytsia: "mystique-forest",
+  taro: "cellarius-copernicus",
+  obriad: "dore-forest",
+  mif: "bilibin-vasilisa",
+  dumky: "durer-melencolia",
+  polytsia: "goya-sleep",
 };
 export const artFor = (e: Entry): Art | null => ART[e.slug] ?? null;
-export const plateFor = (e: Entry): string => ART[e.slug]?.plate ?? RUBRIC_PLATE[e.rubric] ?? "mystique-forest";
+export const plateFor = (e: Entry): string => ART[e.slug]?.plate ?? RUBRIC_PLATE[e.rubric] ?? "cellarius-copernicus";
+
+/** who drew the plate, for the line under the head of a text */
+export function creditFor(plate: string): string {
+  if (plate.startsWith("cellarius")) return "Андреас Целларіус, «Harmonia Macrocosmica», 1660";
+  if (plate === "dore-forest") return "Гюстав Доре, ілюстрація до «Сказання старого моряка», 1876";
+  if (plate.startsWith("dore")) return "Гюстав Доре, ілюстрація до «Божественної комедії», 1861–1868";
+  if (plate === "bilibin-vasilisa") return "Іван Білібін, «Василиса Прекрасна», 1899";
+  if (plate.startsWith("bilibin")) return "Іван Білібін, ілюстрація до казки, 1900";
+  if (plate.startsWith("vasnetsov")) return "Віктор Васнецов, «Альонушка», 1881";
+  if (plate.startsWith("durer")) return "Альбрехт Дюрер, «Меланхолія I», 1514";
+  if (plate.startsWith("goya")) return "Франсіско Гойя, «Сон розуму народжує чудовиськ», 1799";
+  return "Гюстав Доре";
+}
 
 /** a line from the text, set large in the middle of it */
 export const PULL: Record<string, string> = {

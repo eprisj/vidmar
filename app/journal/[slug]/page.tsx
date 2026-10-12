@@ -5,7 +5,7 @@ import JournalText from "@/components/JournalText";
 import JournalCover from "@/components/JournalCover";
 import ShareRow from "@/components/ShareRow";
 import { Icon } from "@/components/JournalIcons";
-import { PULL, artFor, around, dateText, entries, entryBySlug, entryPath, plateFor, readTime, rubricOf } from "@/lib/journal";
+import { PULL, artFor, creditFor, around, dateText, entries, entryBySlug, entryPath, plateFor, readTime, rubricOf } from "@/lib/journal";
 import { SITE_URL, getSeoAtBuild, pageMeta } from "@/lib/seo";
 import styles from "./entry.module.css";
 
@@ -88,6 +88,9 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
               <Icon name="clock" size={15} />
               {readTime(e.minutes)}
             </span>
+          </p>
+          <p className={styles.credit}>
+            На шапці: {creditFor(plate)}
           </p>
         </div>
       </header>
