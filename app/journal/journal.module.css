@@ -615,24 +615,32 @@
   text-align: center;
 }
 
-/* an engraving of the heavens behind, dark at the edges and lit from the middle */
+/* an engraving of the heavens behind: pushed a little past the edges so the paper margin of the print never shows, dark at the sides and lit from the middle */
 .heroPlate {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background:
-    radial-gradient(55% 55% at 50% 48%, rgba(201, 169, 97, 0.2), transparent 70%),
-    radial-gradient(120% 90% at 50% 50%, rgba(14, 29, 58, 0.35) 0%, rgba(11, 22, 43, 0.92) 100%),
-    url(/gravure/cellarius-copernicus-md.webp) 50% 45% / cover no-repeat,
-    var(--ink-deep);
+  isolation: isolate;
+  background: var(--ink-deep);
+}
+
+.heroPlate::before {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  z-index: -1;
+  background: url(/gravure/cellarius-copernicus-md.webp) 50% 45% / cover no-repeat;
 }
 
 .heroPlate::after {
   content: "";
   position: absolute;
-  inset: auto 0 0 0;
-  height: 34%;
-  background: linear-gradient(to top, var(--ink) 0%, transparent 100%);
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(11, 22, 43, 0.55) 0%, transparent 18%, transparent 58%, var(--ink-abyss) 100%),
+    linear-gradient(90deg, rgba(11, 22, 43, 0.92) 0%, rgba(11, 22, 43, 0.35) 12%, transparent 26%, transparent 74%, rgba(11, 22, 43, 0.35) 88%, rgba(11, 22, 43, 0.92) 100%),
+    radial-gradient(55% 55% at 50% 48%, rgba(201, 169, 97, 0.2), transparent 70%),
+    radial-gradient(120% 90% at 50% 50%, rgba(14, 29, 58, 0.3) 0%, rgba(11, 22, 43, 0.85) 100%);
 }
 
 .heroRing {
@@ -853,6 +861,9 @@
   filter: blur(80px) saturate(1.25);
   opacity: 0.34;
   transform: scale(1.1);
+  /* it fades in from the top, where the title page ends in the same dark */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 24%, #000 54%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, transparent 24%, #000 54%, #000 78%, transparent 100%);
 }
 
 .frontLink {
@@ -1257,4 +1268,9 @@
 /* the rubric strip, with gold rules */
 .tabs {
   border-block-color: rgba(201, 169, 97, 0.28);
+}
+
+/* the title page ends in the dark the frontispiece begins in: no seam between them */
+.hero + section.front {
+  background: linear-gradient(180deg, var(--ink-abyss) 0%, var(--ink-deep) 45%, var(--ink) 100%);
 }
