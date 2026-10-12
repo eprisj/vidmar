@@ -1,3 +1,8 @@
+/** Slips of the channel's own text, set right on the page. The posts are not
+ * edited at the source (npm run journal fetches them again), so a known slip
+ * is mended here. */
+const FIXES: [string, string][] = [["фундаментальну помилка", "фундаментальну помилку"]];
+
 /** The small things a typesetter does before a text goes to the page: the
  * quotes of the language, the long dash with its space held to the word
  * before it, the apostrophe, the ellipsis, and short words that must not be
@@ -7,6 +12,7 @@ const OPENS = /[\s(\[ —–«„“]/;
 const LETTER = /[A-Za-zА-Яа-яІіЇїЄєҐґ]/;
 
 export function typo(s: string, prev = ""): string {
+  for (const [from, to] of FIXES) s = s.replace(from, to);
   let out = "";
   for (let i = 0; i < s.length; i++) {
     const c = s[i];
