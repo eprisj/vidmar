@@ -6,6 +6,7 @@ import JournalCover from "@/components/JournalCover";
 import { Icon } from "@/components/JournalIcons";
 import { channels, dateText, entries, entryBySlug, entryPath, FEATURED, inRubric, readTime, rubricOf, rubrics } from "@/lib/journal";
 import { seoMeta } from "@/lib/seo";
+import { typo } from "@/lib/typo";
 import styles from "./journal.module.css";
 import { Txt } from "@/components/SiteText";
 
@@ -15,6 +16,8 @@ export const generateMetadata = (): Promise<Metadata> =>
     "Журнал видавництва ВІДЬМАР: тексти про Таро, обряд, рід і міф з каналів академії «Всесвіт Луннарії» та Яра Линського.",
     "/journal",
   );
+
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII"];
 
 export default function JournalPage() {
   const featured = entryBySlug(FEATURED) ?? entries[0];
@@ -31,12 +34,13 @@ export default function JournalPage() {
               <Link href={entryPath(featured.slug)} prefetch={false} className={styles.featured}>
                 <JournalCover slug={featured.slug} rubric={featured.rubric} image={featured.image} ratio="3 / 2" priority />
                 <span className={styles.featuredBody}>
+                  <span className={styles.kicker}>Читайте першим</span>
                   <span className={styles.badge}>
                     <Icon name={featured.rubric} size={16} />
                     {rubricOf(featured).title}
                   </span>
-                  <span className={styles.featuredTitle}>{featured.title}</span>
-                  <span className={styles.featuredDek}>{featured.dek}</span>
+                  <span className={styles.featuredTitle}>{typo(featured.title)}</span>
+                  <span className={styles.featuredDek}>{typo(featured.dek)}</span>
                   <span className={styles.featuredMeta}>
                     <span>
                       <Icon name="calendar" size={16} />
@@ -71,49 +75,56 @@ export default function JournalPage() {
         </div>
       </nav>
 
-      {shown.map((r, k) => {
-        const list = inRubric(r.id);
-        return (
-          <section key={r.id} id={r.id} className={`${k % 2 ? "ink-2" : "ink"} ${styles.rubric}`} data-field="dark" aria-labelledby={`h-${r.id}`}>
-            <div className="wrapMax">
-              <Reveal>
-                <header className={styles.rubricHead}>
-                  <span className={styles.rubricIcon}>
-                    <Icon name={r.id} size={26} />
+      {/* the contents: one page of a book, the rubrics as its chapters */}
+      <section className={`ink ${styles.shelf}`} data-field="dark">
+        <div className={styles.contents}>
+          <header className={styles.contentsHead}>
+            <span className={styles.contentsKicker}>Відьмар · Журнал</span>
+            <h2 className={styles.contentsTitle}>Зміст</h2>
+            <span className={styles.orn} aria-hidden="true" />
+          </header>
+          {shown.map((r, k) => {
+            const list = inRubric(r.id);
+            return (
+              <section key={r.id} id={r.id} className={styles.chapter} aria-labelledby={`h-${r.id}`}>
+                <header className={styles.chHead}>
+                  <span className={styles.numeral} aria-hidden="true">
+                    {ROMAN[k]}
                   </span>
-                  <div>
-                    <h2 id={`h-${r.id}`} className={styles.rubricTitle}>
+                  <div className={styles.chText}>
+                    <h3 id={`h-${r.id}`} className={styles.chTitle}>
+                      <Icon name={r.id} size={20} />
                       {r.title}
-                    </h2>
-                    <p className={styles.rubricLede}>{r.lede}</p>
+                    </h3>
+                    <p className={styles.chLede}>{r.lede}</p>
                   </div>
-                  <span className={`micro ${styles.rubricCount}`}>{list.length} текстів</span>
                 </header>
-              </Reveal>
-              <ul className={styles.grid}>
-                {list.map((e, i) => (
-                  <li key={e.slug}>
-                    <Reveal delay={(i % 3) * 80}>
-                      <Link href={entryPath(e.slug)} prefetch={false} className={styles.card}>
-                        <JournalCover slug={e.slug} rubric={e.rubric} image={e.image} />
-                        <span className={styles.cardBody}>
-                          <span className={styles.cardTitle}>{e.title}</span>
-                          <span className={styles.cardDek}>{e.dek}</span>
-                          <span className={styles.cardMeta}>
-                            <span>{dateText(e.date)}</span>
-                            <span aria-hidden="true">·</span>
-                            <span>{readTime(e.minutes)}</span>
+                <ul className={styles.rows}>
+                  {list.map((e) => (
+                    <li key={e.slug}>
+                      <Link href={entryPath(e.slug)} prefetch={false} className={styles.row}>
+                        <span className={styles.rowCover}>
+                          <JournalCover slug={e.slug} rubric={e.rubric} image={e.image} ratio="3 / 2" />
+                        </span>
+                        <span className={styles.rowBody}>
+                          <span className={styles.rowTitle}>{typo(e.title)}</span>
+                          <span className={styles.rowDek}>{typo(e.dek)}</span>
+                          <span className={styles.rowMeta}>
+                            {dateText(e.date)} · {readTime(e.minutes)}
                           </span>
                         </span>
+                        <span className={styles.rowGo} aria-hidden="true">
+                          <Icon name="arrow" size={18} />
+                        </span>
                       </Link>
-                    </Reveal>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-        );
-      })}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="ink padS" data-field="dark">
         <div className="wrapMax">
