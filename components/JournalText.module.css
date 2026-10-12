@@ -725,3 +725,14 @@
   border: 0;
   border-image: none;
 }
+
+/* a line set large from the text: centred, whole in its own column, whatever the paragraph rules say */
+.text .pull p:not([class]) {
+  text-align: center;
+  hyphens: manual;
+  text-wrap: balance;
+}
+
+.text .pull {
+  margin-inline: 0;
+}
