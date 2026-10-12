@@ -96,7 +96,7 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
       </header>
 
       {/* the paper: the text itself, on wheat */}
-      <section className={`ash ${styles.paper}`} data-field="light">
+      <section className={`ink ${styles.paper}`} data-field="dark">
         <div className={styles.sheet}>
           {e.image && (
             <figure className={styles.figure}>

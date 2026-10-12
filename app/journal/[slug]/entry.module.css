@@ -434,3 +434,71 @@
   padding-top: 0;
   font-style: italic;
 }
+
+
+/* ================= the page on a dark table ================= */
+/* A cream sheet on beige wheat was a pale on pale; the table is the night of the head, the page is the one bright thing, and it rises out of the head. */
+section.paper {
+  position: relative;
+  padding-block: clamp(20px, 3vw, 40px) clamp(64px, 9vw, 130px);
+  background:
+    radial-gradient(60% 45% at 50% 18%, rgba(201, 169, 97, 0.16), transparent 70%),
+    radial-gradient(90% 60% at 50% 100%, rgba(29, 58, 109, 0.7), transparent 75%),
+    linear-gradient(180deg, var(--ink) 0%, var(--ink-deep) 70%, var(--ink-abyss) 100%);
+}
+
+.sheet {
+  z-index: 2;
+  width: calc(100% - 24px);
+  margin-inline: auto;
+  padding: clamp(32px, 7vw, 48px) clamp(20px, 6vw, 40px) 36px;
+  border-radius: 4px;
+  color: var(--on-light);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27220%27 height=%27220%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix values=%270 0 0 0 .42  0 0 0 0 .3  0 0 0 0 .1  0 0 0 .12 0%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E") 0 0 / 220px 220px,
+    linear-gradient(90deg, rgba(110, 75, 20, 0.1), transparent 5%, transparent 95%, rgba(110, 75, 20, 0.1)),
+    linear-gradient(180deg, #fcf1d6, #f8e7c5);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 0 0 1px rgba(122, 95, 38, 0.35),
+    0 3px 0 -1px #f3deb0, 0 4px 0 -1px rgba(122, 95, 38, 0.25),
+    0 7px 0 -2px #ecd49f, 0 8px 0 -2px rgba(122, 95, 38, 0.2),
+    0 60px 90px -30px rgba(0, 0, 0, 0.75),
+    0 0 120px -20px rgba(201, 169, 97, 0.18);
+}
+
+.sheet::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(122, 95, 38, 0.38);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+@media (min-width: 900px) {
+  .sheet {
+    width: 100%;
+    padding: clamp(48px, 5vw, 72px) 5.5rem clamp(40px, 4vw, 60px);
+  }
+  .sheet::before {
+    inset: 12px;
+  }
+  .head:not(.headCard) + .paper .sheet {
+    margin-top: clamp(-90px, -5vw, -40px);
+  }
+}
+
+/* the sheet is paper inside a dark section: its captions take the light-field colour */
+.sheet :global(.micro) {
+  color: var(--on-light-mute);
+}
+
+@media (max-width: 560px) {
+  .runhead {
+    justify-content: center;
+  }
+  .runhead span:first-child {
+    display: none;
+  }
+}
