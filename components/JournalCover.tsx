@@ -1,4 +1,5 @@
 import { Icon } from "./JournalIcons";
+import { artFor, type Entry } from "@/lib/journal";
 import styles from "./JournalCover.module.css";
 
 /** the same text always gets the same stars */
@@ -36,13 +37,34 @@ export default function JournalCover({
   image,
   ratio = "4 / 3",
   priority = false,
+  size = "xs",
 }: {
   slug: string;
   rubric: string;
   image: string | null;
   ratio?: string;
   priority?: boolean;
+  /** which size of the plate to load: small cards take xs, the large cover sm */
+  size?: "xs" | "sm";
 }) {
+  const art = image ? null : artFor({ slug } as Entry);
+  if (art) {
+    return (
+      <span className={`${styles.cover} ${art.card ? styles.hasCard : ""}`} style={{ aspectRatio: ratio }} aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={`${styles.img} ${styles.plateImg}`} src={`/gravure/${art.plate}-${size}.webp`} alt="" loading={priority ? "eager" : "lazy"} decoding="async" />
+        <span className={styles.shade} />
+        {art.card ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className={styles.card} src={`/tarot/${art.card}.webp`} alt="" loading="lazy" decoding="async" />
+        ) : (
+          <span className={styles.seal}>
+            <Icon name={rubric} size={30} />
+          </span>
+        )}
+      </span>
+    );
+  }
   if (image) {
     return (
       <span className={styles.cover} style={{ aspectRatio: ratio }}>

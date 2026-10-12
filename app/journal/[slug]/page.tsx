@@ -5,7 +5,7 @@ import JournalText from "@/components/JournalText";
 import JournalCover from "@/components/JournalCover";
 import ShareRow from "@/components/ShareRow";
 import { Icon } from "@/components/JournalIcons";
-import { around, dateText, entries, entryBySlug, entryPath, readTime, rubricOf } from "@/lib/journal";
+import { PULL, artFor, around, dateText, entries, entryBySlug, entryPath, plateFor, readTime, rubricOf } from "@/lib/journal";
 import { SITE_URL, getSeoAtBuild, pageMeta } from "@/lib/seo";
 import styles from "./entry.module.css";
 
@@ -33,6 +33,8 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
   const e = entryBySlug(slug);
   if (!e) return null;
   const rubric = rubricOf(e);
+  const art = artFor(e);
+  const plate = plateFor(e);
   const { prev, next } = around(e.slug);
   const more = entries.filter((x) => x.slug !== e.slug && x.rubric !== e.rubric).slice(0, 3);
   const jsonLd = {
@@ -52,7 +54,17 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
       <div className={styles.progress} aria-hidden="true" />
 
       {/* the head: dark, plain and quiet, so the text below is the page */}
-      <header className={`ink ${styles.head}`} data-field="dark" data-candle="">
+      <header
+        className={`ink ${styles.head} ${art?.card ? styles.headCard : ""}`}
+        data-field="dark"
+        data-candle=""
+        style={{ ["--plate" as string]: `url(/gravure/${plate}-md.webp)` }}
+      >
+        <span className={styles.headPlate} aria-hidden="true" />
+        {art?.card && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className={styles.headCardImg} src={`/tarot/${art.card}.webp`} alt="" decoding="async" />
+        )}
         <div className={`wrapMax ${styles.headIn}`}>
           <nav className={styles.crumbs} aria-label="Розділ">
             <Link href="/journal" prefetch={false}>
@@ -89,7 +101,10 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
             </figure>
           )}
           <article>
-            <JournalText blocks={e.blocks} />
+            <JournalText blocks={e.blocks} pull={PULL[e.slug]} />
+            <p className={styles.fleuron} aria-hidden="true">
+              ✦
+            </p>
             <p className={styles.source}>
               Текст уперше з’явився в Telegram:{" "}
               <a href={e.url} target="_blank" rel="noopener noreferrer">

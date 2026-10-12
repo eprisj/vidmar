@@ -58,3 +58,54 @@ a:hover .mark {
     transform: translate(-50%, -50%);
   }
 }
+
+/* a Doré plate behind, shaded toward the foot so a card or a mark can stand on it */
+.plateImg {
+  object-position: 50% 38%;
+  filter: saturate(1.1) brightness(1.02) contrast(1.05);
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 50%, rgba(14, 29, 58, 0) 30%, rgba(14, 29, 58, 0.4) 100%),
+    linear-gradient(to top, rgba(11, 22, 43, 0.6), rgba(11, 22, 43, 0) 45%);
+}
+
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 86%;
+  width: auto;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  border-radius: 6px;
+  box-shadow: 0 22px 40px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(245, 222, 179, 0.35), 0 0 46px rgba(201, 169, 97, 0.18);
+  transition: transform 0.9s var(--ease);
+}
+
+a:hover .card {
+  transform: translate(-50%, -52%) rotate(-2deg) scale(1.03);
+}
+
+.seal {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgba(201, 169, 97, 0.7);
+  border-radius: 50%;
+  background: rgba(14, 29, 58, 0.62);
+  color: var(--gold);
+  backdrop-filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a:hover .card {
+    transform: translate(-50%, -50%) rotate(-4deg);
+  }
+}

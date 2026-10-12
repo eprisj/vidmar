@@ -39,6 +39,50 @@ export const channels = [
 
 export const entries: Entry[] = (raw as Entry[]).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
 
+/** The pictures of the journal, from what the house already owns: Doré's
+ * plates (public/gravure, duotoned to the house ink) and the tarot cards
+ * (public/tarot). A text that came with its own picture shows that; one that
+ * did not gets a plate, and a text about an arcana gets that card laid on it. */
+export type Art = { plate: string; card?: string };
+const ART: Record<string, Art> = {
+  "pershyi-rozklad": { plate: "mystique-forest", card: "00-fool" },
+  "choho-karty-movchat": { plate: "death-moon", card: "02-high-priestess" },
+  "scho-rozpovist-rozklad": { plate: "fantasy-giant", card: "01-magician" },
+  "arkan-kliuch": { plate: "macbeth-cave", card: "05-hierophant" },
+  "kolir-u-kartakh": { plate: "bluebeard", card: "03-empress" },
+  "prostir-arkaniv": { plate: "witches-storm", card: "07-chariot" },
+  "travy-ta-arkany": { plate: "mystique-forest", card: "08-strength" },
+  "arkany-porohy": { plate: "death-moon", card: "09-hermit" },
+  "rytual-ochyshchennia-kolody": { plate: "mystique-forest" },
+  "kamin-oberih-domu": { plate: "macbeth-cave" },
+  "pershyi-porih": { plate: "witches-storm" },
+  "valpurhiieva-nich": { plate: "witches-storm" },
+  "tykhe-remeslo": { plate: "death-moon" },
+  "odyn-namir": { plate: "mystique-forest" },
+};
+/** the plate behind the head of a text that has none of its own */
+const RUBRIC_PLATE: Record<string, string> = {
+  taro: "death-moon",
+  obriad: "macbeth-cave",
+  mif: "fantasy-giant",
+  dumky: "bluebeard",
+  polytsia: "mystique-forest",
+};
+export const artFor = (e: Entry): Art | null => ART[e.slug] ?? null;
+export const plateFor = (e: Entry): string => ART[e.slug]?.plate ?? RUBRIC_PLATE[e.rubric] ?? "mystique-forest";
+
+/** a line from the text, set large in the middle of it */
+export const PULL: Record<string, string> = {
+  "pershyi-porih": "Новий шлях ніколи не починається зі старого кроку.",
+  "tykhe-remeslo": "Справжнє не завжди ховається. Але воно ніколи не потребує безперервно доводити, що воно справжнє.",
+  "valpurhiieva-nich": "Вальпургієва ніч — не про страх. Це ніч пам’яті про те, ким ми були.",
+  "velesova-nich": "Головне — не назва свята, а те світло, яке воно приносить.",
+  "vyshyvanka-inzheneriia": "Навіть чорний колір у нас може говорити не про кінець, а про коріння, силу й продовження життя.",
+  "odyn-namir": "Ти маєш право жити в своєму ритмі.",
+  "prysisty-na-dorizhku": "Ця коротка мить спокою заряджає нас мудрістю предків та позитивною енергією на весь шлях.",
+  "skhidne-taro-hanjyfa": "Це справжня естетика давнього Сходу, де азарт переплітається з філософією.",
+};
+
 /** the text the journal opens on: an old rite with a picture */
 export const FEATURED = "velesova-nich";
 

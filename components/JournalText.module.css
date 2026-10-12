@@ -195,3 +195,71 @@
     margin: 0;
   }
 }
+
+/* a drop cap on the first paragraph */
+.cap {
+  float: left;
+  margin: 0.04em 0.1em -0.06em 0;
+  font-family: var(--font-read), Georgia, serif;
+  font-size: 3.7em;
+  font-weight: 600;
+  line-height: 0.78;
+  color: var(--jt-accent);
+}
+
+/* a line from the text, set large: wider than the column where there is room */
+.pull {
+  position: relative;
+  margin: 2.2em 0 2.2em;
+  padding: 1.5em 0 1.3em;
+  border-block: 1px solid var(--jt-rule);
+  text-align: center;
+}
+
+.pull::before,
+.pull::after {
+  content: "✦";
+  position: absolute;
+  left: 50%;
+  padding-inline: 0.7em;
+  transform: translateX(-50%);
+  background: var(--ash);
+  font-size: 0.7em;
+  line-height: 1;
+  color: var(--jt-accent);
+}
+
+.pull::before {
+  top: -0.5em;
+}
+
+.pull::after {
+  bottom: -0.5em;
+}
+
+.pullMark {
+  display: block;
+  height: 0.5em;
+  font-size: 3.4em;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--jt-accent);
+  opacity: 0.55;
+}
+
+.pull p {
+  margin: 0.5em 0 0;
+  font-size: 1.42em;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.38;
+  letter-spacing: -0.01em;
+  color: var(--jt-strong);
+  text-wrap: balance;
+}
+
+@media (min-width: 1000px) {
+  .pull {
+    margin-inline: -4.5rem;
+  }
+}
