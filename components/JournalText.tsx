@@ -4,6 +4,7 @@ import { layout } from "@/lib/journal-layout";
 import type { Block } from "@/lib/journal";
 import Runs from "./Runs";
 import Seal from "./Seal";
+import { typo } from "@/lib/typo";
 import styles from "./JournalText.module.css";
 
 const Lines = ({ lines }: { lines: Line[] }) => (
@@ -70,7 +71,7 @@ export default function JournalText({ blocks, pull, cards, marks }: { blocks: Bl
               <span className={styles.pullMark} aria-hidden="true">
                 «
               </span>
-              <p>{pull}</p>
+              <p>{typo(pull!)}</p>
             </aside>
           ) : null;
         return (
@@ -103,7 +104,7 @@ export default function JournalText({ blocks, pull, cards, marks }: { blocks: Bl
           case "h":
             return (
               <h2 key={i} className={styles.h}>
-                {n.text}
+                {typo(n.text)}
               </h2>
             );
           case "verse":
@@ -210,7 +211,7 @@ export default function JournalText({ blocks, pull, cards, marks }: { blocks: Bl
                       )}
                       <span className={styles.entryBody}>
                         <span className={styles.name}>{h.name}</span>
-                        <span className={styles.where}>{h.where}</span>
+                        <span className={styles.where}>{typo(h.where)}</span>
                         <span className={styles.meaning}>
                           <span className={styles.arrow} aria-hidden="true">
                             →

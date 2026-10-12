@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import type { Line } from "@/lib/journal";
+import { typo } from "@/lib/typo";
 import styles from "./JournalText.module.css";
 
 /** One line of a Telegram post: bold, italic and links as the channel set them. */
@@ -7,7 +8,9 @@ export default function Runs({ line }: { line: Line }) {
   return (
     <>
       {line.map((r, i) => {
-        let n: React.ReactNode = (r as { cap?: boolean }).cap ? <CapText t={r.t} /> : (r as { sc?: boolean }).sc ? <span className={styles.sc}>{r.t}</span> : r.t;
+        const prev = line.slice(0, i).map((q) => q.t).join("");
+        const t = typo(r.t, prev);
+        let n: React.ReactNode = (r as { cap?: boolean }).cap ? <CapText t={t} /> : (r as { sc?: boolean }).sc ? <span className={styles.sc}>{t}</span> : t;
         if (r.i) n = <em>{n}</em>;
         if (r.b) n = <strong>{n}</strong>;
         if (r.href)

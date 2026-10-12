@@ -42,6 +42,7 @@ const golos = Golos_Text({
 const literata = Literata({
   variable: "--font-read",
   subsets: ["cyrillic", "latin"],
+  axes: ["opsz"],
   display: "swap",
 });
 
