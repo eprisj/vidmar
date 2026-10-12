@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import JournalText from "@/components/JournalText";
+import JournalCover from "@/components/JournalCover";
+import ShareRow from "@/components/ShareRow";
+import { Icon } from "@/components/JournalIcons";
 import { around, dateText, entries, entryBySlug, entryPath, readTime, rubricOf } from "@/lib/journal";
 import { SITE_URL, getSeoAtBuild, pageMeta } from "@/lib/seo";
 import styles from "./entry.module.css";
@@ -53,19 +56,26 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
         <div className={`wrapMax ${styles.headIn}`}>
           <nav className={styles.crumbs} aria-label="Розділ">
             <Link href="/journal" prefetch={false}>
-              ← Журнал
+              <Icon name="back" size={15} />
+              Журнал
             </Link>
             <span aria-hidden="true">/</span>
-            <Link href={`/journal#${rubric.id}`} prefetch={false}>
+            <Link href={`/journal#${rubric.id}`} prefetch={false} className={styles.crumbRubric}>
+              <Icon name={rubric.id} size={16} />
               {rubric.title}
             </Link>
           </nav>
           <h1 className={styles.title}>{e.title}</h1>
           <p className={styles.dek}>{e.dek}</p>
           <p className={`micro ${styles.meta}`}>
-            <time dateTime={e.date}>{dateText(e.date)}</time>
-            <span aria-hidden="true">·</span>
-            <span>{readTime(e.minutes)}</span>
+            <span className={styles.metaItem}>
+              <Icon name="calendar" size={15} />
+              <time dateTime={e.date}>{dateText(e.date)}</time>
+            </span>
+            <span className={styles.metaItem}>
+              <Icon name="clock" size={15} />
+              {readTime(e.minutes)}
+            </span>
           </p>
         </div>
       </header>
@@ -88,11 +98,16 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
             </p>
           </article>
 
+          <ShareRow url={`${SITE_URL}${entryPath(e.slug)}`} title={e.title} />
+
           {(prev || next) && (
             <nav className={styles.pager} aria-label="У цій рубриці">
               {prev ? (
                 <Link href={entryPath(prev.slug)} prefetch={false} className={styles.pagerLink}>
-                  <span className="micro">раніше в рубриці</span>
+                  <span className={`micro ${styles.pagerLabel}`}>
+                    <Icon name="back" size={14} />
+                    раніше в рубриці
+                  </span>
                   <span className={styles.pagerTitle}>{prev.title}</span>
                 </Link>
               ) : (
@@ -100,7 +115,10 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
               )}
               {next ? (
                 <Link href={entryPath(next.slug)} prefetch={false} className={`${styles.pagerLink} ${styles.pagerNext}`}>
-                  <span className="micro">далі в рубриці</span>
+                  <span className={`micro ${styles.pagerLabel}`}>
+                    далі в рубриці
+                    <Icon name="arrow" size={14} />
+                  </span>
                   <span className={styles.pagerTitle}>{next.title}</span>
                 </Link>
               ) : (
@@ -121,6 +139,7 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
               {more.map((x) => (
                 <li key={x.slug}>
                   <Link href={entryPath(x.slug)} prefetch={false} className={styles.moreCard}>
+                    <JournalCover slug={x.slug} rubric={x.rubric} image={x.image} ratio="16 / 10" />
                     <span className="micro">{rubricOf(x).title}</span>
                     <span className={styles.moreTitle}>{x.title}</span>
                     <span className={styles.moreDek}>{x.dek}</span>

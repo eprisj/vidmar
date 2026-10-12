@@ -22,6 +22,9 @@
 }
 
 .crumbs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   border-bottom: 1px solid var(--hair-d);
   padding-bottom: 2px;
   transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
@@ -51,10 +54,21 @@
   text-wrap: balance;
 }
 
+.crumbRubric {
+  color: var(--gold);
+}
+
 .meta {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px 24px;
   margin: 0;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ---------- the paper ---------- */
@@ -136,6 +150,12 @@
   align-items: flex-end;
 }
 
+.pagerLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .pagerTitle {
   font-size: clamp(1rem, 1.4vw, 1.2rem);
   font-weight: 600;
@@ -162,9 +182,7 @@
 .moreCard {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 18px;
-  border-top: 1px solid var(--hair-d);
+  gap: 12px;
   color: inherit;
   height: 100%;
 }
