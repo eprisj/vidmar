@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import type { Line } from "@/lib/journal";
+import type { Line, Mark } from "@/lib/journal";
 import { layout } from "@/lib/journal-layout";
 import type { Block } from "@/lib/journal";
 import Runs from "./Runs";
@@ -35,15 +35,30 @@ function splitHead(line: Line): { name: string; where: string } | null {
   return where ? { name: raw.slice(0, at).trim(), where: where.charAt(0).toUpperCase() + where.slice(1) } : null;
 }
 
+/** the first words after the cap, to be set in capitals the way a book opens a chapter */
+function openWords(lines: Line[]): Line[] {
+  const first = lines[0];
+  const at = first?.findIndex((r) => !(r as { cap?: boolean }).cap && r.t.trim());
+  if (!first || at === undefined || at < 0) return lines;
+  const r = first[at];
+  const m = /^(\s*\S+(?:\s+\S+){0,1})(?=\s|$)/.exec(r.t);
+  if (!m || m[1].length > 24 || at !== (first[0] && (first[0] as { cap?: boolean }).cap ? 1 : 0)) return lines;
+  const head = { ...r, t: m[1], sc: true } as typeof r & { sc: boolean };
+  const rest = { ...r, t: r.t.slice(m[1].length) };
+  const out = [...first.slice(0, at), head, ...(rest.t ? [rest] : []), ...first.slice(at + 1)];
+  return [out, ...lines.slice(1)];
+}
+
 /** A journal text set for reading: a lead paragraph, headings, numbered steps,
  * glossaries, spoken formulas and verse each in their own form. */
-export default function JournalText({ blocks, pull, cards }: { blocks: Block[]; pull?: string; cards?: Record<string, string> }) {
+export default function JournalText({ blocks, pull, cards, marks }: { blocks: Block[]; pull?: string; cards?: Record<string, string>; marks?: Record<string, Mark> }) {
   const nodes = layout(blocks);
   // a line from the text, set large a little before the middle, between two paragraphs
   let at = -1;
   if (pull && nodes.length >= 6) {
     for (let k = Math.round(nodes.length * 0.42); k < nodes.length - 1; k++) {
-      if (nodes[k - 1].kind === "p" && (nodes[k].kind === "p" || nodes[k].kind === "h")) { at = k; break; }
+      const prose = (x: string) => x === "p" || x === "stanza";
+      if (prose(nodes[k - 1].kind) && (prose(nodes[k].kind) || nodes[k].kind === "h")) { at = k; break; }
     }
   }
   return (
@@ -70,10 +85,19 @@ export default function JournalText({ blocks, pull, cards }: { blocks: Block[]; 
 
   function renderNode(n: (typeof nodes)[number], i: number) {
         switch (n.kind) {
-          case "lede":
+          case "lede": {
+            // a line that leads into a list is no opening: it keeps no drop cap
+            const leadIn = /:\s*$/.test(n.lines.map((l) => l.map((r) => r.t).join("")).join(" "));
             return (
               <p key={i} className={styles.lede}>
-                <Lines lines={dropCap(n.lines)} />
+                <Lines lines={leadIn ? n.lines : openWords(dropCap(n.lines))} />
+              </p>
+            );
+          }
+          case "stanza":
+            return (
+              <p key={i} className={i === nodes.length - 1 && n.lines.length === 1 ? styles.closing : styles.stanza}>
+                <Lines lines={n.lines} />
               </p>
             );
           case "h":
@@ -116,6 +140,32 @@ export default function JournalText({ blocks, pull, cards }: { blocks: Block[]; 
             );
           case "terms": {
             // «Name — setting» then «→ meaning»: each one set as an entry, with its card when the text has them
+            const plain = (l: Line) => l.map((r) => r.t).join("").replace(/\s+/g, " ").trim();
+            // a glossary with a sign beside each term: a numeral, a swatch
+            if (marks && n.items.some((it) => marks[plain(it.term).toLowerCase()])) {
+              return (
+                <ol key={i} className={`${styles.entries} ${styles.withCards}`}>
+                  {n.items.map((it, k) => {
+                    const name = plain(it.term);
+                    const m = marks[name.toLowerCase()];
+                    return (
+                      <li key={k} className={styles.entry}>
+                        <span className={styles.sign} aria-hidden="true">
+                          {m && "roman" in m && <span className={styles.roman}>{m.roman}</span>}
+                          {m && "color" in m && <span className={styles.swatch} style={{ background: m.color }} />}
+                        </span>
+                        <span className={styles.entryBody}>
+                          <span className={styles.name}>{name}</span>
+                          <span className={styles.note}>
+                            <Lines lines={it.note} />
+                          </span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              );
+            }
             const heads = n.items.map((it) => splitHead(it.term));
             const entries = heads.every((h) => h) && n.items.every((it) => it.note.length > 0);
             if (!entries) {
@@ -176,7 +226,7 @@ export default function JournalText({ blocks, pull, cards }: { blocks: Block[]; 
           }
           default:
             return (
-              <p key={i}>
+              <p key={i} className={i === nodes.length - 1 && i >= 4 && n.lines.length === 1 && n.lines[0].map((r) => r.t).join("").length <= 40 ? styles.closing : undefined}>
                 <Lines lines={n.lines} />
               </p>
             );

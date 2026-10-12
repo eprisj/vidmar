@@ -7,7 +7,7 @@ export default function Runs({ line }: { line: Line }) {
   return (
     <>
       {line.map((r, i) => {
-        let n: React.ReactNode = (r as { cap?: boolean }).cap ? <CapText t={r.t} /> : r.t;
+        let n: React.ReactNode = (r as { cap?: boolean }).cap ? <CapText t={r.t} /> : (r as { sc?: boolean }).sc ? <span className={styles.sc}>{r.t}</span> : r.t;
         if (r.i) n = <em>{n}</em>;
         if (r.b) n = <strong>{n}</strong>;
         if (r.href)

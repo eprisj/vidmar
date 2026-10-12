@@ -9,6 +9,7 @@ export type Node =
   | { kind: "lede"; lines: Line[] }
   | { kind: "h"; text: string }
   | { kind: "p"; lines: Line[] }
+  | { kind: "stanza"; lines: Line[] }
   | { kind: "verse"; lines: Line[] }
   | { kind: "quote"; lines: Line[] }
   | { kind: "ol"; items: Line[][] }
@@ -172,6 +173,11 @@ export function layout(blocks: Block[]): Node[] {
     const avg = b.reduce((n, l) => n + text(l).length, 0) / b.length;
     if (b.length >= 3 && avg < 46) {
       nodes.push({ kind: "verse", lines: b });
+      continue;
+    }
+    // two to four short lines are a stanza of the prose, set a little apart
+    if (b.length >= 2 && b.length <= 4 && b.every((l) => text(l).length <= 58)) {
+      nodes.push({ kind: "stanza", lines: b });
       continue;
     }
     nodes.push({ kind: "p", lines: b });

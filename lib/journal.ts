@@ -83,6 +83,27 @@ export const CARDS_IN: Record<string, Record<string, string>> = {
   },
 };
 
+/** In a glossary, the sign that stands beside each term: a Roman numeral for
+ * an arcana, a swatch for a colour. Keyed like CARDS_IN. */
+export type Mark = { roman: string } | { color: string };
+export const MARKS_IN: Record<string, Record<string, Mark>> = {
+  "arkany-porohy": {
+    смерть: { roman: "XIII" },
+    вежа: { roman: "XVI" },
+    повішений: { roman: "XII" },
+    суд: { roman: "XX" },
+    світ: { roman: "XXI" },
+  },
+  "kolir-u-kartakh": {
+    червоний: { color: "#b5342c" },
+    синій: { color: "#2a4f9a" },
+    зелений: { color: "#4b7a3c" },
+    жовтий: { color: "#e0b82e" },
+    чорний: { color: "#16171c" },
+    білий: { color: "#fbf6ea" },
+  },
+};
+
 /** the plate behind the head of a text that has none of its own */
 const RUBRIC_PLATE: Record<string, string> = {
   taro: "cellarius-copernicus",

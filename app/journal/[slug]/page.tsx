@@ -5,7 +5,7 @@ import JournalText from "@/components/JournalText";
 import JournalCover from "@/components/JournalCover";
 import ShareRow from "@/components/ShareRow";
 import { Icon } from "@/components/JournalIcons";
-import { CARDS_IN, PULL, artFor, creditFor, around, dateText, entries, entryBySlug, entryPath, plateFor, readTime, rubricOf } from "@/lib/journal";
+import { CARDS_IN, MARKS_IN, PULL, artFor, creditFor, around, dateText, entries, entryBySlug, entryPath, plateFor, readTime, rubricOf } from "@/lib/journal";
 import { SITE_URL, getSeoAtBuild, pageMeta } from "@/lib/seo";
 import styles from "./entry.module.css";
 
@@ -103,8 +103,15 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ s
               <img src={e.image} alt="" decoding="async" />
             </figure>
           )}
+          <p className={styles.runhead} aria-hidden="true">
+            <span>Відьмар · Журнал</span>
+            <span>
+              <Icon name={rubric.id} size={15} />
+              {rubric.title}
+            </span>
+          </p>
           <article>
-            <JournalText blocks={e.blocks} pull={PULL[e.slug]} cards={CARDS_IN[e.slug]} />
+            <JournalText blocks={e.blocks} pull={PULL[e.slug]} cards={CARDS_IN[e.slug]} marks={MARKS_IN[e.slug]} />
             <p className={styles.fleuron} aria-hidden="true">
               ✦
             </p>
