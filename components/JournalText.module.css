@@ -691,3 +691,37 @@
     line-height: 1.48;
   }
 }
+
+/* a spoken formula and verse: no bars, no boxes. The words stand alone, set in italic, with a small ornament over a formula */
+.quote {
+  position: relative;
+  margin: 2em 0 1.8em;
+  padding: 1.6em 0.5em 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  text-align: center;
+  font-size: 1.1em;
+  font-style: italic;
+  line-height: 1.42;
+  color: var(--jt-strong);
+  text-wrap: balance;
+}
+
+.quote::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--jt-accent);
+}
+
+.verse {
+  padding: 0 0 0 1.4em;
+  border: 0;
+  border-image: none;
+}
