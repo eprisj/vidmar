@@ -25,7 +25,6 @@ export default function JournalPage() {
   const shown = rubrics.filter((r) => inRubric(r.id).length);
   const fart = featured ? artFor(featured) : null;
   const ambient = featured?.image ?? (fart ? `/gravure/${fart.plate}-sm.webp` : "/gravure/cellarius-copernicus-sm.webp");
-  const since = entries.reduce((y, e) => Math.min(y, new Date(e.date).getFullYear()), 9999);
   return (
     <>
       {/* the title page: the journal opens like a book */}
@@ -54,20 +53,6 @@ export default function JournalPage() {
           <p className={styles.heroLede}>
             <Txt k="page.journal.lede" />
           </p>
-          <dl className={styles.heroStats}>
-            <div>
-              <dt>текстів</dt>
-              <dd>{entries.length}</dd>
-            </div>
-            <div>
-              <dt>рубрик</dt>
-              <dd>{shown.length}</dd>
-            </div>
-            <div>
-              <dt>перший текст</dt>
-              <dd>{since}</dd>
-            </div>
-          </dl>
           <a href="#contents" className={styles.heroCue} aria-label="До змісту">
             <span aria-hidden="true" />
           </a>
