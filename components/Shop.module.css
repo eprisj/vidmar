@@ -93,13 +93,13 @@
        screen — the form and its two sentences of context, floating in an
        otherwise-empty box. Bounding the track to what the text can actually
        use pulls the whole block back into one composed group. */
-    grid-template-columns: minmax(0, 380px) minmax(0, 460px);
+    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
   }
 }
 
 .aside {
   color: var(--on-dark-mute);
-  max-width: 44ch;
+  max-width: none;
   display: grid;
   gap: 12px;
 }

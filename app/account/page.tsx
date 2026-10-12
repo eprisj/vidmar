@@ -734,10 +734,38 @@ const PERKS = [
   },
 ];
 
+/** a printed-looking code that carries nothing: the card is only shown, not issued */
+const QR = Array.from({ length: 81 }, (_, i) => {
+  const x = i % 9;
+  const y = Math.floor(i / 9);
+  const finder = (x < 3 && y < 3) || (x > 5 && y < 3) || (x < 3 && y > 5);
+  return finder || (i * 7 + y * 3) % 5 < 2;
+});
+
 function Perks() {
   return (
     <div className={styles.perks}>
-      <span className={styles.perksKicker}>Усередині кабінету</span>
+      <div className={styles.scene} aria-hidden="true">
+        <span className={styles.sceneFan}>
+          {/* eslint-disable @next/next/no-img-element */}
+          <img className={styles.fanL} src="/tarot/02-high-priestess-xs.webp" alt="" />
+          <img className={styles.fanR} src="/tarot/01-magician-xs.webp" alt="" />
+          <img className={styles.fanC} src="/tarot/00-fool-xs.webp" alt="" />
+          {/* eslint-enable @next/next/no-img-element */}
+        </span>
+        <div className={styles.sample}>
+          <span className={styles.sampleBand}>ВІДЬМАР · картка читача</span>
+          <span className={styles.sampleSeal}>
+            <Seal star emblem />
+          </span>
+          <span className={styles.sampleQr}>
+            <svg viewBox="0 0 9 9" shapeRendering="crispEdges">
+              {QR.map((on, i) => on && <rect key={i} x={i % 9} y={Math.floor(i / 9)} width="1" height="1" />)}
+            </svg>
+          </span>
+          <span className={styles.sampleCode}>ВДМ · ·· ·· ··</span>
+        </div>
+      </div>
       <ul className={styles.perksList}>
         {PERKS.map((p) => (
           <li key={p.title}>
@@ -746,20 +774,11 @@ function Perks() {
                 <path d={p.icon} />
               </svg>
             </span>
-            <span>
-              <b>{p.title}</b>
-              <span>{p.text}</span>
-            </span>
+            <b>{p.title}</b>
+            <span>{p.text}</span>
           </li>
         ))}
       </ul>
-      <div className={styles.sample} aria-hidden="true">
-        <span className={styles.sampleBand}>ВІДЬМАР · картка читача</span>
-        <span className={styles.sampleSeal}>
-          <Seal star emblem />
-        </span>
-        <span className={styles.sampleCode}>ВДМ · ·· ·· ··</span>
-      </div>
     </div>
   );
 }
