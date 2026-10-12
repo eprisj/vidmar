@@ -1,67 +1,109 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import PageHero from "@/components/PageHero";
-import { journalRubrics } from "@/lib/content";
+import { channels, dateText, entries, entryBySlug, entryPath, FEATURED, inRubric, readTime, rubrics } from "@/lib/journal";
 import { seoMeta } from "@/lib/seo";
 import styles from "./journal.module.css";
 import { Txt } from "@/components/SiteText";
 
 export const generateMetadata = (): Promise<Metadata> =>
   seoMeta(
-  "Журнал – ВІДЬМАР",
-  "Журнал видавництва ВІДЬМАР – записи про підготовку першої книги зʼявляться тут ближче до випуску.",
-  "/journal",
-);
+    "Журнал – ВІДЬМАР",
+    "Журнал видавництва ВІДЬМАР: тексти про Таро, обряд, рід і міф з каналів академії «Всесвіт Луннарії» та Яра Линського.",
+    "/journal",
+  );
 
 export default function JournalPage() {
+  const featured = entryBySlug(FEATURED) ?? entries[0];
   return (
     <>
-      <PageHero
-        compact
-        label="Журнал"
-        title={<Txt k="page.journal.title" />}
-        variant={5}
-      />
+      <PageHero compact label="Журнал" title={<Txt k="page.journal.title" />} lede={<Txt k="page.journal.lede" />} variant={5} />
 
-      {/* a real engraving standing in for the empty page — Macbeth and the
-          three witches, 1860s Doré, rather than another textured panel */}
-      <section className={`ink ${styles.plate}`} data-field="dark">
-        <img
-          className={styles.plateImg}
-          src="/gravure/macbeth-cave.webp"
-          srcSet="/gravure/macbeth-cave-sm.webp 780w, /gravure/macbeth-cave-md.webp 1200w, /gravure/macbeth-cave.webp 1761w"
-          sizes="100vw"
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          decoding="async"
-        />
-      </section>
+      {/* the first text of the journal, with its picture */}
+      {featured && (
+        <section className="ink padS" data-field="dark" data-candle="">
+          <div className="wrapMax">
+            <Reveal>
+              <Link href={entryPath(featured.slug)} prefetch={false} className={styles.featured}>
+                {featured.image ? (
+                  <img className={styles.featuredImg} src={featured.image} alt="" loading="lazy" decoding="async" />
+                ) : (
+                  <span className={styles.featuredImg} aria-hidden="true" />
+                )}
+                <span className={styles.featuredBody}>
+                  <span className="micro micro--bright">читати першим</span>
+                  <span className={styles.featuredTitle}>{featured.title}</span>
+                  <span className={styles.featuredDek}>{featured.dek}</span>
+                  <span className={`micro ${styles.meta}`}>
+                    {dateText(featured.date)} · {readTime(featured.minutes)}
+                  </span>
+                </span>
+              </Link>
+            </Reveal>
+          </div>
+        </section>
+      )}
 
-      {/* the three sections, shown as what they are: ruled, numbered and
-          waiting — a table of contents with its lines not yet written */}
+      {/* the table of contents: every rubric with the texts that stand in it */}
       <section className="ink pad" data-field="dark" data-candle="">
         <div className="wrapMax">
           <Reveal>
-            <span className="micro micro--bright">зміст</span>
+            <span className="micro micro--bright">зміст · {entries.length} текстів</span>
           </Reveal>
           <div className={styles.rubrics}>
-            {journalRubrics.map((title, i) => (
-              <Reveal key={title} delay={i * 90}>
-                <article className={styles.rubric}>
-                  <div className={styles.rubricBody}>
-                    <h2 className={styles.rubricTitle}>{title}</h2>
-                    <span className={styles.lines} aria-hidden="true">
-                      <span />
-                      <span />
-                      <span />
-                    </span>
-                  </div>
-                  <span className={`micro ${styles.state}`}>Готується</span>
-                </article>
-              </Reveal>
-            ))}
+            {rubrics.map((r) => {
+              const list = inRubric(r.id);
+              if (!list.length) return null;
+              return (
+                <Reveal key={r.id}>
+                  <section className={styles.rubric} id={r.id} aria-labelledby={`h-${r.id}`}>
+                    <header className={styles.rubricHead}>
+                      <h2 id={`h-${r.id}`} className={styles.rubricTitle}>
+                        {r.title}
+                      </h2>
+                      <p className={styles.rubricLede}>{r.lede}</p>
+                    </header>
+                    <ul className={styles.list}>
+                      {list.map((e) => (
+                        <li key={e.slug}>
+                          <Link href={entryPath(e.slug)} prefetch={false} className={styles.row}>
+                            <span className={styles.rowMain}>
+                              <span className={styles.rowTitle}>{e.title}</span>
+                              <span className={styles.rowDek}>{e.dek}</span>
+                            </span>
+                            <span className={`micro ${styles.rowMeta}`}>
+                              {dateText(e.date)}
+                              <br />
+                              {readTime(e.minutes)}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                </Reveal>
+              );
+            })}
           </div>
+        </div>
+      </section>
+
+      <section className="ink padS" data-field="dark">
+        <div className="wrapMax">
+          <Reveal>
+            <div className={styles.more}>
+              <span className="micro micro--bright">далі в Telegram</span>
+              <div className={styles.moreList}>
+                {channels.map((c) => (
+                  <a key={c.handle} className={styles.moreRow} href={`https://t.me/${c.handle}`} target="_blank" rel="noopener noreferrer">
+                    <span className={styles.moreName}>{c.name}</span>
+                    <span className={styles.moreNote}>{c.note}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
     </>

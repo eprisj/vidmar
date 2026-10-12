@@ -1,0 +1,164 @@
+{
+  "_": "The journal's reading list: which posts of the public Telegram channels stand on the site, in which rubric. `npm run journal` fetches them again and rewrites lib/journal-data.json and public/journal/. Edit here, never in the data file. title: the heading (a post's own first line is dropped when it is the same); cut: drop everything from the paragraph that starts with this; strip: words cut off the start of the text; dropLines: lines removed as they are; dek: the line under the heading, when the first paragraph does not do the job.",
+  "picks": [
+    {
+      "slug": "pershyi-rozklad",
+      "channel": "lunnaria_academy",
+      "id": 285,
+      "rubric": "taro",
+      "title": "Як зробити перший розклад легко й без тривоги?",
+      "dek": "Чотири кроки для першого разу: питання, страх, правильність і простір."
+    },
+    {
+      "slug": "choho-karty-movchat",
+      "channel": "lunnaria_academy",
+      "id": 298,
+      "rubric": "taro",
+      "title": "Чому карти можуть «мовчати»?",
+      "dek": "Чотири причини, чому колода раптом нічого не каже."
+    },
+    {
+      "slug": "scho-rozpovist-rozklad",
+      "channel": "lunnaria_academy",
+      "id": 307,
+      "rubric": "taro",
+      "title": "Що може розповісти твій розклад про тебе?",
+      "dek": "Що означає, коли в розкладі більшість однієї масті."
+    },
+    {
+      "slug": "arkan-kliuch",
+      "channel": "lunnaria_academy",
+      "id": 430,
+      "rubric": "taro",
+      "title": "Як знайти свій Аркан-ключ?",
+      "dek": "Три способи знайти карту, яка веде тебе: повторюваність, емоція й дата."
+    },
+    {
+      "slug": "kolir-u-kartakh",
+      "channel": "lunnaria_academy",
+      "id": 391,
+      "rubric": "taro",
+      "title": "Що кажуть кольори на карті",
+      "dek": "Шість кольорів, і що означає, коли один з них заповнює карту."
+    },
+    {
+      "slug": "prostir-arkaniv",
+      "channel": "lunnaria_academy",
+      "id": 360,
+      "rubric": "taro",
+      "title": "Простір, який стоїть за арканом",
+      "dek": "Для кожного аркана є місце: берег, печера, поле, скеля. Вісім прикладів."
+    },
+    {
+      "slug": "travy-ta-arkany",
+      "channel": "lunnaria_academy",
+      "id": 353,
+      "rubric": "taro",
+      "title": "Трави та їхні аркани",
+      "dek": "Яка рослина відповідає якому аркану, і про що вона нагадує."
+    },
+    {
+      "slug": "arkany-porohy",
+      "channel": "lunnaria_academy",
+      "id": 585,
+      "rubric": "taro",
+      "title": "Аркани-пороги",
+      "dek": "Карти, які приходять, коли ти стоїш на внутрішньому переході."
+    },
+    {
+      "slug": "skhidne-taro-hanjyfa",
+      "channel": "yarlinscky",
+      "id": 11334,
+      "rubric": "taro",
+      "title": "Східне Таро: Ганджифа",
+      "dek": "Кругла колода з десятьма мастями, розписана вручну, від Персії до Індії Великих Моголів."
+    },
+    {
+      "slug": "rytual-ochyshchennia-kolody",
+      "channel": "lunnaria_academy",
+      "id": 294,
+      "rubric": "obriad",
+      "title": "Ритуал очищення колоди",
+      "dek": "Просто й без зайвого: тиша, дим або свічка, сіль, простір."
+    },
+    {
+      "slug": "kamin-oberih-domu",
+      "channel": "yarlinscky",
+      "id": 10479,
+      "rubric": "obriad",
+      "title": "Ритуал «Камінь-Оберіг Дому»",
+      "dek": "Обряд, який робить із каменю сторожа оселі.",
+      "dropLines": [
+        "(Те що обіцяв у відео)"
+      ]
+    },
+    {
+      "slug": "pershyi-porih",
+      "channel": "yarlinscky",
+      "id": 13078,
+      "rubric": "obriad",
+      "title": "Перший поріг: як заземлити магію в реальність",
+      "dek": "Чому нове життя не починається зі старого кроку, і практика на кілька секунд перед виходом із дому.",
+      "strip": "Добрий вечір. Хочу повідати.",
+      "cut": "Вже у неділю розкрию"
+    },
+    {
+      "slug": "velesova-nich",
+      "channel": "yarlinscky",
+      "id": 10520,
+      "rubric": "mif",
+      "title": "Велесова ніч, а не Самайн",
+      "dek": "Звідки в нас свято наприкінці жовтня, і що сказати дітям про Гелловін.",
+      "strip": "Я бачу ваші повідомлення й питання в діректі про Хеллоуїн. Напишу тут одразу всім. Святкувати чи ні? Що робити дітям, тощо?"
+    },
+    {
+      "slug": "valpurhiieva-nich",
+      "channel": "yarlinscky",
+      "id": 9676,
+      "rubric": "mif",
+      "title": "Вальпургієва ніч: коли все стає видно"
+    },
+    {
+      "slug": "prysisty-na-dorizhku",
+      "channel": "yarlinscky",
+      "id": 9693,
+      "rubric": "mif",
+      "title": "Присісти на доріжку",
+      "dek": "Чому перед дорогою ми завмираємо на хвильку, і що про це кажуть психологи."
+    },
+    {
+      "slug": "vyshyvanka-inzheneriia",
+      "channel": "yarlinscky",
+      "id": 11916,
+      "rubric": "mif",
+      "title": "Інженерна таємниця вишиванки",
+      "dek": "Вощена нитка, фарба на житньому тісті й чорний колір, який говорить про життя."
+    },
+    {
+      "slug": "tykhe-remeslo",
+      "channel": "yarlinscky",
+      "id": 12472,
+      "rubric": "dumky",
+      "title": "Тихе ремесло",
+      "dek": "Чим справжня практика відрізняється від добре сконструйованого образу.",
+      "strip": "Додам ще."
+    },
+    {
+      "slug": "odyn-namir",
+      "channel": "lunnaria_academy",
+      "id": 716,
+      "rubric": "dumky",
+      "title": "Один внутрішній намір замість обіцянок",
+      "dek": "Про рік, який починається не з обіцянок, а з дозволу жити у своєму ритмі."
+    },
+    {
+      "slug": "sluzhnytsia",
+      "channel": "yarlinscky",
+      "id": 10840,
+      "rubric": "polytsia",
+      "title": "«Служниця» Фріди Мак-Фадден",
+      "dek": "Психологічна драма з елементами трилера, яку важко відкласти.",
+      "strip": "Я ніколи вам не радив книгу. Але цього разу — пораджу, хоч вона далеко не найкраща."
+    }
+  ]
+}

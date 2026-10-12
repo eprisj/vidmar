@@ -114,15 +114,6 @@ export const submissionRules = [
 export const submissionNote =
   "Ми лише формуємо команду, тож сирі тексти з глибокою правкою поки не беремо.";
 
-/** The three sections the journal will open with. Nothing is published yet,
- * so the page shows them as what they are — planned, not written. Titles are
- * the ones the journal page already named in prose. */
-export const journalRubrics = [
-  "Нотатки про підготовку видання",
-  "Розмови з авторами",
-  "Полиця редакції",
-];
-
 export type TarotCard = {
   slug: string;
   file: string;

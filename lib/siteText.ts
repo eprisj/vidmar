@@ -146,7 +146,8 @@ export const TEXT_FIELDS: TextField[] = [
   { key: "page.about.lede", section: "Заголовки сторінок", label: "Про нас · підзаголовок", kind: "long", default: "Починаємо з нуля – вдвох, із любові до читання.", page: "/about" },
   { key: "page.genres.title", section: "Заголовки сторінок", label: "Напрями · заголовок", kind: "text", default: "Що ми видаємо", page: "/genres" },
   { key: "page.catalog.title", section: "Заголовки сторінок", label: "Каталог · заголовок", kind: "text", default: "Книги ВІДЬМАР", page: "/catalog" },
-  { key: "page.journal.title", section: "Заголовки сторінок", label: "Журнал · заголовок", kind: "text", default: "Скоро тут будуть записи", page: "/journal" },
+  { key: "page.journal.lede", section: "Заголовки сторінок", label: "Журнал · підзаголовок", kind: "long", default: "Про Таро, обряд, рід і міф: тексти з каналів академії «Всесвіт Луннарії» та Яра Линського, які варто перечитувати.", page: "/journal" },
+  { key: "page.journal.title", section: "Заголовки сторінок", label: "Журнал · заголовок", kind: "text", default: "Тексти, до яких повертаються", page: "/journal" },
   { key: "page.submissions.title", section: "Заголовки сторінок", label: "Авторам · заголовок", kind: "text", default: "Надіслати рукопис", page: "/submissions" },
   { key: "page.submissions.lede", section: "Заголовки сторінок", label: "Авторам · підзаголовок", kind: "long", default: "Ми читаємо кожен рукопис, що надходить.", page: "/submissions" },
 
