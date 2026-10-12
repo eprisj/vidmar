@@ -10,6 +10,7 @@ import GenreRows from "@/components/GenreRows";
 import Shelf from "@/components/Shelf";
 import Altar from "@/components/Altar";
 import CardOfTheDay from "@/components/CardOfTheDay";
+import JournalTeasers from "@/components/JournalTeasers";
 import { genres } from "@/lib/content";
 import styles from "./page.module.css";
 import { LitTxt, Txt } from "@/components/SiteText";
@@ -93,6 +94,9 @@ export default function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* the journal: three texts to begin with */}
+      <JournalTeasers />
 
       {/* where we are right now */}
       <section className="ink pad" data-field="dark" data-candle="">

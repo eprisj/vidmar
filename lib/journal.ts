@@ -42,6 +42,13 @@ export const entries: Entry[] = (raw as Entry[]).slice().sort((a, b) => (a.date 
 /** the text the journal opens on: an old rite with a picture */
 export const FEATURED = "velesova-nich";
 
+/** the three texts the home page shows, from three rubrics; the newest ones if a slug is gone */
+export const HOME = ["pershyi-porih", "velesova-nich", "skhidne-taro-hanjyfa"];
+export const homeEntries = (): Entry[] => {
+  const picked = HOME.map((s) => entries.find((e) => e.slug === s)).filter((e): e is Entry => !!e);
+  return picked.length === 3 ? picked : entries.slice(0, 3);
+};
+
 export const entryPath = (slug: string) => `/journal/${slug}`;
 export const entryBySlug = (slug: string) => entries.find((e) => e.slug === slug);
 export const rubricOf = (e: Entry) => rubrics.find((r) => r.id === e.rubric) ?? rubrics[0];
