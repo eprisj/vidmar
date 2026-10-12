@@ -6,17 +6,19 @@
   overflow: hidden;
 }
 
+/* a strip, not a screen: at 4 / 3 the engraving took the whole viewport
+   under the title and pushed the six directions below the fold */
 .plateImg {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 250px;
   object-fit: cover;
-  object-position: 50% 30%;
+  object-position: 50% 75%;
 }
 
 @media (max-width: 640px) {
   .plateImg {
-    aspect-ratio: 1 / 1;
+    height: 200px;
     object-position: 60% 30%;
   }
 }
