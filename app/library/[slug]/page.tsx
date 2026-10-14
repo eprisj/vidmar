@@ -26,7 +26,8 @@ export default async function LibraryBookPage({ params }: { params: Promise<{ sl
   if (!book) return null;
   const blocks = loadBlocks(book);
   const parts = blocks.flatMap((b) => (b.t === "heading" ? [b] : []));
-  const other = libraryBooks.find((x) => x.slug !== book.slug);
+  const at = libraryBooks.findIndex((x) => x.slug === book.slug);
+  const other = libraryBooks[(at + 1) % libraryBooks.length];
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Book",
