@@ -11,6 +11,7 @@ const nav = [
   { href: "/about", label: "Про нас" },
   { href: "/genres", label: "Напрями" },
   { href: "/catalog", label: "Каталог" },
+  { href: "/library", label: "Бібліотека" },
   { href: "/submissions", label: "Авторам" },
   { href: "/journal", label: "Журнал" },
   { href: "/account", label: "Кабінет" },

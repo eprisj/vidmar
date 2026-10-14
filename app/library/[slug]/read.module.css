@@ -1,0 +1,243 @@
+/* the paper: the whole book, on wheat, set in the reading face */
+.paper {
+  padding-block: clamp(28px, 4vw, 64px) clamp(56px, 8vw, 120px);
+  background:
+    radial-gradient(100% 70% at 50% 8%, rgba(255, 240, 205, 0.55), transparent 70%),
+    radial-gradient(140% 90% at 50% 100%, rgba(150, 110, 40, 0.28), transparent 70%),
+    #ecd3a0;
+  color: #2f2310;
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding-inline: var(--gut);
+}
+
+@media (min-width: 900px) {
+  .sheet {
+    max-width: 50rem;
+    padding: clamp(48px, 5vw, 72px) 4.5rem clamp(40px, 4vw, 60px);
+    border-radius: 6px;
+    background:
+      radial-gradient(70% 35% at 50% 0%, rgba(255, 255, 255, 0.5), transparent 70%),
+      linear-gradient(180deg, #fcf1d6, #f8e7c5);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.75) inset,
+      0 0 0 1px rgba(122, 95, 38, 0.3),
+      0 46px 80px -38px rgba(55, 35, 8, 0.65);
+  }
+}
+
+.runhead {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 auto clamp(26px, 3.5vw, 44px);
+  padding-bottom: 12px;
+  border-bottom: 3px double rgba(122, 95, 38, 0.4);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #6e531d;
+}
+
+.about {
+  font-family: var(--font-read), Georgia, serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: #4a3913;
+  margin: 0 0 1.6rem;
+}
+
+/* the contents */
+.toc {
+  margin: 0 0 clamp(34px, 5vw, 56px);
+  padding: 18px 0;
+  border-block: 1px solid rgba(122, 95, 38, 0.3);
+}
+
+.tocLabel {
+  margin: 0 0 10px;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #6e531d;
+}
+
+.toc ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc a {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid rgba(122, 95, 38, 0.4);
+  border-radius: 999px;
+  font-family: var(--font-read), Georgia, serif;
+  font-size: 0.92rem;
+  color: #4a3913;
+  text-decoration: none;
+}
+
+.toc a:hover,
+.toc a:focus-visible {
+  background: rgba(201, 169, 97, 0.25);
+  color: #2f2310;
+}
+
+/* the text */
+.text {
+  font-family: var(--font-read), Georgia, "Times New Roman", serif;
+  font-size: clamp(1.1rem, 0.5vw + 1rem, 1.28rem);
+  line-height: 1.78;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.text p {
+  margin: 0 0 1.05em;
+}
+
+.cap::first-letter {
+  float: left;
+  margin: 0.06em 0.12em 0 0;
+  font-size: 3.7em;
+  line-height: 0.82;
+  font-weight: 600;
+  color: #7a5f26;
+}
+
+.part {
+  scroll-margin-top: 88px;
+  margin: 2.4em 0 1.1em;
+  text-align: center;
+  font-family: var(--font-read), Georgia, serif;
+  font-weight: 600;
+  font-size: 1.5em;
+  color: #7a5f26;
+}
+
+.part::before,
+.part::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 1px;
+  margin: 0.6em auto;
+  background: rgba(122, 95, 38, 0.6);
+}
+
+.speaker {
+  margin: 1.5em 0 0.15em !important;
+  font-family: var(--font-golos), system-ui, sans-serif;
+  font-size: 0.66em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #7a5f26;
+}
+
+.remark {
+  padding-left: 1.1em;
+  font-style: italic;
+  font-size: 0.94em;
+  line-height: 1.65;
+  color: #6b5a3a;
+}
+
+.verse {
+  padding-left: 1.1em;
+  border-left: 2px solid rgba(122, 95, 38, 0.25);
+}
+
+.verse span {
+  display: block;
+}
+
+.fleuron {
+  height: 22px;
+  margin: clamp(30px, 4vw, 50px) auto 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 140 18%27%3E%3Cg fill=%27none%27 stroke=%27%237a5f26%27 stroke-width=%27.9%27 stroke-linecap=%27round%27%3E%3Cpath d=%27M2 9h50M88 9h50%27 opacity=%27.6%27/%3E%3Cpath d=%27M70 2l7 7-7 7-7-7z%27/%3E%3C/g%3E%3Ccircle cx=%2770%27 cy=%279%27 r=%271.7%27 fill=%27%237a5f26%27/%3E%3C/svg%3E") center / 150px 22px no-repeat;
+}
+
+.source {
+  margin: 14px auto 28px;
+  max-width: 34rem;
+  text-align: center;
+  font-size: 0.86rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: #6b5a3a;
+}
+
+.next a {
+  display: grid;
+  gap: 4px;
+  margin-top: 28px;
+  padding: 22px 0 0;
+  border-top: 1px solid rgba(122, 95, 38, 0.35);
+  text-decoration: none;
+  color: inherit;
+}
+
+.nextLabel {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #6e531d;
+}
+
+.nextTitle {
+  font-family: var(--font-read), Georgia, serif;
+  font-size: 1.7rem;
+  color: #2f2310;
+}
+
+.nextBy {
+  font-style: italic;
+  color: #6b5a3a;
+}
+
+/* the reading thread along the top, where the browser can draw it */
+.progress {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .progress {
+    display: block;
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    height: 3px;
+    background: var(--gold);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    animation: grow linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media print {
+  .progress {
+    display: none;
+  }
+}

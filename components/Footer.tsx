@@ -29,6 +29,7 @@ export default function Footer() {
             <Link href="/about" prefetch={false}>Про нас</Link>
             <Link href="/genres" prefetch={false}>Напрями</Link>
             <Link href="/catalog" prefetch={false}>Каталог</Link>
+            <Link href="/library" prefetch={false}>Бібліотека</Link>
             <Link href="/journal" prefetch={false}>Журнал</Link>
           </div>
         </div>

@@ -1,0 +1,77 @@
+.root {
+  padding-block: clamp(40px, 6vw, 96px);
+}
+
+.list {
+  display: grid;
+  gap: clamp(18px, 2.4vw, 32px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 760px) {
+  .list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  display: grid;
+  gap: 8px;
+  height: 100%;
+  padding: clamp(24px, 3vw, 40px);
+  border: 1px solid rgba(201, 169, 97, 0.4);
+  border-radius: 14px;
+  background: linear-gradient(160deg, var(--ink-2), var(--ink-deep));
+  color: var(--on-dark);
+  text-decoration: none;
+  transition: border-color 0.25s, transform 0.25s;
+}
+
+.card:hover,
+.card:focus-visible {
+  border-color: var(--gold);
+  transform: translateY(-3px);
+}
+
+.form {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.title {
+  font-size: var(--fs-h3);
+  line-height: 1.15;
+}
+
+.by {
+  font-style: italic;
+  color: var(--on-dark-mute);
+}
+
+.dek {
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
+.meta {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--on-dark-mute);
+}
+
+.note {
+  margin-top: 36px;
+  text-align: center;
+  color: var(--on-dark-mute);
+}
+
+.note a {
+  color: var(--on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

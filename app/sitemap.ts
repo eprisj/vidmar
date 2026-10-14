@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL, bookPath, getSeoAtBuild } from "@/lib/seo";
 import { getBooksAtBuild } from "@/lib/api";
 import { entries, entryPath } from "@/lib/journal";
+import { libraryBooks, libraryPath } from "@/lib/library";
 
 /** `output: export` builds these as files, which Next only does when the
  * route is explicitly static. */
@@ -16,6 +17,7 @@ const pages: { path: string; priority: number }[] = [
   { path: "/genres", priority: 0.8 },
   { path: "/submissions", priority: 0.8 },
   { path: "/catalog", priority: 0.6 },
+  { path: "/library", priority: 0.7 },
   { path: "/journal", priority: 0.6 },
   { path: "/privacy", priority: 0.2 },
   { path: "/terms", priority: 0.2 },
@@ -31,6 +33,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified,
       changeFrequency: "monthly" as const,
       priority,
+    })),
+    // the free library: each book whole
+    ...libraryBooks.map((b) => ({
+      url: `${SITE_URL}${libraryPath(b.slug)}`,
+      lastModified,
+      changeFrequency: "yearly" as const,
+      priority: 0.7,
     })),
     // every text of the journal, with its picture when it has one
     ...entries.map((e) => ({
